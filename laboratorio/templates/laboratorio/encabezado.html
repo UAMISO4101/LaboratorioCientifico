@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <nav class="navbar navbar-default navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="">Biodiversidad</a>
+                </div>
+                <div id="datos_usuario_login" class="navbar-right">
+                    <img id="imagen_usuario" class="img-responsive" style="width:50px;height:50px;margin-left:30px;border-radius:20px;"/>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li id="add_user"><a href="agregarUsuario">Registro</a> </li>
+                        <li id="login_user"><a href="ingresar"><span class="glyphicon glyphicon-log-in" ></span> Login</a></li>
+                        <li id="cerrar_session"><a id="click_cerrar_sesion" href="#" onclick="logout()"><span class="glyphicon glyphicon-log-out" ></span> Logout</a></li>
+                    </ul>
+
+
+                    <ul  class="nav navbar-nav navbar-right">
+                        <li id="user_menu" class="dropdown">
+                            <a  href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                Menu Usuario<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li id="mod_user"><a href="perfil">Perfil</a> </li>
+                                <li id="mod_pass"><a href="modificarPassword">Modificacion de Password</a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div  class="nav navbar-nav navbar-center" style="display: inline-flex">
+                        <br>
+                        <br>
+                        <br>
+                        <select id="categorias" name="categorias" class="selectpicker form-control" style="margin-top: 11px">
+                        </select>
+                        <a id="filtrar_categoria" href=# onclick="filterCategory()" style="margin-top: 20px;margin-left: 8px;display: inherit"><span class="glyphicon glyphicon-search" ></span> Filtrar</a>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+    </body>
+</html>

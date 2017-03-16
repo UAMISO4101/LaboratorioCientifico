@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+        /*(function(){
+             $.getJSON("obtenerEspecies").done(function (data) {
+                if (data){
+                    data = $.parseJSON(data);
+                    var especies = $("#especies");
+                    $(data).each(function() {
+                        var div = $('<div class="col-md-4 col-sm-6 col-lg-3 well">');
+                        $(div).append("Categoria: "+this.fields.categoria);
+                        $(div).append('<img src="../'+this.fields.fotoFile+'" class="img-responsive" style="width:200px;height:200px"/>');
+                        $(div).append( '<a href="verDetalle/?id=' + this.pk + '">' + this.fields.nombre +'</a><br>');
+                        $(div).append("Descripcion Corta: "+this.fields.descripcion_corta);
+                        $(especies).append(div);
+
+
+                    });
+                }
+            });
+        })();
+        (function(){
+            $.getJSON("isLogged").done(function (data) {
+                if (data.mensaje == 'no'){
+                    $("#add_user").show();
+                    $("#cerrar_session").hide();
+                    $("#mod_user").hide();
+                    $("#mod_pass").hide();
+                    $("#user_menu").hide();
+                    $("#login_user").show();
+                    $("#mi_perfil").hide();
+                    $("#datos_usuario_login").hide();
+                }else{
+                    $("#add_user").hide();
+                    $("#cerrar_session").show();
+                    $("#mod_user").show();
+                    $("#mod_pass").show();
+                    $("#user_menu").show();
+                    $("#login_user").hide();
+                    $("#mi_perfil").show();
+                    $("#datos_usuario_login").show();
+                    if (data.usuario){
+                        data = $.parseJSON(data.usuario);
+                        $("#imagen_usuario").attr("title", data.fields.first_name+" "+data.fields.last_name);
+                        $("#imagen_usuario").attr("src", "../"+data.fields.imageFile);
+                    }
+                }
+            });
+        })();
+
+        function logout(){
+            $.getJSON("logout").done(function (data) {
+                if (data.mensaje == 'ok'){
+                    location.reload();
+                }else{
+                    alert("Hubo un error");
+                }
+            });
+        }
+
+
+        (function(){
+            $.getJSON("consultarCategorias").done(function (data) {
+                if (data){
+                    data =  $.parseJSON(data);
+                    var categorias = $("#categorias");
+                    categorias.append($("<option />").val("").text("Filtrar Categoría..."));
+                    $(data).each(function() {
+                        categorias.append($("<option />").val(this.pk).text(this.fields.nombre));
+                    });
+                }
+            });
+        })();
+
+        function filterCategory(){
+            if ($("#categorias").val() != '') {
+                vUrl = "obtenerEspeciesxCategoria?id=" + $("#categorias").val();
+            }
+            else {
+                vUrl = "obtenerEspecies";
+            }
+
+                $.getJSON(vUrl).done(function (data) {
+                    if (data) {
+                        data = $.parseJSON(data);
+
+                        var especies = $("#especies");
+                        $(especies).empty();
+                        $(data).each(function () {
+                            var div = $('<div class="col-md-4 col-sm-6 col-lg-3 well">');
+                            $(div).append("Categoria: " + this.fields.categoria);
+                            $(div).append('<img src="../' + this.fields.fotoFile + '" class="img-responsive" style="width:200px;height:200px"/>');
+                            $(div).append('<a href="verDetalle/?id=' + this.pk + '">' + this.fields.nombre + '</a><br>');
+                            $(div).append("Descripcion Corta: " + this.fields.descripcion_corta);
+                            $(especies).append(div);
+
+
+                        });
+                    }
+                });
+        }
+*/
+    </script>
+</head>
+<body>
+<div id="encabezado"></div>
+<br />
+<br />
+<br />
+<h2 align="center">Laboratorio Cientifico</h2>
+<h2 align="center"></h2>
+<br>
+<div class="row" id="especies"></div>
+
+</body>
+<div id="pie"></div>
+
+
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("encabezado");
+            $("#pie").load("pie");
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+</script>
+</html>
+

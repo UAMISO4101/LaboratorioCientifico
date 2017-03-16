@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script>
+        (function(){
+            $.getJSON("../isLogged").done(function (data) {
+                if (data.mensaje == 'no'){
+                    $("#add_user").show();
+                    $("#cerrar_session").hide();
+                    $("#login_user").show();
+                    $("#home").hide();
+                    $("#mi_perfil").hide();
+                    $("#mensaje").hide();
+                }else{
+                    $("#add_user").hide();
+                    $("#cerrar_session").show();
+                    $("#mi_perfil").show();
+                    $("#editar").hide();
+                    $("#cancelar").hide();
+                    $("#home").show();
+                    $("#login_user").hide();
+                    $("#mensaje").hide();
+                    $("#fotoFile").prop('disabled', true);
+                    $("#paises").prop('disabled', true);
+                    $("#ciudades").prop('disabled', true);
+                }
+            });
+        })();
+
+        function logout(){
+            $.getJSON("../logout").done(function (data) {
+                if (data.mensaje == 'ok'){
+                     window.location = "../";
+                }else{
+                    alert("Hubo un error");
+                }
+            });
+        }
+
+        (function ()
+        {
+            $.getJSON("../infoUsuario").done(function (data)
+            {
+                if (data)
+                {
+                    //alert(JSON.stringify(data));
+                    $.each(data, function(i, item)
+                    {
+                        $("#username").text(item.fields.username);
+                        $("#first_name").text(item.fields.first_name);
+                        $("#last_name").text(item.fields.last_name);
+                        $("#email").text(item.fields.email);
+                        $("#intereses").text(item.fields.interes);
+                        $("#perfilImage").attr('src', '/'+ item.fields.imageFile);
+                        $("#perfilImage").attr('style', 'width:200px;height:200px');
+                        $.getJSON("../consultarPaisUser").done(function (data)
+                        {
+                            if(data)
+                            {
+                                $("#paises option").filter(function()
+                                {
+                                    return this.text == data.pais;
+                                }).attr('selected', true);
+                                if(loadCiudades($('#paises option:selected').val()))
+                                {
+                                     $.getJSON("../consultarCiudadUser").done(function (data)
+                                     {
+                                         $("#ciudades option").filter(function()
+                                         {
+                                            return this.text == data.ciudad;
+                                         }).attr('selected', true);
+                                     });
+                                }
+                            }
+                        });
+
+                    });
+                }
+            })
+        })();
+
+        (function(){
+            $.getJSON("../consultarPaises").done(function (data) {
+                if (data){
+                    data =  $.parseJSON(data);
+                    var paises = $("#paises");
+                    paises.append($("<option />").val("").text("Seleccione..."));
+                    $(data).each(function() {
+                        paises.append($("<option />").val(this.pk).text(this.fields.nombre));
+                    });
+                }
+            });
+        })();
+
+    function loadCiudades(sel) {
+        $.getJSON("../consultarCiudades?id="+sel).done(function (data) {
+            if (data){
+                data =  $.parseJSON(data);
+                var ciudades = $("#ciudades");
+                ciudades.empty();
+                ciudades.append($("<option />").val("").text("Seleccione..."));
+                $(data).each(function() {
+                    ciudades.append($("<option />").val(this.pk).text(this.fields.nombre));
+                });
+            }
+        });
+        return true;
+    };
+
+    function editarPerfil()
+    {
+        $("#editar").show();
+        $("#cancelar").show();
+        $( "label" ).replaceWith( function()
+        {
+            return "<input id=\"" + $(this).attr('id')+ "\" + name=\" "+ $(this).attr('id') +"\" type=\"text\" value=\"" + $( this ).html() + "\" + class=\"form-control\" />";
+        });
+        $("#fotoFile").prop('disabled', false);
+        $("#paises").prop('disabled', false);
+        $("#ciudades").prop('disabled', false);
+    };
+
+    function cancelarEdicion()
+    {
+        //$("#editar").hide();
+        //$("#cancelar").hide();
+        //$( "input[type=text]" ).replaceWith( function()
+        //{
+        //    return "<label id=\"" + $(this).attr('id')+ "\" + name=\" "+ $(this).attr('id') +"\">" + $( this ).val() + "</label>";
+        //});
+        //$("#fotoFile").prop('disabled', true);
+        //$("#paises").prop('disabled', true);
+        //$("#ciudades").prop('disabled', true);
+        location.reload();
+    }
+
+    $(function()
+    {
+        $('form').submit(function (e) {
+        var formData = new FormData($("#formEdicion")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    window.location = "../perfil";
+                }
+            }
+        });
+        e.preventDefault();
+    });
+    });
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="">Biodiversidad</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav"></ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li id="login_user"><a class="glyphicon glyphicon-log-in" href="ingresar"> Login</a> </li>
+                <li id="add_user"><a href="agregarUsuario">Registro</a> </li>
+                <li ide="home"><a  href="../"><span class="glyphicon glyphicon-home"></span> Home</a> </li>
+                <li id="cerrar_session"><a id="click_cerrar_sesion" href="#" onclick="logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a> </li>
+            </ul>
+             <ul  class="nav navbar-nav navbar-right">
+                <li id="user_menu" class="dropdown">
+                    <a  href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Menu Usuario<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li id="mod_user"><a href="../perfil">Perfil</a> </li>
+                        <li id="mod_pass"><a href="../modificarPassword">Modificacion de Password</a> </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<br>
+<br>
+<form id="formEdicion" action="../editarUsuario/" enctype="multipart/form-data" method="post" novalidate>
+    <div class="row">
+        <div class="col-md-6 col-sm-offset-3">
+            <div id="mensaje" class="alert alert-danger">
+                <label id="mensaje1"></label>
+            </div>
+            <div class='page-header'>
+                <div class='btn-toolbar pull-right'>
+                    <div class='btn-group'>
+                        <button type="button" class="btn btn-info" onclick="editarPerfil()">
+                            <span class="glyphicon glyphicon-edit"></span> Editar
+                        </button>
+                    </div>
+                </div>
+                <h2>Perfil</h2>
+                </div>
+            <h4>Usuario:</h4>
+            <label id="username" name="username"></label>
+            <br/>
+            <h4>Nombres:</h4>
+            <label id="first_name" name="first_name"></label>
+            <br/>
+            <h4>Apellidos:</h4>
+            <label id="last_name" name="last_name"></label>
+            <br/>
+            <h4>Email:</h4>
+            <label id="email" name="email"></label>
+            <br/>
+            <h4>Intereses Reserva:</h4>
+            <label id="intereses" name="intereses"></label>
+            <br/>
+            <h4>Imagen perfil:</h4>
+            <img id="perfilImage"/>
+            <br>
+            <br>
+            <input id="fotoFile" name="fotoFile" type="file"/>
+            <br/>
+            <h4>Pais:</h4>
+            <select id="paises" name="paises" class="selectpicker form-control" onchange="loadCiudades(this.val())" required>
+            </select>
+            <br/>
+            <h4>Ciudad:</h4>
+            <select id="ciudades" name="ciudades" class="selectpicker form-control" required>
+            </select>
+            <br/>
+            <br/>
+            <input id="editar" type="submit" value="Guardar Cambios" class="btn btn-primary"/>
+            <button id="cancelar" class="btn btn-danger" onclick="cancelarEdicion()" type="button">Cancelar</button>
+        </div>
+    </div>
+</form>
+</body>
+</html>
