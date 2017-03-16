@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        (function(){
+             $.getJSON("../obtenerTiposBodega").done(function (data) {
+                data =  $.parseJSON(data);
+                var tipoBodega = $("#tipo_bodega");
+                tipoBodega.append($("<option />").val("").text("Seleccione Tipo..."));
+                $(data).each(function() {
+                    tipoBodega.append($("<option />").val(this.pk).text(this.fields.nombre));
+                });
+            });
+        })();
+        (function(){
+             $.getJSON("../obtenerUsuarios").done(function (data) {
+                data =  $.parseJSON(data);
+                var responsable = $("#responsable");
+                responsable.append($("<option />").val("").text("Seleccione Responsable..."));
+                $(data).each(function() {
+                    responsable.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+                });
+            });
+        })();
+        $('form').submit(function (e) {
+            var formData = new FormData($("#formCrearBodega")[0]);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data && data.mensaje && data.mensaje != "ok") {
+                        $("#mensaje1").text(data.mensaje);
+                        $("#mensaje").show();
+                    } else {
+                        window.location = "../";
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+        /*(function(){
+            $.getJSON("isLogged").done(function (data) {
+                if (data.mensaje == 'no'){
+                    $("#add_user").show();
+                    $("#cerrar_session").hide();
+                    $("#mod_user").hide();
+                    $("#mod_pass").hide();
+                    $("#user_menu").hide();
+                    $("#login_user").show();
+                    $("#mi_perfil").hide();
+                    $("#datos_usuario_login").hide();
+                }else{
+                    $("#add_user").hide();
+                    $("#cerrar_session").show();
+                    $("#mod_user").show();
+                    $("#mod_pass").show();
+                    $("#user_menu").show();
+                    $("#login_user").hide();
+                    $("#mi_perfil").show();
+                    $("#datos_usuario_login").show();
+                    if (data.usuario){
+                        data = $.parseJSON(data.usuario);
+                        $("#imagen_usuario").attr("title", data.fields.first_name+" "+data.fields.last_name);
+                        $("#imagen_usuario").attr("src", "../"+data.fields.imageFile);
+                    }
+                }
+            });
+        })();
+        function logout(){
+            $.getJSON("logout").done(function (data) {
+                if (data.mensaje == 'ok'){
+                    location.reload();
+                }else{
+                    alert("Hubo un error");
+                }
+            });
+        }
+        (function(){
+            $.getJSON("consultarCategorias").done(function (data) {
+                if (data){
+                    data =  $.parseJSON(data);
+                    var categorias = $("#categorias");
+                    categorias.append($("<option />").val("").text("Filtrar Categoría..."));
+                    $(data).each(function() {
+                        categorias.append($("<option />").val(this.pk).text(this.fields.nombre));
+                    });
+                }
+            });
+        })();
+        function filterCategory(){
+            if ($("#categorias").val() != '') {
+                vUrl = "obtenerEspeciesxCategoria?id=" + $("#categorias").val();
+            }
+            else {
+                vUrl = "obtenerEspecies";
+            }
+                $.getJSON(vUrl).done(function (data) {
+                    if (data) {
+                        data = $.parseJSON(data);
+                        var especies = $("#especies");
+                        $(especies).empty();
+                        $(data).each(function () {
+                            var div = $('<div class="col-md-4 col-sm-6 col-lg-3 well">');
+                            $(div).append("Categoria: " + this.fields.categoria);
+                            $(div).append('<img src="../' + this.fields.fotoFile + '" class="img-responsive" style="width:200px;height:200px"/>');
+                            $(div).append('<a href="verDetalle/?id=' + this.pk + '">' + this.fields.nombre + '</a><br>');
+                            $(div).append("Descripcion Corta: " + this.fields.descripcion_corta);
+                            $(especies).append(div);
+                        });
+                    }
+                });
+        }
+*/
+    </script>
+</head>
+<body>
+<div id="encabezado"></div>
+<br />
+<br />
+<br />
+<h2 align="center">Crear Bodega</h2>
+<h2 align="center"></h2>
+<br>
+<form id="formCrearBodega" action="../crearBodega/" method="post">
+    <div class="row">
+        <div class="col-md-6 col-sm-offset-3">
+            <div id="mensaje" class="alert alert-danger">
+                <label id="mensaje1"></label>
+            </div>
+            <div class="page-header">
+                <h2>Registro</h2>
+            </div>
+            <label >Serial</label>
+            <input id="serial" name="serial" type="text" class="form-control input-md"
+                   required/>
+            <br/>
+            <label >Nombre</label>
+            <input id="nombre" name="nombre" type="text" class="form-control input-md"
+                   required/>
+            <br/>
+            <label >Ubicación</label>
+            <input id="ubicacion" name="ubicacion" type="text" class="form-control input-md"
+                   required/>
+            <br/>
+            <label >Niveles</label>
+            <input id="niveles" name="niveles" type="number" class="form-control input-md"
+                   min="1" max="5" required maxlength="1" />
+            <br/>
+            <br/>
+            <label >Secciones</label>
+            <input id="secciones" name="secciones" type="number" class="form-control input-md"
+                    min="1" max="7" required maxlength="1"/>
+            <br/>
+            <br/>
+            <label >Temperatura Mínima</label>
+            <input id="temperatura_minima" name="temperatura_minima" type="number" class="form-control input-md"
+                    min="-100" max="100" required maxlength="3"/>
+            <br/>
+            <br/>
+            <label >Temperatura Media</label>
+            <input id="temperatura_media" name="temperatura_media" type="number" class="form-control input-md"
+                    min="-100" max="100" required maxlength="3"/>
+            <br/>
+            <br/>
+            <label >Responsable</label>
+            <select id="responsable" name="responsable" class="selectpicker form-control" required>
+            </select>
+            <br/>
+            <label >Tipo Bodega</label>
+            <select id="tipo_bodega" name="tipo_bodega" class="selectpicker form-control" required>
+            </select>
+            <br/>
+            <br/>
+            <br/>
+            <input type="submit" value="Crear" class="btn btn-primary"/>
+            <a href="../">Cancelar</a>
+        </div>
+    </div>
+</form>
+
+</body>
+<div id="pie"></div>
+
+
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+            var niveles = $( "#niveles" ).spinner();
+            var secciones = $( "#secciones" ).spinner();
+            var temperaturaMinima = $( "#temperaturaMinima" ).spinner({
+              step: 0.01,
+              numberFormat: "n"
+            });
+            var temperaturaMedia = $( "#temperaturaMedia" ).spinner({
+              step: 0.01,
+              numberFormat: "n"
+            });
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+
+    $("#mensaje").hide();
+</script>
+</html>
