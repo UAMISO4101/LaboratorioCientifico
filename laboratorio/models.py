@@ -12,7 +12,8 @@ class Usuario(AbstractUser):
     imageFile = models.ImageField(upload_to='images', null=True,  blank=True)
     roles = models.ManyToManyField(Rol)
 
-class TipoBodega(models.Model):
+class Tipo(models.Model):
+    grupo = models.CharField(max_length=100, null=True)
     nombre = models.CharField(max_length=100, unique=True, null=True)
 
 class Bodega(models.Model):
@@ -28,7 +29,7 @@ class Bodega(models.Model):
     usuario_actualizacion = models.IntegerField(null=True)
     fecha_creacion = models.DateTimeField(null=True)
     fecha_actualizacion = models.DateTimeField(null=True)
-    tipo_bodega = models.ForeignKey(TipoBodega, null=True)
+    tipo_bodega = models.ForeignKey(Tipo, null=True)
     usuario = models.ForeignKey(Usuario, null=True)
 
 class Producto(models.Model):
@@ -68,12 +69,13 @@ class Producto(models.Model):
         ('Otros', 'Moleculas genericas'),
     )
     clasificacion = models.CharField(max_length=35,choices=clasificacion_choices)
-    unidadMedida_choices = (
-        ('mg', 'Miligramos'),
-        ('g', 'Gramos'),
-        ('kg', 'Kilogramos'),
-        ('ml', 'Mililitros'),
-        ('l', 'Litros'),
-        ('unknown', 'unknown'),)
-    unidadMedida = models.CharField(max_length=10, choices=unidadMedida_choices, default='unknown')
+    unidad_medida = models.ForeignKey(Tipo, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
+
+class ProductosEnBodega(models.Model):
+    bodega = models.ForeignKey(Bodega, null=True)
+    producto = models.ForeignKey(Producto, null=True)
+    nivel = models.IntegerField(null=True)
+    seccion = models.IntegerField(null=True)
+    cantidad = models.IntegerField(null=True)
+    unidad_medida = models.ForeignKey(Tipo, null=True)

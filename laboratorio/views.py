@@ -9,7 +9,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 
-from laboratorio.models import TipoBodega, Usuario, Bodega
+from laboratorio.models import Tipo, Usuario, Bodega
 
 
 def ir_index(request):
@@ -23,7 +23,7 @@ def ir_crear_bodega(request):
 
 @csrf_exempt
 def obtenerTiposBodega(request):
-    qs = TipoBodega.objects.all()
+    qs = Tipo.objects.all()
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
@@ -45,7 +45,7 @@ def crearBodega(request):
                         temperatura_media=Decimal(request.POST['temperatura_media']),
                         ubicacion = request.POST['ubicacion'],
                         fecha_creacion = datetime.now(),
-                        tipo_bodega = TipoBodega.objects.filter(id=request.POST['tipo_bodega']).first(),
+                        tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first(),
                         usuario=Usuario.objects.filter(id=request.POST['responsable']).first())
         if not Bodega.objects.filter(serial=bodega.serial).exists():
             dosLugares = Decimal('00.01')
