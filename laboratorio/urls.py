@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 
 from . import views
 
-urlpatterns = {
+urlpatterns = [
     url(r'^$', views.ir_index, name=''),
     url(r'^index/$', views.ir_index, name=''),
     url(r'^pie/$', views.ir_pie, name=''),
@@ -13,4 +13,4 @@ urlpatterns = {
     url(r'^obtenerTiposBodega/$', views.obtenerTiposBodega, name='obtenerTiposBodega'),
     url(r'^obtenerUsuarios/$', views.obtenerUsuarios, name='obtenerUsuarios'),
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
-}
+]
