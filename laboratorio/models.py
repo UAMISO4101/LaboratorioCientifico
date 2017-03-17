@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -14,22 +13,23 @@ class Usuario(AbstractUser):
     roles = models.ManyToManyField(Rol)
 
 class TipoBodega(models.Model):
-    nombre = models.CharField(max_length=100, unique=True, null= True)
+    nombre = models.CharField(max_length=100, unique=True, null=True)
 
 class Bodega(models.Model):
-    serial = models.CharField(max_length=50, unique=True, null= True)
-    nombre = models.CharField(max_length=100)
-    tipo_bodega = models.ForeignKey(TipoBodega, null= True)
-    numero_bandejas = models.IntegerField(default= 0)
-    cupo_bandeja = models.IntegerField(default=0)
-    temperatura_minima = models.DecimalField(max_digits=2, decimal_places=2, default= 0.00)
-    temperatura_media = models.DecimalField(max_digits=2, decimal_places=2, default= 0.00)
-    estado = models.BooleanField(default= False)
-    limite = models.IntegerField(default=0)
-    usuario_creacion = models.IntegerField(default=0)
-    usuario_actualizacion = models.IntegerField(default=0)
-    fecha_creacion = models.DateTimeField(default= datetime.datetime.today())
-    fecha_actualizacion = models.DateTimeField(null= True)
+    serial = models.CharField(max_length=50, unique=True, null=True)
+    nombre = models.CharField(max_length=100, null=True)
+    ubicacion = models.CharField(max_length=100, null=True)
+    niveles = models.IntegerField(null=True)
+    secciones = models.IntegerField(null=True)
+    temperatura_minima = models.DecimalField(null=True, max_digits=11,decimal_places=8)
+    temperatura_media = models.DecimalField(null=True, max_digits=11,decimal_places=8)
+    estado = models.BooleanField(default=True)
+    usuario_creacion = models.IntegerField(null=True)
+    usuario_actualizacion = models.IntegerField(null=True)
+    fecha_creacion = models.DateTimeField(null=True)
+    fecha_actualizacion = models.DateTimeField(null=True)
+    tipo_bodega = models.ForeignKey(TipoBodega, null=True)
+    usuario = models.ForeignKey(Usuario, null=True)
 
 class Producto(models.Model):
     codigo = models.CharField(max_length=10, unique= True, null= True)
@@ -76,3 +76,4 @@ class Producto(models.Model):
         ('l', 'Litros'),
         ('unknown', 'unknown'),)
     unidadMedida = models.CharField(max_length=10, choices=unidadMedida_choices, default='unknown')
+    imageFile = models.ImageField(upload_to='images', null=True, blank=True)
