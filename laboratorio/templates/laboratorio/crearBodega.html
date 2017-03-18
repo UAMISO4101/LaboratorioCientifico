@@ -14,17 +14,20 @@
 <br />
 <br />
 <br />
-<h2 align="center">Crear Bodega</h2>
+<h2 id="hCrear" align="center">Crear Bodega</h2>
+<h2 id="hEditar" align="center" style="display: none;">Editar Bodega</h2>
 <h2 align="center"></h2>
 <br>
 <form id="formCrearBodega" action="../crearBodega/" method="post">
+    <input id="id_bodega_guardada" name="id_bodega_guardada" type="hidden" />
     <div class="row">
         <div class="col-md-6 col-sm-offset-3">
             <div id="mensaje" class="alert alert-danger">
                 <label id="mensaje1"></label>
             </div>
             <div class="page-header">
-                <h2>Registro</h2>
+                <h2 id="hRegistro">Registro</h2>
+                <h2 id="hEdicion" style="display: none;">Edición</h2>
             </div>
             <label >Serial</label>
             <input id="serial" name="serial" type="text" class="form-control input-md"
@@ -68,8 +71,8 @@
             <br/>
             <br/>
             <br/>
-            <input type="submit" value="Crear" class="btn btn-primary"/>
-            <a href="../">Cancelar</a>
+            <input type="submit" value="Guardar" class="btn btn-primary"/>
+            <a href="../bodegas">Cancelar</a>
         </div>
     </div>
 </form>
@@ -79,6 +82,35 @@
 
 
 <script>
+    function GetParameterValues(param) {
+        var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < url.length; i++) {
+            var urlparam = url[i].split('=');
+            if (urlparam[0] == param) {
+                return urlparam[1];
+            }
+        }
+    }
+
+    (function(){
+        $.getJSON("../obtenerTiposBodega").done(function (data) {
+            data =  $.parseJSON(data);
+            var tipoBodega = $("#tipo_bodega");
+            tipoBodega.append($("<option />").val("").text("Seleccione Tipo..."));
+            $(data).each(function() {
+                tipoBodega.append($("<option />").val(this.pk).text(this.fields.nombre));
+            });
+        });
+        $.getJSON("../obtenerUsuarios").done(function (data) {
+            data =  $.parseJSON(data);
+            var responsable = $("#responsable");
+            responsable.append($("<option />").val("").text("Seleccione Responsable..."));
+            $(data).each(function() {
+                responsable.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+            });
+        });
+    })();
+
     (function(){
         try {
             $("#encabezado").load("../encabezado");
@@ -93,6 +125,35 @@
               step: 0.01,
               numberFormat: "n"
             });
+
+            var parametro = GetParameterValues("id_bodega");
+            if (parametro){
+                $('#hCrear').hide();
+                $('#hEditar').show();
+                $('#hRegistro').hide();
+                $('#hEdicion').show();
+                //cargar informacion
+                $.getJSON("../obtenerBodega",{
+                            id_bodega: parametro
+                         }).done(function (data) {
+                    if (data){
+                        bodega =  $.parseJSON(data.bodega);
+                        $("#serial").val(bodega.fields["serial"]);
+                        $("#nombre").val(bodega.fields["nombre"]);
+                        $("#niveles").val(bodega.fields["niveles"]);
+                        $("#secciones").val(bodega.fields["secciones"]);
+                        $("#ubicacion").val(bodega.fields["ubicacion"]);
+                        $("#temperatura_minima").val(bodega.fields["temperatura_minima"]);
+                        $("#temperatura_media").val(bodega.fields["temperatura_media"]);
+                        $("#responsable").val(bodega.fields["usuario"]);
+                        $("#tipo_bodega").val(bodega.fields["tipo_bodega"]);
+                        $("#id_bodega_guardada").val(bodega.pk);
+                    }
+                });
+            }
+
+
+
         }catch (exc){
             alert(exc.message);
         }
@@ -100,26 +161,7 @@
 
     $("#mensaje").hide();
 
-    (function(){
-         $.getJSON("../obtenerTiposBodega").done(function (data) {
-            data =  $.parseJSON(data);
-            var tipoBodega = $("#tipo_bodega");
-            tipoBodega.append($("<option />").val("").text("Seleccione Tipo..."));
-            $(data).each(function() {
-                tipoBodega.append($("<option />").val(this.pk).text(this.fields.nombre));
-            });
-        });
-    })();
-    (function(){
-         $.getJSON("../obtenerUsuarios").done(function (data) {
-            data =  $.parseJSON(data);
-            var responsable = $("#responsable");
-            responsable.append($("<option />").val("").text("Seleccione Responsable..."));
-            $(data).each(function() {
-                responsable.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
-            });
-        });
-    })();
+
     $('form').submit(function (e) {
         var formData = new FormData($("#formCrearBodega")[0]);
         $.ajax({
@@ -133,7 +175,7 @@
                     $("#mensaje1").text(data.mensaje);
                     $("#mensaje").show();
                 } else {
-                    window.location = "../";
+                    window.location = "../bodegas";
                 }
             }
         });
@@ -176,41 +218,7 @@
             }
         });
     }
-    (function(){
-        $.getJSON("consultarCategorias").done(function (data) {
-            if (data){
-                data =  $.parseJSON(data);
-                var categorias = $("#categorias");
-                categorias.append($("<option />").val("").text("Filtrar Categoría..."));
-                $(data).each(function() {
-                    categorias.append($("<option />").val(this.pk).text(this.fields.nombre));
-                });
-            }
-        });
-    })();
-    function filterCategory(){
-        if ($("#categorias").val() != '') {
-            vUrl = "obtenerEspeciesxCategoria?id=" + $("#categorias").val();
-        }
-        else {
-            vUrl = "obtenerEspecies";
-        }
-            $.getJSON(vUrl).done(function (data) {
-                if (data) {
-                    data = $.parseJSON(data);
-                    var especies = $("#especies");
-                    $(especies).empty();
-                    $(data).each(function () {
-                        var div = $('<div class="col-md-4 col-sm-6 col-lg-3 well">');
-                        $(div).append("Categoria: " + this.fields.categoria);
-                        $(div).append('<img src="../' + this.fields.fotoFile + '" class="img-responsive" style="width:200px;height:200px"/>');
-                        $(div).append('<a href="verDetalle/?id=' + this.pk + '">' + this.fields.nombre + '</a><br>');
-                        $(div).append("Descripcion Corta: " + this.fields.descripcion_corta);
-                        $(especies).append(div);
-                    });
-                }
-            });
-    }
+
 */
     </script>
 </html>
