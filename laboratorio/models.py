@@ -84,7 +84,8 @@ class TransaccionInventario(models.Model):
 
     fecha_creacion = models.DateTimeField(null=False)
     fecha_ejecucion = models.DateTimeField(null=False)
-    estado = models.CharField(null=False)
+    tipo = models.ForeignKey(Tipo, null=True)
+    estado = models.ForeignKey(Tipo, null=True)
     bodega_origen = models.ForeignKey(Bodega, related_name="bodegaOrigen",null=False)
     bodega_destino = models.ForeignKey(Bodega, related_name="bodegaDestino",null=False)
     producto_bodega_origen = models.ForeignKey(ProductosEnBodega, related_name="ubucacionOrigen", null=True)
