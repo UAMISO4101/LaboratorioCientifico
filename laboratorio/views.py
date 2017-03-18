@@ -43,7 +43,7 @@ def crearBodega(request):
     mensaje = ""
     if request.method == 'POST':
         dosLugares = Decimal('00.01')
-        if request.POST['id_bodega_guardada'] is None:
+        if request.POST['id_bodega_guardada'] == None or request.POST['id_bodega_guardada'] == "":
             bodega = Bodega(serial=request.POST['serial'],
                         nombre=request.POST['nombre'],
                         niveles=int(request.POST['niveles']),
