@@ -79,3 +79,23 @@ class ProductosEnBodega(models.Model):
     seccion = models.IntegerField(null=True)
     cantidad = models.IntegerField(null=True)
     unidad_medida = models.ForeignKey(Tipo, null=True)
+
+class TransaccionInventario(models.Model):
+
+    fecha_creacion = models.DateTimeField(null=False)
+    fecha_ejecucion = models.DateTimeField(null=False)
+    estado = models.CharField(null=False)
+    bodega_origen = models.ForeignKey(Bodega, related_name="bodegaOrigen",null=False)
+    bodega_destino = models.ForeignKey(Bodega, related_name="bodegaDestino",null=False)
+    producto_bodega_origen = models.ForeignKey(ProductosEnBodega, related_name="ubucacionOrigen", null=True)
+    producto_bodega_destino = models.ForeignKey(ProductosEnBodega, related_name="ubucacionDestino", null=True)
+    nivel_origen = models.IntegerField(null=True)
+    seccion_origen = models.IntegerField(null=True)
+    nivel_destino = models.IntegerField(null=True)
+    seccion_destino = models.IntegerField(null=True)
+    producto = models.ForeignKey(Producto, null=True)
+    cantidad = models.IntegerField(null=True)
+    unidad_medida = models.ForeignKey(Tipo, null=True)
+    usuario = models.ForeignKey(Usuario, null=False)
+    autoriza = models.ForeignKey(Usuario, null=True)
+    comentarios = models.CharField(max_length=200, null=True)
