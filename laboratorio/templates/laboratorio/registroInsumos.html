@@ -19,18 +19,52 @@
 <br>
     <div class="container">
       <div class="row">
-        <div class="col-md-12">
-          <h2 class="text-center">Registro de insumos y reactivos</h2>
-        </div>
-      </div>
-      <div class="row">
         <div class="col-md-6 col-sm-offset-3">
+            <div class="page-header text-center">
+                <h2 id="hRegistro">Registro de Insumos y Reactivos</h2>
+            </div>
           <form role="form" class="my-4">
+               <label><b>Código</b></label><input class="form-control input-md" id="codigo" placeholder="Ingrese un código de referencia" type="text"><br>
            <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" placeholder="Ingrese el nombre" type="text"><br>
-           <label><b>Descripción</b></label><input class="form-control input-md" id="descripcion" placeholder="Descripción del insumo" type="text"><br>
-           <label><b>Valor Unitario</b></label><input class="form-control input-md" id="valor" type="text" placeholder="Ingrese el valor unitario"><br>
-              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"/>
-           <button type="submit" class="btn btn-default">Submit</button></form>
+              <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" placeholder="Descripción del insumo o reactivo" type="text"></textarea><br>
+              <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" type="text" placeholder="Ingrese el valor unitario"></div><br>
+              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
+           <label class="required" for="id_clasificacion">Clasificacion:</label>
+            <br>
+              <select id="id_clasificacion" name="clasificacion" required class="form-control">
+                  <option value="" selected="selected">---------</option>
+                  <optgroup label="Materiales Vivos">
+                      <option value="Bac">Bacterias</option>
+                      <option value="Hon">Hongos</option>
+                    </optgroup>
+                    <optgroup label="Medios de Cultivo">
+                    <option value="Glu">Glucosa</option>
+                    <option value="Fru">Fructuosa</option>
+                    <option value="Tri">Triptona</option>
+                    <option value="Pep">Peptona</option>
+                    </optgroup>
+                    <optgroup label="Micronutrientes">
+                    <option value="Fe">Hierro</option>
+                    <option value="Mg">Magnesio</option>
+                    <option value="P">Fosforo</option>
+                    </optgroup>
+                    <optgroup label="Manipulacion ADN y Proteinas">
+                    <option value="Pri">Primers</option>
+                    <option value="Kem">Kits de extraccion metagenomica</option>
+                    <option value="KeADN">Kits de extraccion ADN aislado</option>
+                    <option value="Pup">Purificador de proteinas</option>
+                    <option value="Enr">Enzimas de restriccion</option>
+                    <option value="Pro">Proteasas</option>
+                    </optgroup>
+                  <optgroup label="Otros">
+                      <option value="Otros">Moleculas genericas</option>
+                  </optgroup>
+                    </select>
+              <br>
+              <label for="id_imageFile">Imagen:</label><input id="imageFile" name="imageFile" type="file" />
+                <br>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="#">Cancelar</a></form>
         </div>
 
       </div>
