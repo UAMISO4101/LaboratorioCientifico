@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
-
+    url(r'^recursos/$', views.ir_recursos, name='recursos'),
+    url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
 ]

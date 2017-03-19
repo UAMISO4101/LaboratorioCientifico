@@ -25,6 +25,10 @@ def ir_crear_bodega(request):
     return render(request, "laboratorio/crearBodega.html")
 def ir_bodegas(request):
     return render(request, "laboratorio/bodegas.html")
+def ir_recursos(request):
+    return render(request, "laboratorio/recursos.html")
+def ir_regitrarInsumos(request):
+    return render(request, "laboratorio/registroInsumos.html")
 
 @csrf_exempt
 def obtenerTiposBodega(request):

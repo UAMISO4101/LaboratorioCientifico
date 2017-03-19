@@ -1,0 +1,52 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+</head>
+
+<body>
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br>
+<br>
+<br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="text-center">Registro de insumos y reactivos</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-sm-offset-3">
+          <form role="form" class="my-4">
+           <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" placeholder="Ingrese el nombre" type="text"><br>
+           <label><b>Descripción</b></label><input class="form-control input-md" id="descripcion" placeholder="Descripción del insumo" type="text"><br>
+           <label><b>Valor Unitario</b></label><input class="form-control input-md" id="valor" type="text" placeholder="Ingrese el valor unitario"><br>
+              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"/>
+           <button type="submit" class="btn btn-default">Submit</button></form>
+        </div>
+
+      </div>
+    </div>
+    </div>
+    <div id="pie"></div>
+</div>
+</body>
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+</script>
+</html>
