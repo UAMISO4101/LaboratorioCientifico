@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor
-from laboratorio.models import Tipo, Usuario, Bodega
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
 
 
 def ir_index(request):
@@ -126,3 +126,43 @@ def obtenerBodega(request):
     struct = json.loads(qs_json)
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
+
+@csrf_exempt
+def obtenerExperimentos(request):
+    qs = Experimento.objects.all().prefetch_related('asignado')
+    qs_json = serializers.serialize('json', qs)
+    respT = []
+    for exp in qs:
+        asignado = exp.asignado.values('username', 'id')[0]
+        struct = json.loads(qs_json)[0]
+        resp = {'experimento': struct, 'asignado': asignado}
+        respT.append(resp)
+    return JsonResponse(respT, safe=False)
+
+@csrf_exempt
+def obtenerExperimentosPorUsuario(request):
+    usuario = Usuario.objects.get(username=request.GET['username'])
+    exp_usuario = Experimento.objects.filter(asignado=usuario)
+    qs_json = serializers.serialize('json', exp_usuario)
+    return JsonResponse(qs_json, safe=False)
+
+@csrf_exempt
+def obtenerProtocolosPorExperimento(request):
+    exp = Experimento.objects.filter(codigo=request.GET['codigo'])
+    prots_exp = Protocolo.objects.filter(experimento=exp)
+    qs_json = serializers.serialize('json', prots_exp)
+    return JsonResponse(qs_json, safe=False)
+
+@csrf_exempt
+def obtenerPPPorProtocolo(request):
+    prot = Protocolo.objects.filter(id=request.GET['id'])
+    prods_prot = ProductoProtocolo.objects.filter(protocolo=prot).select_related('producto')
+    qs_json = serializers.serialize('json', prods_prot)
+    producto = {'nombre':prods_prot.first().producto.nombre,
+                'id': prods_prot.first().producto.pk}
+    struct = json.loads(qs_json)[0]
+    resp = {'productoprotocolo': struct, 'producto': producto}
+    return JsonResponse(resp, safe=False)
+
+def experimentos(request):
+    return render(request, "laboratorio/experimentos.html")

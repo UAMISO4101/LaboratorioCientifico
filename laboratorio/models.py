@@ -113,7 +113,7 @@ class ProductoProtocolo(models.Model):
     descripcion = models.CharField(max_length=50)
     cantidadUtilizada = models.DecimalField(decimal_places=3, max_digits=10, null=True)
     protocolo = models.ForeignKey(Protocolo, on_delete=models.CASCADE, null=True)
-    producto = models.OneToOneField(Producto, null=True)
+    producto = models.ForeignKey(Producto, null=True)
 
 class Experimento(models.Model):
 
@@ -123,3 +123,4 @@ class Experimento(models.Model):
     estado = models.CharField(max_length=50)
     protocolo = models.ManyToManyField(Protocolo)
     asignado = models.ManyToManyField(Usuario)
+
