@@ -101,3 +101,26 @@ class TransaccionInventario(models.Model):
     usuario = models.ForeignKey(Usuario, related_name="usuarioTrx", null=False)
     autoriza = models.ForeignKey(Usuario, related_name="autorizaTrx", null=True)
     comentarios = models.CharField(max_length=200, null=True)
+
+class Protocolo(models.Model):
+
+    version = models.BigIntegerField(null=True)
+    nombre = models.CharField(max_length=50)
+    fecha = models.DateField(null=True)
+    descripcion = models.CharField(max_length=1000)
+
+class ProductoProtocolo(models.Model):
+
+    descripcion = models.CharField(max_length=50)
+    cantidadUtilizada = models.DecimalField(decimal_places=3, max_digits=10, null=True)
+    protocolo = models.ForeignKey(Protocolo, on_delete=models.CASCADE, null=True)
+    producto = models.OneToOneField(Producto, null=True)
+
+class Experimento(models.Model):
+
+    codigo = models.CharField(max_length=10, unique=True, null=True)
+    nombre = models.CharField(max_length=50)
+    fecha = models.DateField(null=True)
+    estado = models.CharField(max_length=50)
+    protocolo = models.ManyToManyField(Protocolo)
+    asignado = models.ManyToManyField(Usuario)
