@@ -66,7 +66,7 @@
         $.getJSON("../obtenerExperimentos").done(function (data) {
             console.log(data)
             datos =  data;
-            var tabla = $('#tabla').DataTable( {
+            $('#tabla').DataTable( {
                 bProcessing: true,
                 aaData: datos,
                 aoColumns: [
@@ -79,11 +79,12 @@
             $('#tabla tbody').on( 'click', 'tr', function () {
                 if ( $(this).hasClass('selected') ) {
                     $(this).removeClass('selected');
+                     $('#tabla_protocolos').dataTable().removeClass('selected');
+                    $('#insumos').hide()
                     $('#protocolos').hide();
-                   // $('#insumos').hide() ;
                 }
                 else {
-                    tabla.$('tr.selected').removeClass('selected');
+                    $('#tabla').dataTable().$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                     $('#protocolos').show();
                     valor = "../obtenerProtocolosPorExperimento";
@@ -98,7 +99,7 @@
                         $('#tabla_protocolos').dataTable().fnClearTable();
                         $('#tabla_protocolos').dataTable().fnAddData(datos);
                     }else{
-                        var tablaP = $('#tabla_protocolos').DataTable( {
+                        $('#tabla_protocolos').DataTable( {
                         bProcessing: true,
                         aaData: datos,
                         aoColumns: [
@@ -112,12 +113,12 @@
 
                     }
                         $('#tabla_protocolos tbody').on( 'click', 'tr', function () {
-                        if ( $(this).hasClass('selected') ) {
+                        if ( $(this).hasClass('selected')) {
                             $(this).removeClass('selected');
                             $('#insumos').hide()
                         }
                         else {
-                            tablaP.$('tr.selected').removeClass('selected');
+                            $('#tabla_protocolos').dataTable().$('tr.selected').removeClass('selected');
                             $(this).addClass('selected');
                             $('#insumos').show();
                             valor = "../obtenerPPPorProtocolo";
@@ -131,7 +132,7 @@
                                     $('#tabla_insumos').dataTable().fnClearTable();
                                     $('#tabla_insumos').dataTable().fnAddData(datos);
                             }else {
-                           var tablaI = $('#tabla_insumos').DataTable({
+                            $('#tabla_insumos').DataTable({
                                         bProcessing: true,
                                         aaData: datos,
                                         aoColumns: [
