@@ -11,6 +11,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 
+from laboratorio.models import Tipo, Usuario, Bodega, Producto
 from laboratorio.modelos_vista import BodegaVista, Convertidor
 from laboratorio.models import Tipo, Usuario, Bodega
 
@@ -94,6 +95,41 @@ def crearBodega(request):
 
     return JsonResponse({"mensaje": mensaje})
 
+  
+@csrf_exempt
+def busquedaProducto(request):
+    qs = Producto.objects.all()
+    #qs = Producto.objects.filter(unidad_medida__nombre__icontains="UM").order_by("nombre")
+    #name_map = {'first': 'first_name', 'last': 'last_name', 'bd': 'birth_date', 'pk': 'id'}
+    #qs = Producto.objects.raw("select* from laboratorio_producto where unidadesaExistentes=10")
+
+    #sql_query = "SELECT* FROM LABORATORIO_PRODUCTO WHERE UNIDADESEXISTENTES=10"
+    #required_question_information = Producto.objects.raw(sql_query)
+
+    #cursor = connection.cursor()
+
+
+    #qs2 = Bodega.objects.all()
+    #qs3 = Bodega.objects.all()
+
+
+    #mensajes = Mensaje.objects.filter(emisor=request.user) | | Mensaje.objects.filter(destinatarios__mensaje__emisor=request.user)
+    #for especie in qs:
+    #    especie.categoria_id = Categoria.objects.filter(id = especie.categoria_id).first().nombre
+    qs_json = serializers.serialize('json', qs)
+
+    return JsonResponse(qs_json, safe=False)
+
+
+@csrf_exempt
+def verProductoLista(request):
+    #global globvar
+    #globvar = request.GET.get('id');
+    busquedaProducto(request)
+    #consultar_especie_comentario(request)
+    return render(request, "laboratorio/busquedaproducto.html")
+
+  
 @csrf_exempt
 def obtenerBodegas(request):
     qs = Bodega.objects.all()
@@ -118,6 +154,7 @@ def obtenerBodegas(request):
     json_string = json.dumps(listaBodegas, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
+  
 @csrf_exempt
 def obtenerBodega(request):
     time.sleep(0.3)

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+        <script>
+            (function(){
+                try {
+                    $("#encabezado").load("../encabezado");
+                    $("#pie").load("../pie");
+                }catch (exc){
+                    alert(exc.message);
+                }
+            })();
+        (function(){
+             $.getJSON("../busquedaproducto").done(function (data) {
+                if (data){
+                    data = $.parseJSON(data);
+                    var resultados = $("#resultados");
+
+                    var tablaresult="<table border=\"1px\" width=\"85%%\">";
+                    tablaresult=tablaresult+"<tr style=\"text-align: center; font-size: large\">";
+                    tablaresult=tablaresult+"<td>Fecha transacción</td>";
+                    tablaresult=tablaresult+"<td>Bodega Origen</td>";
+                    tablaresult=tablaresult+"<td>Bodega Destino</td>";
+                    tablaresult=tablaresult+"<td>Recurso</td>";
+                    tablaresult=tablaresult+"<td>Cantidad</td>";
+                    tablaresult=tablaresult+"<td>Unidad</td>";
+                    tablaresult=tablaresult+"<td>Autoriza</td>";
+                    tablaresult=tablaresult+"<td>Recibe</td>";
+                    tablaresult=tablaresult+"</tr>";
+
+                    var result ="";
+
+                    $(data).each(function() {
+                        result=result+"<tr>";
+                        result=result+"<td>"+this.fields.nombre+"</td>";
+                        result=result+"<td>"+this.fields.nombre+"</td>";
+                        result=result+"<td>"+this.fields.nombre+"</td>";
+                        result=result+"<td>"+this.fields.nombre+"</td>";
+                        result=result+"<td style=\"text-align: right\">"+this.fields.unidadesExistentes+"</td>";
+                        result=result+"<td style=\"text-align: right\">"+this.fields.unidad_medida+"</td>";
+                        result=result+"<td>"+this.fields.nombre+"</td>";
+                        result=result+"<td>"+this.fields.nombre+"</td>";
+                        result=result+"</tr>";
+                    });
+
+                    tablaresult=tablaresult+result+"</table>";
+
+                    $(resultados).append(tablaresult);
+                }
+                else {
+                    alert("No ha productos para mostrar");
+                }
+            });
+        })();
+    </script>
+
+</head>
+<body>
+
+<div id="principal">
+    <div id="encabezado"></div>
+    <div id="busqueda">
+        <table>
+            <tr>
+                <td>Bodega origen</td>
+                <td><input type="text" id="bodegaorigen"></td>
+                <td>Destino</td>
+                <td><input type="text" id="bodegadestino"></td>
+                <td>Recurso</td>
+                <td><input type="text" id="recurso"></td>
+            </tr>
+            <tr>
+                <td>Fecha desde</td>
+                <td><input type="date" id="fechadesde"></td>
+                <td>hasta</td>
+                <td><input type="date" id="fechahasta"></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <input type="submit" id="buscar" value="Buscar">&nbsp;&nbsp;<a href="">cancelar</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>&nbsp;</div>
+    <div id="resultados">
+    </div>
+    <div id="pie"></div>
+</div>
+</body>
+</html>
