@@ -20,18 +20,21 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6 col-sm-offset-3">
+            <div id="mensaje" class="alert alert-danger">
+                <label id="mensaje1"></label>
+            </div>
             <div class="page-header text-center">
                 <h2 id="hRegistro">Registro de Insumos y Reactivos</h2>
             </div>
-          <form role="form" class="my-4">
-               <label><b>Código</b></label><input class="form-control input-md" id="codigo" placeholder="Ingrese un código de referencia" type="text"><br>
-           <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" placeholder="Ingrese el nombre" type="text"><br>
-              <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" placeholder="Descripción del insumo o reactivo" type="text"></textarea><br>
-              <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" type="text" placeholder="Ingrese el valor unitario"></div><br>
+          <form id="formRegistrarInsumo" action="../guardarInsumo/" method="post" enctype="multipart/form-data" novalidate>
+               <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
+           <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
+              <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
+              <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
               <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
            <label class="required" for="id_clasificacion">Clasificacion:</label>
             <br>
-              <select id="id_clasificacion" name="clasificacion" required class="form-control">
+              <select id="clasificacion" name="clasificacion" required class="form-control">
                   <option value="" selected="selected">---------</option>
                   <optgroup label="Materiales Vivos">
                       <option value="Bac">Bacterias</option>
@@ -61,10 +64,12 @@
                   </optgroup>
                     </select>
               <br>
-              <label for="id_imageFile">Imagen:</label><input id="imageFile" name="imageFile" type="file" />
+              <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
+               <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
+              <label for="id_imageFile">Imagen:</label><input id="imageFile" name="imageFile" type="file" required/>
                 <br>
-              <button type="submit" class="btn btn-primary">Guardar</button>
-          <a href="#">Cancelar</a></form>
+              <input type="submit" value="Guardar" class="btn btn-primary"/>
+          <a href="../recursos">Cancelar</a></form>
         </div>
 
       </div>
@@ -82,5 +87,39 @@
             alert(exc.message);
         }
     })();
+
+    (function() {
+        $.getJSON("../obtenerTiposMedida").done(function (data) {
+            data = $.parseJSON(data);
+            var tipoBodega = $("#medida");
+            tipoBodega.append($("<option />").val("").text("Seleccione Medida..."));
+            $(data).each(function () {
+                tipoBodega.append($("<option />").val(this.pk).text(this.fields.nombre));
+            });
+        })
+    })();
+
+    $("#mensaje").hide();
+
+
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formRegistrarInsumo")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    window.location = "../recursos";
+                }
+            }
+        });
+        e.preventDefault();
+    });
 </script>
 </html>

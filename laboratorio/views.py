@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor
-from laboratorio.models import Tipo, Usuario, Bodega
+from laboratorio.models import Tipo, Usuario, Bodega, Producto
 
 
 def ir_index(request):
@@ -130,3 +130,46 @@ def obtenerBodega(request):
     struct = json.loads(qs_json)
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
+
+@csrf_exempt
+def registrarInsumoReactivo(request):
+    mensaje = ""
+    dosLugares = Decimal('00.01')
+    if request.method == 'POST':
+        codigo = request.POST['codigo']
+        nombre = request.POST['nombre']
+        descripcion = request.POST['descripcion']
+        valor = int(request.POST['valor'])
+        unidadesExistentes = int(request.POST['unidades'])
+        clasificacion = request.POST['clasificacion']
+        unitaria = Decimal(request.POST['cantidad'])
+        imageFile = request.FILES['imageFile']
+
+        if Producto.objects.filter(codigo=codigo).first() != None:
+            mensaje = "El insumo/reactivo con el codigo ingresado ya existe"
+        else:
+            if Producto.objects.filter(nombre=nombre).first() != None:
+                mensaje = "El insumo/reactivo con el nombre ingresado ya existe"
+            else:
+                #Es un producto con un codigo y un nombre nuevos
+                producto = Producto(codigo=codigo,
+                                    nombre=nombre,
+                                    descripcion=descripcion,
+                                    valorUnitario=valor,
+                                    unidadesExistentes=unidadesExistentes,
+                                    clasificacion=clasificacion,
+                                    unidad_medida=Tipo.objects.filter(id=request.POST['medida']).first(),
+                                    unidad_unitaria=unitaria,
+                                    imageFile=imageFile)
+
+                producto.unidad_unitaria.quantize(dosLugares, 'ROUND_DOWN')
+                producto.save()
+                mensaje = "ok"
+
+    return JsonResponse({"mensaje":mensaje})
+
+@csrf_exempt
+def obtenerTiposMedida(request):
+    qs = Tipo.objects.filter(grupo="MEDIDAPRODUCTO")
+    qs_json = serializers.serialize('json', qs)
+    return JsonResponse(qs_json, safe=False)

@@ -18,4 +18,6 @@ urlpatterns = [
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
     url(r'^recursos/$', views.ir_recursos, name='recursos'),
     url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
+    url(r'^guardarInsumo/$', views.registrarInsumoReactivo, name='guardarInsumo'),
+    url(r'^obtenerTiposMedida/$', views.obtenerTiposMedida, name='obtenerTiposMedida'),
 ]
