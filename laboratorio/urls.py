@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
     url(r'^guardarInsumo/$', views.registrarInsumoReactivo, name='guardarInsumo'),
     url(r'^obtenerTiposMedida/$', views.obtenerTiposMedida, name='obtenerTiposMedida'),
+    url(r'^verRecursos/$', views.ir_ver_recursos, name='verRecursos'),
+    url(r'^obtenerRecursos/$', views.obtenerRecursos, name='obtenerRecursos'),
 ]

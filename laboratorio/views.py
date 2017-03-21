@@ -11,7 +11,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 
-from laboratorio.modelos_vista import BodegaVista, Convertidor
+from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista
 from laboratorio.models import Tipo, Usuario, Bodega, Producto
 
 
@@ -29,6 +29,8 @@ def ir_recursos(request):
     return render(request, "laboratorio/recursos.html")
 def ir_regitrarInsumos(request):
     return render(request, "laboratorio/registroInsumos.html")
+def ir_ver_recursos(request):
+    return render(request, "laboratorio/verRecursos.html")
 
 @csrf_exempt
 def obtenerTiposBodega(request):
@@ -173,3 +175,23 @@ def obtenerTiposMedida(request):
     qs = Tipo.objects.filter(grupo="MEDIDAPRODUCTO")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
+
+@csrf_exempt
+def obtenerRecursos(request):
+    qs = Producto.objects.all()
+    listaProductos = []
+    for producto in qs:
+        prod = ProductoVista()
+        prod.id = producto.id
+        prod.codigo = producto.codigo
+        prod.nombre = producto.nombre
+        prod.descripcion = producto.descripcion
+        prod.valorUnitario = str(producto.valorUnitario)
+        prod.unidadesExistentes = str(producto.unidadesExistentes)
+        prod.clasificacion = producto.get_clasificacion_display()
+        prod.unidad_medida = producto.unidad_medida.nombre
+        prod.unidad_unitaria = str(producto.unidad_unitaria)
+        prod.imageFile = str(producto.imageFile)
+        listaProductos.append(prod)
+    json_string = json.dumps(listaProductos, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Cientifico:.</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+</head>
+<body>
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br />
+<br />
+<br />
+<h2 align="center">Recursos</h2>
+<h2 align="center"></h2>
+<br>
+        <div class="container">
+                <table id="tabla" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" style="text-align: center">
+                </table>
+            </div>
+    </div>
+    <div id="pie"></div>
+</div>
+</body>
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+
+    $(function () {
+        $.getJSON("../obtenerRecursos").done(function (data) {
+            datos = $.parseJSON(data);
+            var tabla = $('#tabla').DataTable({
+                bProcessing: true,
+                aaData: datos,
+                aoColumns: [
+                    {mData: "id", sTitle: "Id"},
+                    {mData: "codigo", sTitle: "Codigo"},
+                    {mData: "nombre", sTitle: "Nombre"},
+                    {mData: "descripcion", sTitle: "Descripcion"},
+                    {mData: "valorUnitario", sTitle: "Valor"+"<br>"+"Unitario"},
+                    {mData: "unidadesExistentes", sTitle: "Unidades" +"<br>"+"Existentes"},
+                    {mData: "clasificacion", sTitle: "Clasificacion"},
+                    {mData: "unidad_medida", sTitle: "Unidad"+"<br>"+ "Medida"},
+                    {mData: "unidad_unitaria", sTitle: "Cantidad"+"<br>"+ "Unitaria"},
+                    {targets: 0,mData: "imageFile", sTitle: "Image File",
+                        "render": function ( mData, type, full, meta )
+                        {
+                            return '<img src="../../'+mData+'" class="img-responsive" style="width:200px"></img>';
+                        }}
+                ],
+            })
+        }).done(function () {
+
+        })
+    });
+</script>
+</html>
