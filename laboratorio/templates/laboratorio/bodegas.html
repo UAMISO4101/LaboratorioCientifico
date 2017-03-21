@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+<div id="encabezado"></div>
+<br />
+<br />
+<br />
+<h2 align="center">Bodegas</h2>
+<h2 align="center"></h2>
+<br>
+<form id="formBodegas">
+    <div class="panel panel-default">
+        <div class="panel-heading">Lista de Bodegas</div>
+        <div class="panel-body">
+            <div style="text-align: center;">
+                <a href="../bodega" class="btn btn-primary" role="button">Crear Bodega</a>
+                <a id="btnEditarBodega" href="../bodega" class="btn btn-primary" role="button">Editar Bodega</a>
+                <a href="../">Cancelar</a>
+            </div>
+            <div class="container">
+                <table id="tabla" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</form>
+
+</body>
+<div id="pie"></div>
+
+
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+            $('#btnEditarBodega').attr('disabled', true);
+            $('#btnEditarBodega').bind('click', false);
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+
+    $(function () {
+        $.getJSON("../obtenerBodegas").done(function (data) {
+            datos =  $.parseJSON(data);
+            var tabla = $('#tabla').DataTable( {
+                bProcessing: true,
+                aaData: datos,
+                aoColumns: [
+                    { mData: "id" , sTitle: "Id"},
+                    { mData: "nombre" , sTitle: "Nombre"},
+                    { mData: "serial" , sTitle: "Serial"},
+                    { mData: "niveles" , sTitle: "Niveles"},
+                    { mData: "secciones" , sTitle: "Secciones"},
+                    { mData: "temperatura_minima" , sTitle: "Temperatura Minima"},
+                    { mData: "temperatura_media" , sTitle: "Temperatura Media"},
+                    { mData: "ubicacion" , sTitle: "Ubicacion"},
+                    { mData: "tipo_bodega" , sTitle: "Tipo Bodega"},
+                    { mData: "estado" , sTitle: "Estado"},
+                    { mData: "responsable" , sTitle: "Responsable"}
+                ],
+            } );
+            $('#tabla tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                    $('#btnEditarBodega').attr('disabled', true);
+                    $('#btnEditarBodega').bind('click', false);
+                }
+                else {
+                    tabla.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    valor = $("#btnEditarBodega").attr('href');
+                    if (valor.indexOf("id_bodega")!=-1){
+                        valor = valor.split("?")[0];
+                    }
+                    valor += "?id_bodega="+$(this).children()[0].innerText;
+                    $("#btnEditarBodega").attr("href", valor);
+                    $('#btnEditarBodega').unbind('click', false);
+                    $('#btnEditarBodega').attr('disabled', false);
+                }
+            });
+
+        });
+    });
+
+    /*
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formCrearBodega")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    window.location = "../";
+                }
+            }
+        });
+        e.preventDefault();
+    });*/
+    /*
+    function logout(){
+        $.getJSON("logout").done(function (data) {
+            if (data.mensaje == 'ok'){
+                location.reload();
+            }else{
+                alert("Hubo un error");
+            }
+        });
+    }
+*/
+    </script>
+</html>
