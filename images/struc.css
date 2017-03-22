@@ -26,3 +26,10 @@ body {
     text-align: center;
 }
 
+th, td
+{
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+

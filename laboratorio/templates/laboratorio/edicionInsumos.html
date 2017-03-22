@@ -24,14 +24,15 @@
                 <label id="mensaje1"></label>
             </div>
             <div class="page-header text-center">
-                <h2 id="hRegistro">Registro de Insumos y Reactivos</h2>
+                <h2 id="hRegistro">Edición de Insumos y Reactivos</h2>
             </div>
-          <form id="formRegistrarInsumo" action="../guardarInsumo/" method="post" enctype="multipart/form-data" novalidate>
-               <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
+          <form id="formEdicionInsumo" action="../../guardarEdicionInsumo/" method="post" enctype="multipart/form-data" novalidate>
+              <input id="id_producto_guardado" name="id_producto_guardado" type="hidden" />
+              <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
            <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
               <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
               <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
-              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2" minlength="1"><br>
+              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
            <label class="required" for="id_clasificacion">Clasificacion:</label>
             <br>
               <select id="clasificacion" name="clasificacion" required class="form-control">
@@ -65,11 +66,12 @@
                     </select>
               <br>
               <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
-               <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4" minlength="1"><br>
-              <label for="id_imageFile">Imagen:</label><input id="imageFile" name="imageFile" type="file" required/>
+               <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
+              <img id="imagen" src="" class="img-responsive" style="width: 50%"/><br>
+              <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
                 <br>
               <input type="submit" value="Guardar" class="btn btn-primary"/>
-          <a href="../verRecursos">Cancelar</a></form>
+          <a href="../../verRecursos">Cancelar</a></form>
         </div>
 
       </div>
@@ -81,15 +83,15 @@
 <script>
     (function(){
         try {
-            $("#encabezado").load("../encabezado");
-            $("#pie").load("../pie");
+            $("#encabezado").load("../../encabezado");
+            $("#pie").load("../../pie");
         }catch (exc){
             alert(exc.message);
         }
     })();
 
     (function() {
-        $.getJSON("../obtenerTiposMedida").done(function (data) {
+        $.getJSON("../../obtenerTiposMedida").done(function (data) {
             data = $.parseJSON(data);
             var tipoBodega = $("#medida");
             tipoBodega.append($("<option />").val("").text("Seleccione Medida..."));
@@ -101,9 +103,31 @@
 
     $("#mensaje").hide();
 
+    (function(){
+        url = $(location).attr('href');
+        segments = url.split("/");
+        param = segments[5];
+        $.getJSON("../../obtenerRecurso",{recurso_id: param}).done(function (data)
+        {
+            if (data)
+            {
+                producto =  $.parseJSON(data.producto);
+                $("#codigo").val(producto.fields["codigo"]);
+                $("#nombre").val(producto.fields["nombre"]);
+                $("#descripcion").val(producto.fields["descripcion"]);
+                $("#valor").val(producto.fields["valorUnitario"]);
+                $("#medida").val(producto.fields["unidad_medida"]);
+                $("#cantidad").val(producto.fields["unidad_unitaria"]);
+                $("#clasificacion").val(producto.fields["clasificacion"]);
+                $("#unidades").val(producto.fields["unidadesExistentes"]);
+                $("#imagen").attr('src', "../../../"+producto.fields['imageFile']);
+                $("#id_producto_guardado").val(param)
+            }
+        });
+    })();
 
     $('form').submit(function (e) {
-        var formData = new FormData($("#formRegistrarInsumo")[0]);
+        var formData = new FormData($("#formEdicionInsumo")[0]);
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
@@ -115,7 +139,7 @@
                     $("#mensaje1").text(data.mensaje);
                     $("#mensaje").show();
                 } else {
-                    window.location = "../recursos";
+                    window.location = "../../verRecursos";
                 }
             }
         });

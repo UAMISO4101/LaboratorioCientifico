@@ -5,6 +5,7 @@ from datetime import datetime
 
 from decimal import Decimal
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import JsonResponse
 from django.shortcuts import render
 
@@ -31,6 +32,8 @@ def ir_regitrarInsumos(request):
     return render(request, "laboratorio/registroInsumos.html")
 def ir_ver_recursos(request):
     return render(request, "laboratorio/verRecursos.html")
+def ir_editarRecurso(request, recurso_id=1):
+    return render(request, "laboratorio/edicionInsumos.html")
 
 @csrf_exempt
 def obtenerTiposBodega(request):
@@ -147,12 +150,9 @@ def registrarInsumoReactivo(request):
         unitaria = Decimal(request.POST['cantidad'])
         imageFile = request.FILES['imageFile']
 
-        if Producto.objects.filter(codigo=codigo).first() != None:
-            mensaje = "El insumo/reactivo con el codigo ingresado ya existe"
+        if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=codigo).first() !=None:
+            mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
         else:
-            if Producto.objects.filter(nombre=nombre).first() != None:
-                mensaje = "El insumo/reactivo con el nombre ingresado ya existe"
-            else:
                 #Es un producto con un codigo y un nombre nuevos
                 producto = Producto(codigo=codigo,
                                     nombre=nombre,
@@ -195,3 +195,87 @@ def obtenerRecursos(request):
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
+
+@csrf_exempt
+def obtenerRecurso(request):
+    time.sleep(0.3)
+    qs = Producto.objects.filter(id=request.GET['recurso_id'])
+    qs_json = serializers.serialize('json', qs)
+    struct = json.loads(qs_json)
+    json_recurso = json.dumps(struct[0])
+    return JsonResponse({"producto": json_recurso})
+
+@csrf_exempt
+def guardarEdicionInsumo(request):
+
+    mensaje = ""
+    if request.method == 'POST':
+        codigo = request.POST['codigo']
+        nombre = request.POST['nombre']
+        descripcion = request.POST['descripcion']
+        valor = int(request.POST['valor'])
+        unidadesExistentes = int(request.POST['unidades'])
+        clasificacion = request.POST['clasificacion']
+        unitaria = Decimal(request.POST['cantidad'])
+        imageFile = request.FILES.get('imageFile',None)
+
+        producto = Producto.objects.filter(id=int(request.POST['id_producto_guardado'])).first()
+
+
+        modificacion = False
+        error = False
+        if producto != None:
+
+            if producto.codigo != codigo or producto.nombre != nombre:
+                try:
+                    Producto.objects.get(codigo=codigo)
+                    if producto.codigo != codigo:
+                        error = True
+                    else:
+                        try:
+                            Producto.objects.get(nombre=nombre)
+                            if producto.nombre != nombre:
+                                error = True
+                            else:
+                                modificacion = True
+                        except ObjectDoesNotExist:
+                            modificacion = True
+
+                except ObjectDoesNotExist:
+                    modificacion = True
+                    try:
+                        Producto.objects.get(nombre=nombre)
+                        if producto.nombre != nombre:
+                            error = True
+                        else:
+                            modificacion = True
+                    except ObjectDoesNotExist:
+                        modificacion = True
+
+            elif producto.codigo == codigo and producto.nombre == nombre:
+                modificacion = True
+
+            if error:
+                mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
+            else:
+                if modificacion == True:
+                    producto.codigo = codigo
+                    producto.nombre = nombre
+                    producto.descripcion = descripcion
+                    producto.valorUnitario = valor
+                    producto.unidadesExistentes = unidadesExistentes
+                    producto.clasificacion = clasificacion
+                    producto.unidad_medida = Tipo.objects.filter(id=request.POST['medida']).first()
+                    producto.unidad_unitaria = unitaria
+                    if (imageFile != None):
+                        producto.imageFile = imageFile
+                    producto.save()
+                    mensaje = "ok"
+
+        else:
+            mensaje = "El id del insumo/reactivo que se quiere editar no existe"
+
+    return JsonResponse({"mensaje": mensaje})
+
+
+
