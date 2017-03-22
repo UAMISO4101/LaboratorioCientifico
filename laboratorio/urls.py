@@ -13,10 +13,11 @@ urlpatterns = [
     url(r'^obtenerTiposBodega/$', views.obtenerTiposBodega, name='obtenerTiposBodega'),
     url(r'^obtenerUsuarios/$', views.obtenerUsuarios, name='obtenerUsuarios'),
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
+    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
+    url(r'^verproductolista/$', views.verProductoLista, name='verproductolista'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
-
 
     url(r'^recursos/$', views.ir_recursos, name='recursos'),
     url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
@@ -27,4 +28,3 @@ urlpatterns = [
     url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
     url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
     url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
-]
