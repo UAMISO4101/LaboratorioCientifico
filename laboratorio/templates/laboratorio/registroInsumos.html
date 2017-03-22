@@ -8,6 +8,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js"></script>
 </head>
 
 <body>
@@ -102,6 +103,39 @@
     $("#mensaje").hide();
 
 
+    $("#formRegistrarInsumo").validate({
+        //specify the validation rules
+        rules: {
+            codigo: "required",
+            nombre: "required",
+            descripcion: "required",
+            valor: "required",
+            unidades: "required",
+            clasificacion: "required",
+            medida: "required",
+            cantidad: "required",
+            imageFile: "required",
+        },
+
+        //specify validation error messages
+        messages: {
+            codigo: "Es requerido un código para la creacion del recurso",
+            nombre: "Es requerido un nombre para la creacion del recurso",
+            descripcion: "Es requerido una descripción para la creacion del recurso",
+            valor: "Es necesario un valor unitario para la creación del recurso",
+            unidades: "Son necesarias las unidades existentes para la creación del recurso",
+            clasificacion: "Es necesario elegir una clasificacion para la creación del recurso",
+            medida: "Es necesario elegir una unidad de medida para la creación del recurso",
+            cantidad: "Es necesario elegir una cantidad unitaria para la creación del recurso",
+            imageFile: "Es necesario subir una imagen para la creación del recurso",
+        },
+
+        //submitHandler: function(form){
+        //    form.submit();
+        //}
+
+    });
+
     $('form').submit(function (e) {
         var formData = new FormData($("#formRegistrarInsumo")[0]);
         $.ajax({
@@ -115,7 +149,7 @@
                     $("#mensaje1").text(data.mensaje);
                     $("#mensaje").show();
                 } else {
-                    window.location = "../recursos";
+                    window.location = "../verRecursos";
                 }
             }
         });
