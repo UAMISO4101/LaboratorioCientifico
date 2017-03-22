@@ -79,7 +79,7 @@
             $('#tabla tbody').on( 'click', 'tr', function () {
                 if ( $(this).hasClass('selected') ) {
                     $(this).removeClass('selected');
-                     $('#tabla_protocolos').dataTable().removeClass('selected');
+                    // $('#tabla_protocolos').dataTable().removeClass('selected');
                     $('#insumos').hide()
                     $('#protocolos').hide();
                 }
@@ -137,7 +137,9 @@
                                         aaData: datos,
                                         aoColumns: [
                                             {mData: "productoprotocolo.pk", sTitle: "Id"},
-                                            {mData: "productoprotocolo.fields.descripcion", sTitle: "Descripción"}
+                                            {mData: "producto.nombre", sTitle: "Nombre"},
+                                            {mData: "productoprotocolo.fields.descripcion", sTitle: "Descripción"},
+                                            {mData: "productoprotocolo.fields.cantidadUtilizada", sTitle: "Cantidad"}
                                         ],
                                     });
                                 }
