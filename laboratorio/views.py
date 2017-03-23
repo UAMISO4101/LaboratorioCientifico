@@ -18,8 +18,8 @@ from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
 
-from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, ProductosBodegaVista
+from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
 
 from laboratorio.models import Tipo, Usuario, Bodega
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
