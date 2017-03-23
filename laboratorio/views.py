@@ -317,6 +317,7 @@ def obtenerPPPorProtocolo(request):
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
+@csrf_exempt
 def registrarInsumoReactivo(request):
     mensaje = ""
     dosLugares = Decimal('00.01')
