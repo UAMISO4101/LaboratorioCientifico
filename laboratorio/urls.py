@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^obtenerTiposBodega/$', views.obtenerTiposBodega, name='obtenerTiposBodega'),
     url(r'^obtenerUsuarios/$', views.obtenerUsuarios, name='obtenerUsuarios'),
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
+    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
+    url(r'^verproductolista/$', views.verProductoLista, name='verproductolista'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
@@ -22,5 +24,15 @@ urlpatterns = [
     url(r'^obtenerProtocolosPorExperimento/$', views.obtenerProtocolosPorExperimento, name='obtenerProtocolosPorExperimento'),
     url(r'^obtenerPPPorProtocolo/$', views.obtenerPPPorProtocolo, name='obtenerPPPorProtocolo'),
     url(r'^experimentos/$', views.experimentos, name='experimentos'),
+
+    url(r'^recursos/$', views.ir_recursos, name='recursos'),
+    url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
+    url(r'^guardarInsumo/$', views.registrarInsumoReactivo, name='guardarInsumo'),
+    url(r'^obtenerTiposMedida/$', views.obtenerTiposMedida, name='obtenerTiposMedida'),
+    url(r'^verRecursos/$', views.ir_ver_recursos, name='verRecursos'),
+    url(r'^obtenerRecursos/$', views.obtenerRecursos, name='obtenerRecursos'),
+    url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
+    url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
+    url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
 
 ]

@@ -19,3 +19,15 @@ class BodegaVista():
 class Convertidor(json.JSONEncoder):
     def default(self, obj):
         return obj.__dict__
+
+class ProductoVista():
+    id = 0
+    codigo = ""
+    nombre = ""
+    descripcion = ""
+    valorUnitario = 0
+    unidadesExistentes = 0
+    clasificacion = ""
+    unidad_medida = ""
+    unidad_unitaria = ""
+    imageFile = ""

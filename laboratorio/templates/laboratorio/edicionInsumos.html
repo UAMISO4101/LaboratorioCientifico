@@ -1,0 +1,181 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+</head>
+
+<body>
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br>
+<br>
+<br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-sm-offset-3">
+            <div id="mensaje" class="alert alert-danger">
+                <label id="mensaje1"></label>
+            </div>
+            <div class="page-header text-center">
+                <h2 id="hRegistro">Edición de Insumos y Reactivos</h2>
+            </div>
+          <form id="formEdicionInsumo" action="../../guardarEdicionInsumo/" method="post" enctype="multipart/form-data" novalidate>
+              <input id="id_producto_guardado" name="id_producto_guardado" type="hidden" />
+              <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
+           <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
+              <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
+              <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
+              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
+           <label class="required" for="id_clasificacion">Clasificacion:</label>
+            <br>
+              <select id="clasificacion" name="clasificacion" required class="form-control">
+                  <option value="" selected="selected">---------</option>
+                  <optgroup label="Materiales Vivos">
+                      <option value="Bac">Bacterias</option>
+                      <option value="Hon">Hongos</option>
+                    </optgroup>
+                    <optgroup label="Medios de Cultivo">
+                    <option value="Glu">Glucosa</option>
+                    <option value="Fru">Fructuosa</option>
+                    <option value="Tri">Triptona</option>
+                    <option value="Pep">Peptona</option>
+                    </optgroup>
+                    <optgroup label="Micronutrientes">
+                    <option value="Fe">Hierro</option>
+                    <option value="Mg">Magnesio</option>
+                    <option value="P">Fosforo</option>
+                    </optgroup>
+                    <optgroup label="Manipulacion ADN y Proteinas">
+                    <option value="Pri">Primers</option>
+                    <option value="Kem">Kits de extraccion metagenomica</option>
+                    <option value="KeADN">Kits de extraccion ADN aislado</option>
+                    <option value="Pup">Purificador de proteinas</option>
+                    <option value="Enr">Enzimas de restriccion</option>
+                    <option value="Pro">Proteasas</option>
+                    </optgroup>
+                  <optgroup label="Otros">
+                      <option value="Otros">Moleculas genericas</option>
+                  </optgroup>
+                    </select>
+              <br>
+              <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
+               <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
+              <img id="imagen" src="" class="img-responsive" style="width: 50%"/><br>
+              <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
+                <br>
+              <input type="submit" value="Guardar" class="btn btn-primary"/>
+          <a href="../../verRecursos">Cancelar</a></form>
+        </div>
+
+      </div>
+    </div>
+    </div>
+    <div id="pie"></div>
+</div>
+</body>
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../../encabezado");
+            $("#pie").load("../../pie");
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+
+    (function() {
+        $.getJSON("../../obtenerTiposMedida").done(function (data) {
+            data = $.parseJSON(data);
+            var tipoBodega = $("#medida");
+            tipoBodega.append($("<option />").val("").text("Seleccione Medida..."));
+            $(data).each(function () {
+                tipoBodega.append($("<option />").val(this.pk).text(this.fields.nombre));
+            });
+        })
+    })();
+
+    $("#mensaje").hide();
+
+    (function(){
+        url = $(location).attr('href');
+        segments = url.split("/");
+        param = segments[5];
+        $.getJSON("../../obtenerRecurso",{recurso_id: param}).done(function (data)
+        {
+            if (data)
+            {
+                producto =  $.parseJSON(data.producto);
+                $("#codigo").val(producto.fields["codigo"]);
+                $("#nombre").val(producto.fields["nombre"]);
+                $("#descripcion").val(producto.fields["descripcion"]);
+                $("#valor").val(producto.fields["valorUnitario"]);
+                $("#medida").val(producto.fields["unidad_medida"]);
+                $("#cantidad").val(producto.fields["unidad_unitaria"]);
+                $("#clasificacion").val(producto.fields["clasificacion"]);
+                $("#unidades").val(producto.fields["unidadesExistentes"]);
+                $("#imagen").attr('src', "../../../"+producto.fields['imageFile']);
+                $("#id_producto_guardado").val(param)
+            }
+        });
+    })();
+
+    $("#formEdicionInsumo").validate({
+        //specify the validation rules
+        rules: {
+            codigo: "required",
+            nombre: "required",
+            descripcion: "required",
+            valor: "required",
+            unidades: "required",
+            clasificacion: "required",
+            medida: "required",
+            cantidad: "required",
+        },
+
+        //specify validation error messages
+        messages: {
+            codigo: "Es requerido un código para la edición del recurso",
+            nombre: "Es requerido un nombre para la edición del recurso",
+            descripcion: "Es requerido una descripción para la edición del recurso",
+            valor: "Es necesario un valor unitario para la edición del recurso",
+            unidades: "Son necesarias las unidades existentes para la edición del recurso",
+            clasificacion: "Es necesario elegir una clasificacion para la edición del recurso",
+            medida: "Es necesario elegir una unidad de medida para la edición del recurso",
+            cantidad: "Es necesario elegir una cantidad unitaria para la edición del recurso",
+        },
+
+        //submitHandler: function(form){
+        //    form.submit();
+        //}
+
+    });
+
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formEdicionInsumo")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    window.location = "../../verRecursos";
+                }
+            }
+        });
+        e.preventDefault();
+    });
+</script>
+</html>
