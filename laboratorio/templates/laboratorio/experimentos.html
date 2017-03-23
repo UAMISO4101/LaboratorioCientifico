@@ -26,10 +26,13 @@
         <div class="panel-heading">Lista de experimentos</div>
         <div class="panel-body">
             <div style="text-align: center;">
+                <a id="btnExperimentos" href="" class="btn btn-primary" role="button">Experimentos</a>
+                <a id="btnProtocolos" href="" class="btn btn-primary" role="button">Protocolos</a>
+                <a id="btnProductos" href="" class="btn btn-primary" role="button">Productos</a>
                 <a href="../">Cancelar</a>
             </div>
             <div class="container">
-                <div class="row">
+                <div class="row" id="experimentos">
                     <table id="tabla" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%"></table>
                 </div>
                 <div class="row" id="protocolos">
@@ -55,14 +58,33 @@
         try {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
-            $('#btnProtocolos').attr('disabled', true);
-            $('#btnProtocolos').bind('click', false);
         }catch (exc){
             alert(exc.message);
         }
     })();
 
+    /*$(function(){
+    });*/
     $(function () {
+
+        $('#btnExperimentos').click(function (event) {
+            event.preventDefault();
+            $('#experimentos').show();
+            $('#protocolos').hide();
+            $('#insumos').hide();
+        });
+        $('#btnProtocolos').click(function (event) {
+            event.preventDefault();
+            $('#experimentos').hide();
+            $('#protocolos').show();
+            $('#insumos').hide();
+        });
+        $('#btnProductos').click(function (event) {
+            event.preventDefault();
+            $('#experimentos').hide();
+            $('#protocolos').hide();
+            $('#insumos').show();
+        });
         $.getJSON("../obtenerExperimentos").done(function (data) {
             console.log(data)
             datos =  data;
@@ -86,6 +108,7 @@
                 else {
                     $('#tabla').dataTable().$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
+                    $('#experimentos').hide();
                     $('#protocolos').show();
                     valor = "../obtenerProtocolosPorExperimento";
                     if (valor.indexOf("codigo")!=-1){
@@ -120,6 +143,7 @@
                         else {
                             $('#tabla_protocolos').dataTable().$('tr.selected').removeClass('selected');
                             $(this).addClass('selected');
+                            $('#protocolos').hide();
                             $('#insumos').show();
                             valor = "../obtenerPPPorProtocolo";
                             if (valor.indexOf("id")!=-1){
@@ -151,6 +175,8 @@
             });
 
         });
+
+
     });
     </script>
 </html>
