@@ -19,6 +19,11 @@ urlpatterns = [
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
 
+    url(r'^transaccion/$', views.ir_crear_transaccion, name='transaccion'),
+    url(r'^crearTransaccion/$', views.crear_transaccion, name='crearTransaccion'),
+    url(r'^obtenerTipos/$', views.obtenerTipos, name='obtenerTipos'),
+    url(r'^obtenerProductosBodega/$', views.obtenerProductosBodega, name='obtenerProductosBodega'),
+  
     url(r'^obtenerExperimentos/$', views.obtenerExperimentos, name='obtenerExperimentos'),
     url(r'^obtenerExperimentosPorUsuario/$', views.obtenerExperimentosPorUsuario, name='obtenerExperimentosPorUsuario'),
     url(r'^obtenerProtocolosPorExperimento/$', views.obtenerProtocolosPorExperimento, name='obtenerProtocolosPorExperimento'),
@@ -34,5 +39,4 @@ urlpatterns = [
     url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
     url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
     url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
-
 ]
