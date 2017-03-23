@@ -34,9 +34,9 @@ class Bodega(models.Model):
 
 class Producto(models.Model):
     codigo = models.CharField(max_length=10, unique= True, null= True)
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, unique=True)
     descripcion = models.CharField(max_length=200)
-    valorUnitario = models.DecimalField(max_digits=7,decimal_places=4)
+    valorUnitario = models.IntegerField()
     unidadesExistentes = models.IntegerField()
     clasificacion_choices = (
         ('Materiales Vivos',(
@@ -70,6 +70,7 @@ class Producto(models.Model):
     )
     clasificacion = models.CharField(max_length=35,choices=clasificacion_choices)
     unidad_medida = models.ForeignKey(Tipo, null=True)
+    unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
 
 class ProductosEnBodega(models.Model):

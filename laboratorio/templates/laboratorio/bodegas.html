@@ -12,10 +12,14 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+
 </head>
 <body>
-<div id="encabezado"></div>
-<br />
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br />
 <br />
 <br />
 <h2 align="center">Bodegas</h2>
@@ -36,9 +40,10 @@
         </div>
     </div>
 </form>
-
+    </div>
+    <div id="pie"></div>
+</div>
 </body>
-<div id="pie"></div>
 
 
 <script>
@@ -52,7 +57,6 @@
             alert(exc.message);
         }
     })();
-
     $(function () {
         $.getJSON("../obtenerBodegas").done(function (data) {
             datos =  $.parseJSON(data);
@@ -92,10 +96,8 @@
                     $('#btnEditarBodega').attr('disabled', false);
                 }
             });
-
         });
     });
-
     /*
     $('form').submit(function (e) {
         var formData = new FormData($("#formCrearBodega")[0]);
