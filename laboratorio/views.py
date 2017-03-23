@@ -19,8 +19,7 @@ from psycopg2.extensions import JSON
 
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista
-from laboratorio.models import Tipo, Usuario, Bodega, Producto, ProductosBodegaVista
-
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, ProductosBodegaVista
 
 from laboratorio.models import Tipo, Usuario, Bodega
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
@@ -184,6 +183,7 @@ def obtenerBodega(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
 
+
 @csrf_exempt
 def crear_transaccion(request):
     if request.method == 'POST':
@@ -212,6 +212,7 @@ def crear_transaccion(request):
         tran_json = json.loads(serializers.serialize('json', [transaccion]));
         return JsonResponse(tran_json, safe=False)
       
+@csrf_exempt
 def ejecutar_transaccion(transaccion):
     try:
         print >> sys.stdout, "EN EJECUCION" + str(json.loads(serializers.serialize('json', [transaccion])))
@@ -245,7 +246,7 @@ def ejecutar_transaccion(transaccion):
     except Exception as e:
         print 'EXCEPCION: %s (%s)' % (e.message, type(e))
 
-
+        
 #Funcion GET que trae listas de valores segun el tipo
 @csrf_exempt
 def obtenerTipos(request):
@@ -273,10 +274,49 @@ def obtenerProductosBodega(request):
         pb.unidad_medida = Tipo.objects.get(pk=productoBodega.unidad_medida.id).nombre
         listaProductosBodegas.append(pb)
     json_pb = json.dumps(listaProductosBodegas, cls=Convertidor)
-    return JsonResponse(json_pb, safe=False)
-
+    return JsonResponse(json_pb, safe=False)        
+        
+        
+@csrf_exempt
+def obtenerExperimentos(request):
+    qs = Experimento.objects.all().prefetch_related('asignado')
+    qs_json = serializers.serialize('json', qs)
+    respT = []
+    for exp in qs:
+        asignado = exp.asignado.values('username', 'id')[0]
+        struct = json.loads(qs_json)[0]
+        resp = {'experimento': struct, 'asignado': asignado}
+        respT.append(resp)
+    return JsonResponse(respT, safe=False)
 
 @csrf_exempt
+def obtenerExperimentosPorUsuario(request):
+    usuario = Usuario.objects.get(username=request.GET['username'])
+    exp_usuario = Experimento.objects.filter(asignado=usuario)
+    qs_json = serializers.serialize('json', exp_usuario)
+    return JsonResponse(qs_json, safe=False)
+
+@csrf_exempt
+def obtenerProtocolosPorExperimento(request):
+    exp = Experimento.objects.filter(codigo=request.GET['codigo'])
+    prots_exp = Protocolo.objects.filter(experimento=exp)
+    qs_json = serializers.serialize('json', prots_exp)
+    return JsonResponse(qs_json, safe=False)
+
+@csrf_exempt
+def obtenerPPPorProtocolo(request):
+    prot = Protocolo.objects.filter(id=request.GET['id'])
+    prods_prot = ProductoProtocolo.objects.filter(protocolo=prot).select_related('producto')
+    qs_json = serializers.serialize('json', prods_prot)
+    producto = {'nombre':prods_prot.first().producto.nombre,
+                'id': prods_prot.first().producto.pk}
+    struct = json.loads(qs_json)[0]
+    resp = {'productoprotocolo': struct, 'producto': producto}
+    return JsonResponse(resp, safe=False)
+
+def experimentos(request):
+    return render(request, "laboratorio/experimentos.html")
+
 def registrarInsumoReactivo(request):
     mensaje = ""
     dosLugares = Decimal('00.01')
@@ -416,7 +456,3 @@ def guardarEdicionInsumo(request):
             mensaje = "El id del insumo/reactivo que se quiere editar no existe"
 
     return JsonResponse({"mensaje": mensaje})
-
-
-
-
