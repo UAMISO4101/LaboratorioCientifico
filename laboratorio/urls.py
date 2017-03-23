@@ -17,4 +17,8 @@ urlpatterns = [
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
 
+    url(r'^transaccion/$', views.ir_crear_transaccion, name='transaccion'),
+    url(r'^crearTransaccion/$', views.crear_transaccion, name='crearTransaccion'),
+    url(r'^obtenerTipos/$', views.obtenerTipos, name='obtenerTipos'),
+    url(r'^obtenerProductosBodega/$', views.obtenerProductosBodega, name='obtenerProductosBodega'),
 ]
