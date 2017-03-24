@@ -66,8 +66,6 @@ class TransaccionVista():
 
 def json_default(value):
     if isinstance(value, datetime.date):
-        #print >> sys.stdout, 'Fecha:' + str(datetime.date())
-        return str(datetime.date)
-        #return dict(year=value.year, month=value.month, day=value.day)
+        return datetime.date.isoformat(value)
     else:
         return value.__dict__
