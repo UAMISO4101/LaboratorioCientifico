@@ -14,17 +14,17 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import JsonResponse, HttpResponse
 
 from django.shortcuts import render
+from django.db.models import Q
 
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
-
-from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, TransaccionVista, json_default
+from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
-
-from laboratorio.models import Tipo, Usuario, Bodega
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
+from laboratorio.utils.utils import Utils
+
 
 def ir_index(request):
     return render(request,"laboratorio/index.html")
@@ -123,36 +123,103 @@ def crearBodega(request):
   
 @csrf_exempt
 def busquedaProducto(request):
-    qs = Producto.objects.all()
-    #qs = Producto.objects.filter(unidad_medida__nombre__icontains="UM").order_by("nombre")
-    #name_map = {'first': 'first_name', 'last': 'last_name', 'bd': 'birth_date', 'pk': 'id'}
-    #qs = Producto.objects.raw("select* from laboratorio_producto where unidadesaExistentes=10")
+    #Capturar el valor de los campos
 
-    #sql_query = "SELECT* FROM LABORATORIO_PRODUCTO WHERE UNIDADESEXISTENTES=10"
-    #required_question_information = Producto.objects.raw(sql_query)
+    #Crear la expresion Q
 
-    #cursor = connection.cursor()
-
-
-    #qs2 = Bodega.objects.all()
-    #qs3 = Bodega.objects.all()
+    #Filtra por la expresion; si no hay nada, muestra todos los productos
+    if True:
+        qs = Producto.objects.all()
+    else:
+        qs = Producto.objects.all() #filtro
 
 
-    #mensajes = Mensaje.objects.filter(emisor=request.user) | | Mensaje.objects.filter(destinatarios__mensaje__emisor=request.user)
-    #for especie in qs:
-    #    especie.categoria_id = Categoria.objects.filter(id = especie.categoria_id).first().nombre
-    qs_json = serializers.serialize('json', qs)
+    listaRecurso = []
 
-    return JsonResponse(qs_json, safe=False)
+    for recurso in qs:
+        req = RecursoBusquedaVista()
+        req.id = recurso.id
+        req.nombre = recurso.nombre
+        req.unidadesExistentes = recurso.unidadesExistentes
+        req.unidad_medida = recurso.unidad_medida.nombre
+        req.fechaTransaccion =  obtenerBodegaAcutalxRecurso(recurso, 2)
+        req.bodegaActual=obtenerBodegaAcutalxRecurso(recurso, 1)
+        listaRecurso.append(req)
+
+    json_string = json.dumps(listaRecurso, cls=Convertidor)
+
+    return JsonResponse(json_string, safe=False)
+
+
+def obtenerBodegaAcutalxRecurso(recurso, campo):
+    qs = TransaccionInventario.objects.filter(producto=recurso).order_by('-fecha_ejecucion')[:1]
+
+    retorno="N/A"
+
+    if qs.first():
+        #retorno = serializers.serialize('json', qs)
+        if campo==1:
+            retorno=qs[0].bodega_destino.nombre
+        if campo==2:
+            retorno = str(qs[0].fecha_ejecucion)
+    return retorno
+
+
+def obtenerNombreUsuarioxId(usuario):
+    qs = Usuario.objects.filter(id=usuario)[:1]
+
+    retorno="N/A"
+
+    #if qs.first():
+    retorno=qs[0].first_name + " " + qs[0].last_name
+
+    return retorno
 
 
 @csrf_exempt
-def verProductoLista(request):
-    #global globvar
-    #globvar = request.GET.get('id');
+def busquedaProductoDetalle(request):
+    qs = TransaccionInventario.objects.filter(producto_id=1).order_by('-fecha_creacion')
+
+    listaTrans = []
+
+    for transaccion in qs:
+        req = RecursoBusquedaDetalleVista()
+        req.id = transaccion.id
+        req.fecha = str(transaccion.fecha_ejecucion)
+        req.recurso = transaccion.producto.nombre
+        req.tipoTransaccion = transaccion.tipo.nombre
+        req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre
+        req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre
+        req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
+        req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
+        #req.usuario = obtenerNombreUsuarioxId(            transaccion.usuario.id)
+        #req.autoriza = obtenerNombreUsuarioxId(            transaccion.autoriza.id)
+        req.comentarios = transaccion.comentarios
+        listaTrans.append(req)
+
+    json_string = json.dumps(listaTrans, cls=Convertidor)
+
+    #json_string = serializers.serialize('json', qs)
+
+    return JsonResponse(json_string, safe=False)
+
+#def llenarElementos:
+
+
+
+@csrf_exempt
+def verProductoBusqueda(request):
+    #llenarElementos(request)
     busquedaProducto(request)
-    #consultar_especie_comentario(request)
     return render(request, "laboratorio/busquedaproducto.html")
+
+
+@csrf_exempt
+def verProductoBusquedaDetalle(request):
+    global globvar
+    globvar = request.GET.get('id');
+    busquedaProductoDetalle(request)
+    return render(request, "laboratorio/busquedaproductodetalle.html")
 
   
 @csrf_exempt
@@ -508,3 +575,12 @@ def guardarEdicionInsumo(request):
             mensaje = "El id del insumo/reactivo que se quiere editar no existe"
 
     return JsonResponse({"mensaje": mensaje})
+
+@csrf_exempt
+def convertirUnidad(request):
+
+    cantidad = request.GET['cantidad']
+    medidaOrigen = request.GET['medidaOrigen']
+    medidaDestino = request.GET['medidaDestino']
+    res = Utils.conversion(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
+    return JsonResponse({"conversion":res})
