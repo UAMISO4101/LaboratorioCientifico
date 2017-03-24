@@ -1,0 +1,7 @@
+dj-database-url==0.4.2
+Django==1.10.5
+django-bootstrap3==8.1.0
+olefile==0.44
+pillow==4.0.0
+psycopg2==2.6.2
+wheel==0.24.0
