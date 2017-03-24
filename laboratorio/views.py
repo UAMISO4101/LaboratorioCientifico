@@ -20,7 +20,7 @@ from psycopg2.extensions import JSON
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista
 
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto,  
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 
 def ir_index(request):
