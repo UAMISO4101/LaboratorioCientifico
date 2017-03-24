@@ -20,8 +20,10 @@ from psycopg2.extensions import JSON
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista
 
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
+from laboratorio.utils.utils import Utils
+
 
 def ir_index(request):
     return render(request,"laboratorio/index.html")
@@ -523,3 +525,12 @@ def guardarEdicionInsumo(request):
             mensaje = "El id del insumo/reactivo que se quiere editar no existe"
 
     return JsonResponse({"mensaje": mensaje})
+
+@csrf_exempt
+def convertirUnidad(request):
+
+    cantidad = request.GET['cantidad']
+    medidaOrigen = request.GET['medidaOrigen']
+    medidaDestino = request.GET['medidaDestino']
+    res = Utils.conversion(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
+    return JsonResponse({"conversion":res})
