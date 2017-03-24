@@ -199,8 +199,18 @@ x<br />
                                 }
                             }
                             else {
-                                bodega_destino.append($("<option />").val(this.id).text(this.nombre));
-                                bodega.append($('<option />').val(this.id).text(this.nombre));
+                                if ($("#tipo option[value='" + $('#tipo').val() + "']").text() == 'Paso entre bodegas') {
+                                    if (this.tipo_bodega != 'Externa' && this.tipo_bodega != 'Desperdicio' && this.tipo_bodega != 'Experimento' ) {
+                                        bodega_destino.append($("<option />").val(this.id).text(this.nombre));
+                                    }
+                                    if (this.tipo_bodega != 'Externa') {
+                                        bodega.append($('<option />').val(this.id).text(this.nombre));
+                                    }
+                                }
+                                else {
+                                    bodega_destino.append($("<option />").val(this.id).text(this.nombre));
+                                    bodega.append($('<option />').val(this.id).text(this.nombre));
+                                }
                             }
                         }
                     }
@@ -224,6 +234,8 @@ x<br />
     }
 
     $('#tipo').change(function () {
+        $('#bodega_origen').prop('disabled', false);
+        $('#producto_bodega_origen').empty();
         actualizarBodegasporTipo();
     });
 

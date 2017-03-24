@@ -306,7 +306,7 @@ def crear_transaccion(request):
             bodega_destino = Bodega.objects.get(pk=json_tran['bodega_destino']),
             nivel_destino=json_tran['nivel_destino'],
             seccion_destino=json_tran['seccion_destino'],
-            producto_bodega_origen = ProductosEnBodega.objects.get(pk=json_tran['producto_bodega_origen']),
+            producto_bodega_origen = ProductosEnBodega.objects.filter(id=json_tran['producto_bodega_origen']).first(),
             producto=Producto.objects.get(pk=json_tran['producto']),
             cantidad=json_tran['cantidad'],
             unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida']),
