@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>s
+
+    <script>
+        (function(){
+             $.getJSON("../busquedaproductodetalle").done(function (data) {
+                 var resultados = $("#resultados");
+                 var tituloprod = $("#tituloprod");
+
+                 if (data){
+                    data = $.parseJSON(data);
+
+                    var tablaresult="<table class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\" width=\"85%%\">";
+                    tablaresult=tablaresult+"<thead>";
+                    tablaresult=tablaresult+"<tr>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Fecha</th>";
+                    //tablaresult=tablaresult+"<td>Recurso</td>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo Transacción</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Origen</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Destino</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Usuario</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Autorizó</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Comentarios</th>";
+                    tablaresult=tablaresult+"</tr>";
+                    tablaresult=tablaresult+"</thead>";
+
+                    var result ="";
+                    var nombreproducto="N/A";
+
+                    $(data).each(function() {
+                        result=result+"<tr>";
+                        result=result+"<td>"+this.fecha+"</td>";
+                        //result=result+"<td>"+this.recurso+"</td>";
+                        result=result+"<td>"+this.tipoTransaccion+"</td>";
+                        result=result+"<td>"+this.bodegaOrigen+"</td>";
+                        result=result+"<td>"+this.bodegaDestino+"</td>";
+                        result=result+"<td>"+this.usuario+"</td>";
+                        result=result+"<td>"+this.autoriza+"</td>";
+                        result=result+"<td>"+this.comentarios+"</td>";
+                        result=result+"</tr>";
+
+                        nombreproducto=this.recurso;
+                        //result=result+"<td style=\"text-align: right\">"+this.fields.unidadesExistentes+"</td>";
+                    });
+
+                    tablaresult=tablaresult+result+"</table>";
+
+                    $(resultados).append(tablaresult);
+
+                    $(tituloprod).append("<div>"+nombreproducto+"</div>");
+                }
+                else {
+                    $(resultados).text("No hay detalle de producto para mostrar");
+                }
+            });
+        })();
+    </script>
+
+</head>
+<body>
+<div id="encabezado"></div>
+<br>
+<div id="principal" class="panel panel-default">
+    <div class="page-header" style="margin-bottom: 0px;">
+        <h2 id="tituloprod"></h2>
+    </div>
+    <div class="panel-body" style="padding-bottom:0px">
+        <div id="resultados" class="col-md-6 col-sm-offset-3" style="">
+        </div>
+    </div>
+    <div id="volver" align="center">
+        <input type="button" id="btnvolver" value="Volver" class="btn btn-primary" onclick="window.location='../verproductobusqueda'">
+    </div>
+    <br>
+</div>
+<div id="pie"></div>
+</body>
+<script>
+            (function(){
+                try {
+                    $("#encabezado").load("../encabezado");
+                    $("#pie").load("../pie");
+                }catch (exc){
+                    alert(exc.message);
+                }
+            })();
+</script>
+</html>
