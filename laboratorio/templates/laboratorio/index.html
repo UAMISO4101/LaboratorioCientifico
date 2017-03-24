@@ -20,8 +20,6 @@
                         $(div).append( '<a href="verDetalle/?id=' + this.pk + '">' + this.fields.nombre +'</a><br>');
                         $(div).append("Descripcion Corta: "+this.fields.descripcion_corta);
                         $(especies).append(div);
-
-
                     });
                 }
             });
@@ -54,7 +52,6 @@
                 }
             });
         })();
-
         function logout(){
             $.getJSON("logout").done(function (data) {
                 if (data.mensaje == 'ok'){
@@ -64,8 +61,6 @@
                 }
             });
         }
-
-
         (function(){
             $.getJSON("consultarCategorias").done(function (data) {
                 if (data){
@@ -78,7 +73,6 @@
                 }
             });
         })();
-
         function filterCategory(){
             if ($("#categorias").val() != '') {
                 vUrl = "obtenerEspeciesxCategoria?id=" + $("#categorias").val();
@@ -86,11 +80,9 @@
             else {
                 vUrl = "obtenerEspecies";
             }
-
                 $.getJSON(vUrl).done(function (data) {
                     if (data) {
                         data = $.parseJSON(data);
-
                         var especies = $("#especies");
                         $(especies).empty();
                         $(data).each(function () {
@@ -100,28 +92,30 @@
                             $(div).append('<a href="verDetalle/?id=' + this.pk + '">' + this.fields.nombre + '</a><br>');
                             $(div).append("Descripcion Corta: " + this.fields.descripcion_corta);
                             $(especies).append(div);
-
-
                         });
                     }
                 });
         }
 */
     </script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css"/>
+
 </head>
 <body>
-<div id="encabezado"></div>
-<br />
-<br />
-<br />
-<h2 align="center">Laboratorio Cientifico</h2>
-<h2 align="center"></h2>
-<br>
-<div class="row" id="especies"></div>
-
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br />
+        <br />
+        <br />
+        <h2 align="center">Laboratorio Cientifico</h2>
+        <h2 align="center"></h2>
+        <br>
+        <div class="row" id="especies"></div>
+    </div>
+    <div id="pie"></div>
+</div>
 </body>
-<div id="pie"></div>
-
 
 <script>
     (function(){
@@ -134,4 +128,3 @@
     })();
 </script>
 </html>
-

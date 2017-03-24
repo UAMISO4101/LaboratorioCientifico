@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+<div id="encabezado"></div>
+<br />
+<br />
+<br />
+<h2 align="center">Insumos por Experimento y Asistente</h2>
+<h2 align="center"></h2>
+<br>
+<form id="formBodegas">
+    <div class="panel panel-default">
+        <div class="panel-heading">Lista de experimentos</div>
+        <div class="panel-body">
+            <div style="text-align: center;">
+                <a id="btnExperimentos" href="" class="btn btn-primary" role="button">Experimentos</a>
+                <a id="btnProtocolos" href="" class="btn btn-primary" role="button">Protocolos</a>
+                <a id="btnProductos" href="" class="btn btn-primary" role="button">Productos</a>
+                <a href="../">Cancelar</a>
+            </div>
+            <div class="container">
+                <div class="row" id="experimentos">
+                    <table id="tabla" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%"></table>
+                </div>
+                <div class="row" id="protocolos">
+                    <table id="tabla_protocolos" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%"></table>
+                </div>
+                <div class="row" id="insumos">
+                    <table id="tabla_insumos" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%"></table>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</form>
+
+</body>
+<div id="pie"></div>
+
+
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+
+    /*$(function(){
+    });*/
+    $(function () {
+
+        $('#btnExperimentos').click(function (event) {
+            event.preventDefault();
+            $('#experimentos').show();
+            $('#protocolos').hide();
+            $('#insumos').hide();
+        });
+        $('#btnProtocolos').click(function (event) {
+            event.preventDefault();
+            $('#experimentos').hide();
+            $('#protocolos').show();
+            $('#insumos').hide();
+        });
+        $('#btnProductos').click(function (event) {
+            event.preventDefault();
+            $('#experimentos').hide();
+            $('#protocolos').hide();
+            $('#insumos').show();
+        });
+        $.getJSON("../obtenerExperimentos").done(function (data) {
+            console.log(data)
+            datos =  data;
+            $('#tabla').DataTable( {
+                bProcessing: true,
+                aaData: datos,
+                aoColumns: [
+                    { mData: "experimento.pk" , sTitle: "Id"},
+                    { mData: "experimento.fields.codigo" , sTitle: "Código"},
+                    { mData: "experimento.fields.estado" , sTitle: "Estado"},
+                    { mData: "asignado.username" , sTitle: "Responsable"}
+                ],
+            } );
+            $('#tabla tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                    // $('#tabla_protocolos').dataTable().removeClass('selected');
+                    $('#insumos').hide()
+                    $('#protocolos').hide();
+                }
+                else {
+                    $('#tabla').dataTable().$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    $('#experimentos').hide();
+                    $('#protocolos').show();
+                    valor = "../obtenerProtocolosPorExperimento";
+                    if (valor.indexOf("codigo")!=-1){
+                        valor = valor.split("?")[0];
+                    }
+                    valor += "?codigo="+$(this).children()[1].innerText;
+                    $.getJSON(valor).done(function (data) {
+                    console.log(data)
+                    datos =  $.parseJSON(data);
+                    if($.fn.dataTable.isDataTable('#tabla_protocolos')){
+                        $('#tabla_protocolos').dataTable().fnClearTable();
+                        $('#tabla_protocolos').dataTable().fnAddData(datos);
+                    }else{
+                        $('#tabla_protocolos').DataTable( {
+                        bProcessing: true,
+                        aaData: datos,
+                        aoColumns: [
+                            { mData: "pk" , sTitle: "Id"},
+                            { mData: "fields.version" , sTitle: "Versión"},
+                            { mData: "fields.nombre" , sTitle: "Nombre"},
+                            { mData: "fields.fecha" , sTitle: "Fecha"},
+                            { mData: "fields.descripcion" , sTitle: "Descripción"}
+                        ],
+                    } );
+
+                    }
+                        $('#tabla_protocolos tbody').on( 'click', 'tr', function () {
+                        if ( $(this).hasClass('selected')) {
+                            $(this).removeClass('selected');
+                            $('#insumos').hide()
+                        }
+                        else {
+                            $('#tabla_protocolos').dataTable().$('tr.selected').removeClass('selected');
+                            $(this).addClass('selected');
+                            $('#protocolos').hide();
+                            $('#insumos').show();
+                            valor = "../obtenerPPPorProtocolo";
+                            if (valor.indexOf("id")!=-1){
+                                valor = valor.split("?")[0];
+                            }
+                            valor += "?id="+$(this).children()[0].innerText;
+                            $.getJSON(valor).done(function (data) {
+                            datos =  [data];
+                            if($.fn.dataTable.isDataTable('#tabla_insumos')){
+                                    $('#tabla_insumos').dataTable().fnClearTable();
+                                    $('#tabla_insumos').dataTable().fnAddData(datos);
+                            }else {
+                            $('#tabla_insumos').DataTable({
+                                        bProcessing: true,
+                                        aaData: datos,
+                                        aoColumns: [
+                                            {mData: "productoprotocolo.pk", sTitle: "Id"},
+                                            {mData: "producto.nombre", sTitle: "Nombre"},
+                                            {mData: "productoprotocolo.fields.descripcion", sTitle: "Descripción"},
+                                            {mData: "productoprotocolo.fields.cantidadUtilizada", sTitle: "Cantidad"}
+                                        ],
+                                    });
+                                }
+                            });
+                        }
+            });
+                    });
+                }
+            });
+
+        });
+
+
+    });
+    </script>
+</html>

@@ -34,9 +34,9 @@ class Bodega(models.Model):
 
 class Producto(models.Model):
     codigo = models.CharField(max_length=10, unique= True, null= True)
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, unique=True)
     descripcion = models.CharField(max_length=200)
-    valorUnitario = models.DecimalField(max_digits=7,decimal_places=4)
+    valorUnitario = models.IntegerField()
     unidadesExistentes = models.IntegerField()
     clasificacion_choices = (
         ('Materiales Vivos',(
@@ -70,6 +70,7 @@ class Producto(models.Model):
     )
     clasificacion = models.CharField(max_length=35,choices=clasificacion_choices)
     unidad_medida = models.ForeignKey(Tipo, null=True)
+    unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
 
 class ProductosEnBodega(models.Model):
@@ -84,7 +85,7 @@ class TransaccionInventario(models.Model):
 
     fecha_creacion = models.DateTimeField(null=False)
     fecha_ejecucion = models.DateTimeField(null=False)
-    tipo = models.ForeignKey(Tipo, related_name="tipo_trx", null=True)
+    tipo = models.ForeignKey(Tipo, related_name="tipo_trx", null=False)
     estado = models.ForeignKey(Tipo, related_name="tipo_estado", null=True)
     bodega_origen = models.ForeignKey(Bodega, related_name="bodegaOrigen",null=False)
     bodega_destino = models.ForeignKey(Bodega, related_name="bodegaDestino",null=False)
@@ -95,8 +96,32 @@ class TransaccionInventario(models.Model):
     nivel_destino = models.IntegerField(null=True)
     seccion_destino = models.IntegerField(null=True)
     producto = models.ForeignKey(Producto, null=True)
-    cantidad = models.IntegerField(null=True)
+    cantidad = models.IntegerField(null=False)
     unidad_medida = models.ForeignKey(Tipo, related_name="tipo_unidadmedida", null=True)
-    usuario = models.ForeignKey(Usuario, related_name="usuarioTrx", null=False)
+    usuario = models.ForeignKey(Usuario, related_name="usuarioTrx", null=True)
     autoriza = models.ForeignKey(Usuario, related_name="autorizaTrx", null=True)
     comentarios = models.CharField(max_length=200, null=True)
+
+class Protocolo(models.Model):
+
+    version = models.BigIntegerField(null=True)
+    nombre = models.CharField(max_length=50)
+    fecha = models.DateField(null=True)
+    descripcion = models.CharField(max_length=1000)
+
+class ProductoProtocolo(models.Model):
+
+    descripcion = models.CharField(max_length=50)
+    cantidadUtilizada = models.DecimalField(decimal_places=3, max_digits=10, null=True)
+    protocolo = models.ForeignKey(Protocolo, on_delete=models.CASCADE, null=True)
+    producto = models.ForeignKey(Producto, null=True)
+
+class Experimento(models.Model):
+
+    codigo = models.CharField(max_length=10, unique=True, null=True)
+    nombre = models.CharField(max_length=50)
+    fecha = models.DateField(null=True)
+    estado = models.CharField(max_length=50)
+    protocolo = models.ManyToManyField(Protocolo)
+    asignado = models.ManyToManyField(Usuario)
+
