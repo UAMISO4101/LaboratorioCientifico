@@ -16,7 +16,7 @@ class Tipo(models.Model):
     grupo = models.CharField(max_length=100, null=True)
     nombre = models.CharField(max_length=100, null=True)
     medidaDestino = models.CharField(max_length=100, null=True)
-    valor = models.DecimalField(max_digits=11, decimal_places=8, null=True)
+    valor = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
 class Bodega(models.Model):
     serial = models.CharField(max_length=50, unique=True, null=True)
