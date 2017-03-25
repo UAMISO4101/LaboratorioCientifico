@@ -135,7 +135,7 @@ def busquedaProducto(request):
         req.nombre = recurso.nombre
         req.unidadesExistentes = recurso.unidadesExistentes
         req.unidad_medida = recurso.unidad_medida.nombre
-        req.fechaTransaccion =  obtenerBodegaAcutalxRecurso(recurso, 2)
+        req.fechaTransaccion = obtenerBodegaAcutalxRecurso(recurso, 2)
         req.bodegaActual=obtenerBodegaAcutalxRecurso(recurso, 1)
         listaRecurso.append(req)
 
@@ -144,13 +144,14 @@ def busquedaProducto(request):
     return JsonResponse(json_string, safe=False)
 
 
+#LCINV-5
+#FB
 def obtenerBodegaAcutalxRecurso(recurso, campo):
     qs = TransaccionInventario.objects.filter(producto=recurso).order_by('-fecha_ejecucion')[:1]
 
     retorno="N/A"
 
     if qs.first():
-        #retorno = serializers.serialize('json', qs)
         if campo==1:
             retorno=qs[0].bodega_destino.nombre
         if campo==2:
@@ -158,20 +159,28 @@ def obtenerBodegaAcutalxRecurso(recurso, campo):
     return retorno
 
 
+#LCINV-5
+#FB
 def obtenerNombreUsuarioxId(usuario):
     qs = Usuario.objects.filter(id=usuario)[:1]
 
     retorno="N/A"
 
-    #if qs.first():
     retorno=qs[0].first_name + " " + qs[0].last_name
 
     return retorno
 
 
+#LCINV-5
+#FB
 @csrf_exempt
 def busquedaProductoDetalle(request):
-    qs = TransaccionInventario.objects.filter(producto_id=1).order_by('-fecha_creacion')
+    idprod = int(globvar)
+    #qs = TransaccionInventario.objects.filter(producto_id=2).order_by('-fecha_creacion')
+    qs = TransaccionInventario.objects.filter(producto_id=idprod).order_by('-fecha_creacion')
+
+    #varid = request.POST.get('id', "post")
+    #varidget= request.GET.get("id", "get")
 
     listaTrans = []
 
@@ -187,7 +196,7 @@ def busquedaProductoDetalle(request):
         req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
         #req.usuario = obtenerNombreUsuarioxId(            transaccion.usuario.id)
         #req.autoriza = obtenerNombreUsuarioxId(            transaccion.autoriza.id)
-        req.comentarios = transaccion.comentarios
+        req.comentarios = transaccion.comentarios + "   Globvar-->" + globvar
         listaTrans.append(req)
 
     json_string = json.dumps(listaTrans, cls=Convertidor)
@@ -195,9 +204,6 @@ def busquedaProductoDetalle(request):
     #json_string = serializers.serialize('json', qs)
 
     return JsonResponse(json_string, safe=False)
-
-#def llenarElementos:
-
 
 
 @csrf_exempt
@@ -210,7 +216,7 @@ def verProductoBusqueda(request):
 @csrf_exempt
 def verProductoBusquedaDetalle(request):
     global globvar
-    globvar = request.GET.get('id');
+    globvar = request.GET.get('id')
     busquedaProductoDetalle(request)
     return render(request, "laboratorio/busquedaproductodetalle.html")
 
