@@ -41,4 +41,7 @@ urlpatterns = [
     url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
     url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
     url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
+
+    url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
+    url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
 ]

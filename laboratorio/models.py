@@ -14,7 +14,9 @@ class Usuario(AbstractUser):
 
 class Tipo(models.Model):
     grupo = models.CharField(max_length=100, null=True)
-    nombre = models.CharField(max_length=100, unique=True, null=True)
+    nombre = models.CharField(max_length=100, null=True)
+    medidaDestino = models.CharField(max_length=100, null=True)
+    valor = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
 class Bodega(models.Model):
     serial = models.CharField(max_length=50, unique=True, null=True)
@@ -84,7 +86,6 @@ class ProductosEnBodega(models.Model):
     unidad_medida = models.ForeignKey(Tipo, related_name="prodbod_tipo_unidadmedida", null=True)
 
 class TransaccionInventario(models.Model):
-
     fecha_creacion = models.DateTimeField(null=False)
     fecha_ejecucion = models.DateTimeField(null=False)
     tipo = models.ForeignKey(Tipo, related_name="TIPOTRX", null=False)
@@ -98,7 +99,7 @@ class TransaccionInventario(models.Model):
     nivel_destino = models.IntegerField(null=True)
     seccion_destino = models.IntegerField(null=True)
     producto = models.ForeignKey(Producto, null=True)
-    cantidad = models.IntegerField(null=False)
+    cantidad = models.IntegerField(null=False,default=0)
     unidad_medida = models.ForeignKey(Tipo, related_name="trx_tipo_unidadmedida", null=True)
     usuario = models.ForeignKey(Usuario, related_name="usuarioTrx", null=True)
     autoriza = models.ForeignKey(Usuario, related_name="autorizaTrx", null=True)
