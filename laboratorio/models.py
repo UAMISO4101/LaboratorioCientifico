@@ -31,7 +31,8 @@ class Bodega(models.Model):
     usuario_actualizacion = models.IntegerField(null=True)
     fecha_creacion = models.DateTimeField(null=True)
     fecha_actualizacion = models.DateTimeField(null=True)
-    tipo_bodega = models.ForeignKey(Tipo, null=True)
+    #tipo_bodega = models.ForeignKey(Tipo, null=True)
+    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  #Segun el excel se toma el nombre BODEGA
     usuario = models.ForeignKey(Usuario, null=True)
 
 class Producto(models.Model):
@@ -71,7 +72,8 @@ class Producto(models.Model):
         ('Otros', 'Moleculas genericas'),
     )
     clasificacion = models.CharField(max_length=35,choices=clasificacion_choices)
-    unidad_medida = models.ForeignKey(Tipo, null=True)
+    #unidad_medida = models.ForeignKey(Tipo, null=True)
+    unidad_medida = models.ForeignKey(Tipo, related_name="prod_tipo_unidadmedida", null=True)  # Segun TransaccionInventario.unidad_medida, seria tipo_unidadmedida
     unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
 
@@ -81,14 +83,13 @@ class ProductosEnBodega(models.Model):
     nivel = models.IntegerField(null=True)
     seccion = models.IntegerField(null=True)
     cantidad = models.IntegerField(null=True)
-    unidad_medida = models.ForeignKey(Tipo, null=True)
+    unidad_medida = models.ForeignKey(Tipo, related_name="prodbod_tipo_unidadmedida", null=True)
 
 class TransaccionInventario(models.Model):
-
     fecha_creacion = models.DateTimeField(null=False)
     fecha_ejecucion = models.DateTimeField(null=False)
-    tipo = models.ForeignKey(Tipo, related_name="tipo_trx", null=True)
-    estado = models.ForeignKey(Tipo, related_name="tipo_estado", null=True)
+    tipo = models.ForeignKey(Tipo, related_name="TIPOTRX", null=False)
+    estado = models.ForeignKey(Tipo, related_name="STATUSTRX", null=True)
     bodega_origen = models.ForeignKey(Bodega, related_name="bodegaOrigen",null=False)
     bodega_destino = models.ForeignKey(Bodega, related_name="bodegaDestino",null=False)
     producto_bodega_origen = models.ForeignKey(ProductosEnBodega, related_name="ubucacionOrigen", null=True)
@@ -99,7 +100,7 @@ class TransaccionInventario(models.Model):
     seccion_destino = models.IntegerField(null=True)
     producto = models.ForeignKey(Producto, null=True)
     cantidad = models.IntegerField(null=False,default=0)
-    unidad_medida = models.ForeignKey(Tipo, related_name="tipo_unidadmedida", null=True)
+    unidad_medida = models.ForeignKey(Tipo, related_name="trx_tipo_unidadmedida", null=True)
     usuario = models.ForeignKey(Usuario, related_name="usuarioTrx", null=True)
     autoriza = models.ForeignKey(Usuario, related_name="autorizaTrx", null=True)
     comentarios = models.CharField(max_length=200, null=True)
