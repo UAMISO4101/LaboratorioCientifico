@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import decimal
 import json
 import time
@@ -18,10 +20,11 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
-from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista
-
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo
+from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
+from laboratorio.utils.utils import Utils
+
 
 def ir_index(request):
     return render(request,"laboratorio/index.html")
@@ -44,6 +47,10 @@ def ir_editarRecurso(request, recurso_id=1):
 
 def ir_crear_transaccion(request):
     return render(request,"laboratorio/crearTransaccion.html")
+
+def ir_transacciones(request):
+    return render(request,"laboratorio/transacciones.html")
+
 
 @csrf_exempt
 def obtenerTiposBodega(request):
@@ -135,7 +142,7 @@ def busquedaProducto(request):
         req.nombre = recurso.nombre
         req.unidadesExistentes = recurso.unidadesExistentes
         req.unidad_medida = recurso.unidad_medida.nombre
-        req.fechaTransaccion =  obtenerBodegaAcutalxRecurso(recurso, 2)
+        req.fechaTransaccion = obtenerBodegaAcutalxRecurso(recurso, 2)
         req.bodegaActual=obtenerBodegaAcutalxRecurso(recurso, 1)
         listaRecurso.append(req)
 
@@ -144,13 +151,14 @@ def busquedaProducto(request):
     return JsonResponse(json_string, safe=False)
 
 
+#LCINV-5
+#FB
 def obtenerBodegaAcutalxRecurso(recurso, campo):
     qs = TransaccionInventario.objects.filter(producto=recurso).order_by('-fecha_ejecucion')[:1]
 
     retorno="N/A"
 
     if qs.first():
-        #retorno = serializers.serialize('json', qs)
         if campo==1:
             retorno=qs[0].bodega_destino.nombre
         if campo==2:
@@ -158,20 +166,28 @@ def obtenerBodegaAcutalxRecurso(recurso, campo):
     return retorno
 
 
+#LCINV-5
+#FB
 def obtenerNombreUsuarioxId(usuario):
     qs = Usuario.objects.filter(id=usuario)[:1]
 
     retorno="N/A"
 
-    #if qs.first():
     retorno=qs[0].first_name + " " + qs[0].last_name
 
     return retorno
 
 
+#LCINV-5
+#FB
 @csrf_exempt
 def busquedaProductoDetalle(request):
-    qs = TransaccionInventario.objects.filter(producto_id=1).order_by('-fecha_creacion')
+    idprod = int(globvar)
+    #qs = TransaccionInventario.objects.filter(producto_id=2).order_by('-fecha_creacion')
+    qs = TransaccionInventario.objects.filter(producto_id=idprod).order_by('-fecha_creacion')
+
+    #varid = request.POST.get('id', "post")
+    #varidget= request.GET.get("id", "get")
 
     listaTrans = []
 
@@ -187,7 +203,7 @@ def busquedaProductoDetalle(request):
         req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
         #req.usuario = obtenerNombreUsuarioxId(            transaccion.usuario.id)
         #req.autoriza = obtenerNombreUsuarioxId(            transaccion.autoriza.id)
-        req.comentarios = transaccion.comentarios
+        req.comentarios = transaccion.comentarios + "   Globvar-->" + globvar
         listaTrans.append(req)
 
     json_string = json.dumps(listaTrans, cls=Convertidor)
@@ -195,9 +211,6 @@ def busquedaProductoDetalle(request):
     #json_string = serializers.serialize('json', qs)
 
     return JsonResponse(json_string, safe=False)
-
-#def llenarElementos:
-
 
 
 @csrf_exempt
@@ -210,7 +223,7 @@ def verProductoBusqueda(request):
 @csrf_exempt
 def verProductoBusquedaDetalle(request):
     global globvar
-    globvar = request.GET.get('id');
+    globvar = request.GET.get('id')
     busquedaProductoDetalle(request)
     return render(request, "laboratorio/busquedaproductodetalle.html")
 
@@ -239,6 +252,41 @@ def obtenerBodegas(request):
     json_string = json.dumps(listaBodegas, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
+@csrf_exempt
+def obtenerTransacciones(request):
+    qs = TransaccionInventario.objects.all()
+    listaTransacciones = []
+    for transaccion in qs:
+        trx = TransaccionVista()
+        trx.id = transaccion.id
+        trx.tipo = transaccion.tipo.nombre
+        trx.bodega_origen = transaccion.bodega_origen.nombre
+        trx.nivel_origen = transaccion.nivel_origen
+        trx.seccion_origen = transaccion.seccion_origen
+        trx.bodega_destino = transaccion.bodega_destino.nombre
+        trx.nivel_destino = transaccion.nivel_destino
+        trx.seccion_destino = transaccion.seccion_destino
+        trx.producto = transaccion.producto.nombre
+        trx.cantidad = transaccion.cantidad
+        trx.unidad_medida = transaccion.unidad_medida.nombre
+        trx.estado = transaccion.estado.nombre
+        trx.fecha_creacion = transaccion.fecha_creacion
+        trx.fecha_ejecucion = transaccion.fecha_ejecucion
+        trx.comentarios = transaccion.comentarios
+        trx.usuario = transaccion.usuario
+        #bod.responsable = bodega.usuario.first_name + " " + bodega.usuario.last_name
+        listaTransacciones.append(trx)
+    json_string = json.dumps(listaTransacciones, cls=Convertidor, ensure_ascii=False, default=json_default)
+    return JsonResponse(json_string, safe=False)
+
+@csrf_exempt
+def obtenerTransaccion(request):
+    time.sleep(0.3)
+    qs = TransaccionInventario.objects.filter(id=request.GET['id_transaccion'])
+    qs_json = serializers.serialize('json', qs)
+    struct = json.loads(qs_json)
+    json_bodega = json.dumps(struct[0])
+    return JsonResponse({"transaccion": json_bodega})
   
 @csrf_exempt
 def obtenerBodega(request):
@@ -254,20 +302,21 @@ def obtenerBodega(request):
 def crear_transaccion(request):
     if request.method == 'POST':
         json_tran = json.loads(request.body);
-
+        print >> sys.stdout, "Prod" + json_tran['producto']
+        print >> sys.stdout, "PRODProd" + json_tran['producto_bodega_origen']
         transaccion = TransaccionInventario(
             tipo=Tipo.objects.get(pk=json_tran['tipo']),
             bodega_origen= Bodega.objects.get(pk=json_tran['bodega_origen']),
             nivel_origen=json_tran['nivel_origen'],
             seccion_origen=json_tran['seccion_origen'],
             bodega_destino = Bodega.objects.get(pk=json_tran['bodega_destino']),
-            nivel_destino=json_tran['nivel_origen'],
-            seccion_destino=json_tran['seccion_origen'],
-            producto_bodega_origen = ProductosEnBodega.objects.get(pk=json_tran['producto_bodega_origen']),
-            #producto=Producto.objects.get(pk=json_tran['producto']),
+            nivel_destino=json_tran['nivel_destino'],
+            seccion_destino=json_tran['seccion_destino'],
+            producto_bodega_origen = ProductosEnBodega.objects.filter(id=json_tran['producto_bodega_origen']).first(),
+            producto=Producto.objects.get(pk=json_tran['producto']),
             cantidad=json_tran['cantidad'],
             unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida']),
-            #estado=Tipo.objects.filter(id=json_tran['estado']),
+            estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada').first().id),
             fecha_creacion=datetime.now(),
             fecha_ejecucion=datetime.now(),
             usuario=Usuario.objects.get(pk=1),
@@ -281,23 +330,26 @@ def crear_transaccion(request):
 @csrf_exempt
 def ejecutar_transaccion(transaccion):
     try:
-        print >> sys.stdout, "EN EJECUCION" + str(json.loads(serializers.serialize('json', [transaccion])))
-        print >> sys.stdout, "CAMPOS:" + transaccion.comentarios
-        print >> sys.stdout, "CAMPOS:" + str(transaccion.producto)
-        producto_bodega_origen = ProductosEnBodega.objects.get(pk=transaccion.producto_bodega_origen.pk)
-        print >> sys.stdout, "BDDESTINO:" + str(transaccion.bodega_destino)
+        if transaccion.tipo.nombre != "Recepcion de Proveedor":
+            producto_bodega_origen = ProductosEnBodega.objects.get(pk=transaccion.producto_bodega_origen.pk)
+            producto_bodega_origen.cantidad = int(producto_bodega_origen.cantidad) - int(transaccion.cantidad)
+            producto = producto_bodega_origen.producto
+        else:
+            producto = transaccion.producto
+
 
         producto_bodega_destino_list = ProductosEnBodega.objects.filter(bodega=transaccion.bodega_destino)
-        producto_bodega_origen.cantidad = int(producto_bodega_origen.cantidad) - int(transaccion.cantidad)
+        producto_bodega_destino_list = producto_bodega_destino_list.filter(producto=transaccion.producto)
+        producto_bodega_destino_list = producto_bodega_destino_list.filter(nivel=transaccion.nivel_destino)
+        producto_bodega_destino_list = producto_bodega_destino_list.filter(seccion=transaccion.seccion_destino)
+
         if producto_bodega_destino_list.exists():
             producto_bodega_destino = producto_bodega_destino_list.first()
-            print >> sys.stdout, "SI HAY EN DESTINO"
             producto_bodega_destino.cantidad = int(producto_bodega_destino.cantidad) + int(transaccion.cantidad)
-            print >> sys.stdout, "CANTIDAD:" + str(producto_bodega_origen.cantidad)
         else:
             producto_bodega_destino = ProductosEnBodega(
                                     bodega=transaccion.bodega_destino,
-                                    producto = producto_bodega_origen.producto,
+                                    producto = producto,
                                     nivel = transaccion.nivel_destino,
                                     seccion = transaccion.seccion_destino,
                                     cantidad = transaccion.cantidad,
@@ -305,8 +357,13 @@ def ejecutar_transaccion(transaccion):
 
             )
 
-        producto_bodega_destino.save();
-        producto_bodega_origen.save()
+        producto_bodega_destino.save()
+        transaccion.fecha_ejecucion=datetime.now()
+        transaccion.producto_bodega_destino = producto_bodega_destino
+        transaccion.estado = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada').first().id)
+        transaccion.save()
+        if transaccion.tipo.nombre != "Recepcion de Proveedor":
+                producto_bodega_origen.save()
 
 
     except Exception as e:
@@ -334,6 +391,7 @@ def obtenerProductosBodega(request):
         pb.id = productoBodega.id
         pb.bodega = productoBodega.bodega.pk
         pb.producto = Producto.objects.get(pk=productoBodega.producto.pk).nombre
+        pb.prod_id = Producto.objects.get(pk=productoBodega.producto.pk).pk
         pb.cantidad = productoBodega.cantidad
         pb.nivel = productoBodega.nivel
         pb.seccion = productoBodega.seccion
@@ -523,3 +581,12 @@ def guardarEdicionInsumo(request):
             mensaje = "El id del insumo/reactivo que se quiere editar no existe"
 
     return JsonResponse({"mensaje": mensaje})
+
+@csrf_exempt
+def convertirUnidad(request):
+
+    cantidad = request.GET['cantidad']
+    medidaOrigen = request.GET['medidaOrigen']
+    medidaDestino = request.GET['medidaDestino']
+    res = Utils.conversion(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
+    return JsonResponse({"conversion":res})

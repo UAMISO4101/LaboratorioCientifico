@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>.:Laboratorio Clínico:.</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
+
+</head>
+<body>
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br />
+<br />
+<br />
+<h2 align="center">Transacciones</h2>
+<h2 align="center"></h2>
+<br>
+<form id="formTransaccións">
+    <div class="panel panel-default">
+        <div class="panel-heading">Lista de Transacciones</div>
+        <div class="panel-body">
+            <div style="text-align: center;">
+                <a href="../transaccion" class="btn btn-primary" role="button">Crear Transacción</a>
+                <!--a id="btnEditarTransaccion" href="../transaccion" class="btn btn-primary" role="button" hidden>Editar Transaccion</a-->
+                <a href="../">Cancelar</a>
+            </div>
+            <div class="container">
+                <div class="table-responsive">
+                    <table id="tabla" class="table table-striped table-bordered dt-responsive nowrap table-condensed" cellspacing="0" width="100%"></table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+    </div>
+    <div id="pie"></div>
+</div>
+</body>
+
+
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+            //$('#btnEditarTransaccion').attr('disabled', true);
+            //$('#btnEditarTransaccion').bind('click', false);
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+    $(function () {
+        $.getJSON("../obtenerTransacciones").done(function (data) {
+            datos =  $.parseJSON(data);
+            var tabla = $('#tabla').DataTable( {
+                bProcessing: true,
+                aaData: datos,
+                aoColumns: [
+                    { mData: "id" , sTitle: "Id"},
+                    { mData: "tipo" , sTitle: "Tipo"},
+                    { mData: "producto" , sTitle: "Producto"},
+                    { mData: "cantidad" , sTitle: "Cant."},
+                    { mData: "unidad_medida" , sTitle: "Unidad"},
+                    { mData: "bodega_origen" , sTitle: "Origen"},
+                    { mData: "nivel_origen" , sTitle: "Niv"},
+                    { mData: "seccion_origen" , sTitle: "Sec"},
+                    { mData: "bodega_destino" , sTitle: "Destino"},
+                    { mData: "nivel_destino" , sTitle: "Niv"},
+                    { mData: "seccion_destino" , sTitle: "Sec"},
+                    { mData: "fecha_ejecucion" , sTitle: "Ejecucion"},
+                    { mData: "estado" , sTitle: "Estado"}
+              ],
+            } );
+            $('#tabla tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                    //$('#btnEditarTransaccion').attr('disabled', true);
+                    //$('#btnEditarTransaccion').bind('click', false);
+                }
+                else {
+                    if ($(this).children()[12].innerText != "Ejecutada") {
+                        tabla.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        valor = $("#btnEditarTransaccion").attr('href');
+                        if (valor.indexOf("id_Transaccion") != -1) {
+                            valor = valor.split("?")[0];
+                        }
+
+                        valor += "?id_Transaccion=" + $(this).children()[0].innerText;
+                        //$("#btnEditarTransaccion").attr("href", valor);
+                        //$('#btnEditarTransaccion').unbind('click', false);
+                        //$('#btnEditarTransaccion').attr('disabled', false);
+                    }
+                }
+            });
+        });
+    });
+
+    </script>
+</html>
