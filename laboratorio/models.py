@@ -19,7 +19,7 @@ class Tipo(models.Model):
     valor = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
 class Bodega(models.Model):
-    serial = models.CharField(max_length=50, unique=True, null=True)
+    serial = models.CharField(max_length=50, unique=True, null=False)
     nombre = models.CharField(max_length=100, null=True)
     ubicacion = models.CharField(max_length=100, null=True)
     niveles = models.IntegerField(null=True)
