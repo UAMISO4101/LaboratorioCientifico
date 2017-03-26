@@ -13,6 +13,7 @@
         (function(){
              $.getJSON("../busquedaproducto").done(function (data) {
                  var resultados = $("#resultados");
+                 var hd1 = $("#hd1");
 
                  if (data){
                     data = $.parseJSON(data);
@@ -22,9 +23,9 @@
                     tablaresult=tablaresult+"<tr>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Producto</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Bodega Actual</th>";
-                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidades existentes</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidades Existentes</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidad</th>";
-                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Fecha transacción</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Fecha Ejecución</th>";
                     tablaresult=tablaresult+"</tr>";
                     tablaresult=tablaresult+"</thead>"
 
@@ -38,6 +39,7 @@
                         result=result+"<td style=\"text-align: right\">"+this.unidad_medida+"</td>";
                         result=result+"<td style=\"text-align: right\"><a href=\"../verproductobusquedadetalle/?id="+this.id+"\">"+this.fechaTransaccion+"</a></td>";
                         result=result+"</tr>";
+                        hd1.val(this.hidden1);
                     });
 
                     tablaresult=tablaresult+result+"</table>";
@@ -49,6 +51,40 @@
                 }
             });
         })();
+
+        //Llena selector de Productos
+        (function(){
+             $.getJSON("../obtenerlistaproductos").done(function (data) {
+                 var selectprod = $("#producto");
+
+                 if (data){
+                    data = $.parseJSON(data);
+
+                    var result ="";
+
+                    $(data).each(function() {
+                        selectprod.append("<option value=\""+this.fields.codigo+"\">"+this.fields.nombre+"</option>");
+                    });
+                }
+            });
+        })();
+
+        //Llena selector de Bodegas 1 y 2
+        (function(){
+             $.getJSON("../obtenerlistabodegas").done(function (data) {
+                 var selectb = $("#bodega");
+
+                 if (data){
+                    data = $.parseJSON(data);
+
+                    var result ="";
+
+                    $(data).each(function() {
+                        selectb.append("<option value=\""+this.fields.serial+"\">"+this.fields.nombre+"</option>");
+                    });
+                }
+            });
+        })();
     </script>
 
 </head>
@@ -56,6 +92,7 @@
 <div id="encabezado"></div>
 <br>
 <br>
+<form id="formBuscarProducto" action="../verproductobusqueda/" method="post">
 <div id="principal" class="panel panel-default">
     <div class="page-header" style="margin-bottom: 0px;">
         <h2 id="tituloprod">Localización Productos</h2>
@@ -64,51 +101,37 @@
         <div id="busqueda" class="col-md-6 col-sm-offset-3" style="margin-left: 25%">
             <table class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <b>Producto</b>&nbsp;
                         <select id="producto" name="producto" class="selectpicker form-control" style="width: auto; display: inline">
                             <option selected disabled hidden>Seleccione...</option>
-                            <option>2</option>
                         </select>
                     </td>
-                </tr>
-                <tr>
                     <td>
-                        <b>Origen</b>&nbsp;
-                        <select id="bodegaorigen" name="bodegaorigen" class="selectpicker form-control" style="width: auto; display: inline">
+                        <b>Bodega</b>&nbsp;
+                        <select id="bodega" name="bodega" class="selectpicker form-control" style="width: auto; display: inline">
                             <option selected disabled hidden>Seleccione...</option>
-                            <option>2</option>
                         </select>
                     </td>
                     <td>
-                        <b>Destino&nbsp;</b>&nbsp;
-                        <select id="bodegadestino" name="bodegadestino" class="selectpicker form-control" style="width: auto; display: inline">
-                            <option selected disabled hidden>Seleccione...</option>
-                            <option>2</option>
-                        </select>
+                        <b>Fecha Ejecución</b>&nbsp;
+                        <input type="date" id="fechatransaccion" name="fechatransaccion" class="form-control input-md" style="width: auto; display: inline">
                     </td>
                 </tr>
                 <tr>
-                    <td><b>Desde&nbsp;</b>&nbsp;
-                        <input type="date" id="fechadesde" class="form-control input-md" style="width: auto; display: inline">                   &nbsp;                    &nbsp;
-                    </td>
-                    <td>
-                        <b>Hasta&nbsp;&nbsp;</b>&nbsp;
-                        <input type="date" id="fechahasta" class="form-control input-md" style="width: auto; display: inline">
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center" colspan="2">
+                    <td align="center" colspan="3">
                         <input type="submit" id="buscar" value="Buscar" class="btn btn-primary">&nbsp;&nbsp;<a href="">cancelar</a>
                     </td>
                 </tr>
             </table>
+            <input type="hidden" id="hd1" name="hd1">
         </div>
         <div>&nbsp;</div>
         <div id="resultados">
         </div>
     </div>
 </div>
+</form>
 <div id="pie" align="center"></div>
 </body>
 <script>
