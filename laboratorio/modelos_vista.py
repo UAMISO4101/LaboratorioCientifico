@@ -2,6 +2,11 @@ import json
 import decimal
 import datetime
 
+"""Clase - Auxiliar  BodegaVista.
+
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class BodegaVista():
     id = 0
     serial = ""
@@ -15,7 +20,11 @@ class BodegaVista():
     tipo_bodega = ""
     responsable = ""
 
+"""Clase - Auxiliar  ProductosBodegaVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class ProductosBodegaVista():
     id = 0
     bodega = ""
@@ -25,11 +34,22 @@ class ProductosBodegaVista():
     cantidad = 0
     unidad_medida = ""
 
+"""Clase -  Convertidor.
+
+Clase que sirve como convertidor de json a objeto
+
+"""
 class Convertidor(json.JSONEncoder):
+    """Metodo por defecto de la clase.
+    """
     def default(self, obj):
         return obj.__dict__
 
+"""Clase - Auxiliar  RecursoBusquedaVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class RecursoBusquedaVista():
     id = 0
     nombre = ""
@@ -39,7 +59,11 @@ class RecursoBusquedaVista():
     bodegaActual = ""
     hidden1 = ""
 
+"""Clase - Auxiliar  RecursoBusquedaDetalleVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class RecursoBusquedaDetalleVista():
     id=0
     fecha = ""
@@ -58,7 +82,11 @@ class RecursoBusquedaDetalleVista():
     comentarios = ""
     estadoTrans = ""  # STATUSTRX
 
+"""Clase - Auxiliar  ProductoVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class ProductoVista():
     id = 0
     codigo = ""
@@ -73,6 +101,11 @@ class ProductoVista():
     imageFile = ""
     proveedor = ""
 
+"""Clase - Auxiliar  TransaccionVista.
+
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class TransaccionVista():
     id = 0
     tipo = ""
@@ -91,7 +124,8 @@ class TransaccionVista():
     comentarios = ""
     usuario = ""
 
-
+"""Metodo que formatea a json
+"""
 def json_default(value):
     if isinstance(value, datetime.date):
         return datetime.date.isoformat(value)

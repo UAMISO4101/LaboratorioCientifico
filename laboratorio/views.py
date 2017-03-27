@@ -26,15 +26,30 @@ from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProto
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import Utils
 
+# Navegacion de paginas
 
+"""Metodo a navegar index.
+"""
 def ir_index(request):
     return render(request,"laboratorio/index.html")
+
+"""Metodo a navegar pie de pagina.
+"""
 def ir_pie(request):
     return render(request,"laboratorio/pie.html")
+
+"""Metodo a navegar encabezado.
+"""
 def ir_encabezado(request):
     return render(request,"laboratorio/encabezado.html")
+
+"""Metodo a navegar crear bodega.
+"""
 def ir_crear_bodega(request):
     return render(request, "laboratorio/crearBodega.html")
+
+"""Metodo a navegar lista de bodegas.
+"""
 def ir_bodegas(request):
     return render(request, "laboratorio/bodegas.html")
 def ir_recursos(request):
@@ -53,18 +68,44 @@ def ir_transacciones(request):
     return render(request,"laboratorio/transacciones.html")
 
 
+"""Metodo obtener los tipos de bodega.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para obtener de la tabla Tipos los tipos de bodega en el sistema
+
+request, es la peticion dada por el usuario
+return, formato json con los tipos de bodega
+"""
 @csrf_exempt
 def obtenerTiposBodega(request):
     qs = Tipo.objects.filter(grupo="BODEGA")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+
+
+"""Metodo obtener los usuarios del sistema.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para obtener los usuarios que existen en el sistema
+
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
 @csrf_exempt
 def obtenerUsuarios(request):
     qs = Usuario.objects.all()
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+"""Metodo crear bodega.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para la creacion o actualizacion de bodegas del sistema
+
+request, es la peticion dada por el usuario
+return, formato json con un mensaje indicando si fue exitoso o no
+"""
 @csrf_exempt
 def crearBodega(request):
     mensaje = ""
