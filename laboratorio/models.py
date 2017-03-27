@@ -19,7 +19,7 @@ class Tipo(models.Model):
     valor = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
 class Bodega(models.Model):
-    serial = models.CharField(max_length=50, unique=True, null=False)
+    serial = models.CharField(max_length=50, unique=True, null=True)
     nombre = models.CharField(max_length=100, null=True)
     ubicacion = models.CharField(max_length=100, null=True)
     niveles = models.IntegerField(null=True)
@@ -88,7 +88,7 @@ class ProductosEnBodega(models.Model):
 class TransaccionInventario(models.Model):
     fecha_creacion = models.DateTimeField(null=False)
     fecha_ejecucion = models.DateTimeField(null=False)
-    tipo = models.ForeignKey(Tipo, related_name="TIPOTRX", null=False)
+    tipo = models.ForeignKey(Tipo, related_name="TIPOTRX", null=True)
     estado = models.ForeignKey(Tipo, related_name="STATUSTRX", null=True)
     bodega_origen = models.ForeignKey(Bodega, related_name="bodegaOrigen",null=False)
     bodega_destino = models.ForeignKey(Bodega, related_name="bodegaDestino",null=False)
