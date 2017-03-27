@@ -68,6 +68,7 @@
               <br>
               <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
                <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
+              <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
               <img id="imagen" src="" class="img-responsive" style="width: 50%"/>
               <label style="font-size: smaller"><b>Imagen actual para este recurso.</b></label><br>
               <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
@@ -103,6 +104,17 @@
         })
     })();
 
+    (function() {
+        $.getJSON("../../obtenerProveedores").done(function (data) {
+            data = $.parseJSON(data);
+            var tipoBodega = $("#proveedor");
+            tipoBodega.append($("<option />").val("").text("Seleccione un Proveedor..."));
+            $(data).each(function () {
+                tipoBodega.append($("<option />").val(this.pk).text(this.fields.first_name));
+            });
+        })
+    })();
+
     $("#mensaje").hide();
 
     (function(){
@@ -124,6 +136,7 @@
                 $("#unidades").val(producto.fields["unidadesExistentes"]);
                 $("#imagen").attr('src', "../../../"+producto.fields['imageFile']);
                 $("#id_producto_guardado").val(param)
+                $("#proveedor").val(producto.fields["proveedor"])
             }
         });
     })();

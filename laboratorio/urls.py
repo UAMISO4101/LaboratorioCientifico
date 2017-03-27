@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
     url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
     url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
+    url(r'^obtenerProveedores/$', views.obtenerProveedores, name='obtenerProveedores'),
 
     url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
     url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
@@ -47,5 +48,7 @@ urlpatterns = [
     url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
     url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
     url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
+    url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
+
     # url(r'^buscarproducto/$', views.busquedaProducto, name='buscarproducto'),
 ]

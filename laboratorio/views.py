@@ -24,17 +24,32 @@ from psycopg2.extensions import JSON
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
-from laboratorio.utils.utils import Utils
+from laboratorio.utils.utils import utils
 
+# Navegacion de paginas
 
+"""Metodo a navegar index.
+"""
 def ir_index(request):
     return render(request,"laboratorio/index.html")
+
+"""Metodo a navegar pie de pagina.
+"""
 def ir_pie(request):
     return render(request,"laboratorio/pie.html")
+
+"""Metodo a navegar encabezado.
+"""
 def ir_encabezado(request):
     return render(request,"laboratorio/encabezado.html")
+
+"""Metodo a navegar crear bodega.
+"""
 def ir_crear_bodega(request):
     return render(request, "laboratorio/crearBodega.html")
+
+"""Metodo a navegar lista de bodegas.
+"""
 def ir_bodegas(request):
     return render(request, "laboratorio/bodegas.html")
 def ir_recursos(request):
@@ -53,18 +68,44 @@ def ir_transacciones(request):
     return render(request,"laboratorio/transacciones.html")
 
 
+"""Metodo obtener los tipos de bodega.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para obtener de la tabla Tipos los tipos de bodega en el sistema
+
+request, es la peticion dada por el usuario
+return, formato json con los tipos de bodega
+"""
 @csrf_exempt
 def obtenerTiposBodega(request):
     qs = Tipo.objects.filter(grupo="BODEGA")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+
+
+"""Metodo obtener los usuarios del sistema.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para obtener los usuarios que existen en el sistema
+
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
 @csrf_exempt
 def obtenerUsuarios(request):
     qs = Usuario.objects.all()
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+"""Metodo crear bodega.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para la creacion o actualizacion de bodegas del sistema
+
+request, es la peticion dada por el usuario
+return, formato json con un mensaje indicando si fue exitoso o no
+"""
 @csrf_exempt
 def crearBodega(request):
     mensaje = ""
@@ -524,15 +565,25 @@ def registrarInsumoReactivo(request):
         codigo = request.POST['codigo']
         nombre = request.POST['nombre']
         descripcion = request.POST['descripcion']
-        valor = int(request.POST['valor'])
-        unidadesExistentes = int(request.POST['unidades'])
-        clasificacion = request.POST['clasificacion']
-        unitaria = Decimal(request.POST['cantidad'])
-        imageFile = request.FILES['imageFile']
-
-        if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=codigo).first() !=None:
-            mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
+        if request.POST['valor'] == "":
+            valor = 0
         else:
+            valor = int(request.POST['valor'])
+        if request.POST['unidades'] == "":
+            unidadesExistentes = 0
+        else:
+            unidadesExistentes = int(request.POST['unidades'])
+        clasificacion = request.POST['clasificacion']
+        if request.POST['cantidad'] == "":
+            unitaria = 0.0
+        else:
+            unitaria = Decimal(request.POST['cantidad'])
+        imageFile = request.FILES.get('imageFile', None)
+
+        if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+            if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=nombre).first() !=None:
+                mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
+            else:
                 #Es un producto con un codigo y un nombre nuevos
                 producto = Producto(codigo=codigo,
                                     nombre=nombre,
@@ -542,11 +593,14 @@ def registrarInsumoReactivo(request):
                                     clasificacion=clasificacion,
                                     unidad_medida=Tipo.objects.filter(id=request.POST['medida']).first(),
                                     unidad_unitaria=unitaria,
-                                    imageFile=imageFile)
+                                    imageFile=imageFile,
+                                    proveedor=Usuario.objects.filter(id=request.POST['proveedor']).first())
 
                 producto.unidad_unitaria.quantize(dosLugares, 'ROUND_DOWN')
                 producto.save()
                 mensaje = "ok"
+        else:
+            mensaje = "Todos los campos deben estar debidamente diligenciados"
 
     return JsonResponse({"mensaje":mensaje})
 
@@ -572,6 +626,7 @@ def obtenerRecursos(request):
         prod.unidad_medida = producto.unidad_medida.nombre
         prod.unidad_unitaria = str(producto.unidad_unitaria)
         prod.imageFile = str(producto.imageFile)
+        prod.proveedor = producto.proveedor.first_name
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
@@ -593,25 +648,46 @@ def guardarEdicionInsumo(request):
         codigo = request.POST['codigo']
         nombre = request.POST['nombre']
         descripcion = request.POST['descripcion']
-        valor = int(request.POST['valor'])
-        unidadesExistentes = int(request.POST['unidades'])
+        if request.POST['valor'] == "":
+            valor = 0
+        else:
+            valor = int(request.POST['valor'])
+        if request.POST['unidades'] == "":
+            unidadesExistentes = 0
+        else:
+            unidadesExistentes = int(request.POST['unidades'])
         clasificacion = request.POST['clasificacion']
-        unitaria = Decimal(request.POST['cantidad'])
+        if request.POST['cantidad'] == "":
+            unitaria = 0.0
+        else:
+            unitaria = Decimal(request.POST['cantidad'])
+        clasificacion = request.POST['clasificacion']
         imageFile = request.FILES.get('imageFile',None)
-
+        proveedor = request.POST['proveedor']
         producto = Producto.objects.filter(id=int(request.POST['id_producto_guardado'])).first()
 
 
         modificacion = False
         error = False
         if producto != None:
+            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+                if producto.codigo != codigo or producto.nombre != nombre:
+                    try:
+                        Producto.objects.get(codigo=codigo)
+                        if producto.codigo != codigo:
+                            error = True
+                        else:
+                            try:
+                                Producto.objects.get(nombre=nombre)
+                                if producto.nombre != nombre:
+                                    error = True
+                                else:
+                                    modificacion = True
+                            except ObjectDoesNotExist:
+                                modificacion = True
 
-            if producto.codigo != codigo or producto.nombre != nombre:
-                try:
-                    Producto.objects.get(codigo=codigo)
-                    if producto.codigo != codigo:
-                        error = True
-                    else:
+                    except ObjectDoesNotExist:
+                        modificacion = True
                         try:
                             Producto.objects.get(nombre=nombre)
                             if producto.nombre != nombre:
@@ -621,37 +697,29 @@ def guardarEdicionInsumo(request):
                         except ObjectDoesNotExist:
                             modificacion = True
 
-                except ObjectDoesNotExist:
+                elif producto.codigo == codigo and producto.nombre == nombre:
                     modificacion = True
-                    try:
-                        Producto.objects.get(nombre=nombre)
-                        if producto.nombre != nombre:
-                            error = True
-                        else:
-                            modificacion = True
-                    except ObjectDoesNotExist:
-                        modificacion = True
 
-            elif producto.codigo == codigo and producto.nombre == nombre:
-                modificacion = True
+                if error:
+                    mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
+                else:
+                    if modificacion == True:
+                        producto.codigo = codigo
+                        producto.nombre = nombre
+                        producto.descripcion = descripcion
+                        producto.valorUnitario = valor
+                        producto.unidadesExistentes = unidadesExistentes
+                        producto.clasificacion = clasificacion
+                        producto.unidad_medida = Tipo.objects.filter(id=request.POST['medida']).first()
+                        producto.unidad_unitaria = unitaria
+                        if (imageFile != None):
+                            producto.imageFile = imageFile
+                        producto.proveedor = Usuario.objects.filter(id=proveedor).first()
+                        producto.save()
+                        mensaje = "ok"
 
-            if error:
-                mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
             else:
-                if modificacion == True:
-                    producto.codigo = codigo
-                    producto.nombre = nombre
-                    producto.descripcion = descripcion
-                    producto.valorUnitario = valor
-                    producto.unidadesExistentes = unidadesExistentes
-                    producto.clasificacion = clasificacion
-                    producto.unidad_medida = Tipo.objects.filter(id=request.POST['medida']).first()
-                    producto.unidad_unitaria = unitaria
-                    if (imageFile != None):
-                        producto.imageFile = imageFile
-                    producto.save()
-                    mensaje = "ok"
-
+                mensaje = "Todos los campos deben estar debidamente diligenciados"
         else:
             mensaje = "El id del insumo/reactivo que se quiere editar no existe"
 
@@ -663,5 +731,12 @@ def convertirUnidad(request):
     cantidad = request.GET['cantidad']
     medidaOrigen = request.GET['medidaOrigen']
     medidaDestino = request.GET['medidaDestino']
-    res = Utils.conversion(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
+    res = utils.convertir(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
     return JsonResponse({"conversion":res})
+
+@csrf_exempt
+def obtenerProveedores(request):
+
+    proveedores = Usuario.objects.filter(roles__nombre="Proveedor")
+    qs_json = serializers.serialize('json', proveedores)
+    return JsonResponse(qs_json, safe=False)
