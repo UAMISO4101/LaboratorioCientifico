@@ -24,7 +24,7 @@ from psycopg2.extensions import JSON
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
-from laboratorio.utils.utils import Utils
+from laboratorio.utils.utils import utils
 
 # Navegacion de paginas
 
@@ -731,7 +731,7 @@ def convertirUnidad(request):
     cantidad = request.GET['cantidad']
     medidaOrigen = request.GET['medidaOrigen']
     medidaDestino = request.GET['medidaDestino']
-    res = Utils.conversion(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
+    res = utils.convertir(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
     return JsonResponse({"conversion":res})
 
 @csrf_exempt
