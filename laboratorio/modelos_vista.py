@@ -1,9 +1,6 @@
 import json
-
 import decimal
-
 import datetime
-
 
 class BodegaVista():
     id = 0
@@ -31,6 +28,36 @@ class ProductosBodegaVista():
 class Convertidor(json.JSONEncoder):
     def default(self, obj):
         return obj.__dict__
+
+
+class RecursoBusquedaVista():
+    id = 0
+    nombre = ""
+    unidadesExistentes = ""
+    unidad_medida = ""
+    fechaTransaccion = ""  # Fecha en string
+    bodegaActual = ""
+    hidden1 = ""
+
+
+class RecursoBusquedaDetalleVista():
+    id=0
+    fecha = ""
+    recurso = ""
+    tipoTransaccion = ""  # TIPOTRX
+    bodegaOrigen = ""
+    nivel_origen = ""
+    seccion_origen = ""
+    bodegaDestino = ""
+    nivel_destino = ""
+    seccion_destino = ""
+    cantidad = ""
+    unidad_medida = ""
+    usuario = ""
+    autoriza = ""
+    comentarios = ""
+    estadoTrans = ""  # STATUSTRX
+
 
 class ProductoVista():
     id = 0

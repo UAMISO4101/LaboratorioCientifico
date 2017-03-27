@@ -13,13 +13,20 @@ urlpatterns = [
     url(r'^obtenerTiposBodega/$', views.obtenerTiposBodega, name='obtenerTiposBodega'),
     url(r'^obtenerUsuarios/$', views.obtenerUsuarios, name='obtenerUsuarios'),
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
-    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
-    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
-    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
-    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
+
+    url(r'^transaccion/$', views.ir_crear_transaccion, name='transaccion'),
+    url(r'^crearTransaccion/$', views.crear_transaccion, name='crearTransaccion'),
+    url(r'^obtenerTipos/$', views.obtenerTipos, name='obtenerTipos'),
+    url(r'^obtenerProductosBodega/$', views.obtenerProductosBodega, name='obtenerProductosBodega'),
+  
+    url(r'^obtenerExperimentos/$', views.obtenerExperimentos, name='obtenerExperimentos'),
+    url(r'^obtenerExperimentosPorUsuario/$', views.obtenerExperimentosPorUsuario, name='obtenerExperimentosPorUsuario'),
+    url(r'^obtenerProtocolosPorExperimento/$', views.obtenerProtocolosPorExperimento, name='obtenerProtocolosPorExperimento'),
+    url(r'^obtenerPPPorProtocolo/$', views.obtenerPPPorProtocolo, name='obtenerPPPorProtocolo'),
+    url(r'^experimentos/$', views.experimentos, name='experimentos'),
 
     url(r'^recursos/$', views.ir_recursos, name='recursos'),
     url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
@@ -31,4 +38,14 @@ urlpatterns = [
     url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
     url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
 
+    url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
+    url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
+
+    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
+    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
+    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
+    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
+    url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
+    url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
+    # url(r'^buscarproducto/$', views.busquedaProducto, name='buscarproducto'),
 ]
