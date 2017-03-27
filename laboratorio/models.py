@@ -76,6 +76,7 @@ class Producto(models.Model):
     unidad_medida = models.ForeignKey(Tipo, related_name="prod_tipo_unidadmedida", null=True)  # Segun TransaccionInventario.unidad_medida, seria tipo_unidadmedida
     unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
+    proveedor = models.ForeignKey(Usuario, null=True)
 
 class ProductosEnBodega(models.Model):
     bodega = models.ForeignKey(Bodega, null=True)

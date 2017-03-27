@@ -71,6 +71,7 @@ class ProductoVista():
     unidad_medida = ""
     unidad_unitaria = ""
     imageFile = ""
+    proveedor = ""
 
 class TransaccionVista():
     id = 0
