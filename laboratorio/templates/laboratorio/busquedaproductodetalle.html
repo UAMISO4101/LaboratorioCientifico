@@ -24,10 +24,11 @@
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Fecha</th>";
                     //tablaresult=tablaresult+"<td>Recurso</td>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo Transacción</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Estado Transacción</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Origen</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Destino</th>";
-                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Usuario</th>";
-                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Autorizó</th>";
+                    //tablaresult=tablaresult+"<th style=\"text-align: center;\">Usuario</th>";
+                    //tablaresult=tablaresult+"<th style=\"text-align: center;\">Autorizó</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Comentarios</th>";
                     tablaresult=tablaresult+"</tr>";
                     tablaresult=tablaresult+"</thead>";
@@ -38,12 +39,12 @@
                     $(data).each(function() {
                         result=result+"<tr>";
                         result=result+"<td>"+this.fecha+"</td>";
-                        //result=result+"<td>"+this.recurso+"</td>";
                         result=result+"<td>"+this.tipoTransaccion+"</td>";
+                        result=result+"<td>"+this.estadoTrans+"</td>";
                         result=result+"<td>"+this.bodegaOrigen+"</td>";
                         result=result+"<td>"+this.bodegaDestino+"</td>";
-                        result=result+"<td>"+this.usuario+"</td>";
-                        result=result+"<td>"+this.autoriza+"</td>";
+                        //result=result+"<td>"+this.usuario+"</td>";
+                        //result=result+"<td>"+this.autoriza+"</td>";
                         result=result+"<td>"+this.comentarios+"</td>";
                         result=result+"</tr>";
 
@@ -81,7 +82,7 @@
     </div>
     <br>
 </div>
-<div id="pie"></div>
+<div id="pie" align="center"></div>
 </body>
 <script>
             (function(){

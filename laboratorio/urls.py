@@ -13,10 +13,6 @@ urlpatterns = [
     url(r'^obtenerTiposBodega/$', views.obtenerTiposBodega, name='obtenerTiposBodega'),
     url(r'^obtenerUsuarios/$', views.obtenerUsuarios, name='obtenerUsuarios'),
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
-    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
-    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
-    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
-    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
@@ -41,7 +37,16 @@ urlpatterns = [
     url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
     url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
     url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
+    url(r'^obtenerProveedores/$', views.obtenerProveedores, name='obtenerProveedores'),
 
     url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
     url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
+
+    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
+    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
+    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
+    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
+    url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
+    url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
+    # url(r'^buscarproducto/$', views.busquedaProducto, name='buscarproducto'),
 ]

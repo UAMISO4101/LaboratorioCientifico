@@ -64,12 +64,24 @@
                     {mData: "id", sTitle: "Id"},
                     {mData: "codigo", sTitle: "Codigo"},
                     {mData: "nombre", sTitle: "Nombre"},
-                    {mData: "descripcion", sTitle: "Descripcion"},
+                    {targets:0,mData: "descripcion", sTitle: "Descripcion", "render": function ( mData, type, row) {
+                        return type === 'display' && mData.length > 25 ?
+                            mData.substr( 0, 25 ) +'…' :
+                            mData;
+                    }},
                     {mData: "valorUnitario", sTitle: "Valor"+"<br>"+"Unitario"},
                     {mData: "unidadesExistentes", sTitle: "Unidades" +"<br>"+"Existentes"},
-                    {mData: "clasificacion", sTitle: "Clasificacion"},
+                    {targets:0, mData: "clasificacion", sTitle: "Clasificacion", "render": function ( mData, type, row) {
+                        return type === 'display' && mData.length > 25 ?
+                            mData.substr( 0, 25 ) +'…' :
+                            mData;
+                    }},
                     {mData: "unidad_medida", sTitle: "Unidad"+"<br>"+ "Medida"},
-                    {mData: "unidad_unitaria", sTitle: "Cantidad"+"<br>"+ "Unitaria"},
+                    {mData: "unidad_unitaria", sTitle: "Cantidad"+"<br>"+ "Unitaria", "render": function( mData, type, row)
+                    {
+                        return Math.round(mData * 100) / 100
+                    }},
+                    {mData: "proveedor", sTitle: "Proveedor"},
                     {targets: 0,mData: "imageFile", sTitle: "Image File",
                         "render": function ( mData, type, full, meta )
                         {

@@ -33,22 +33,30 @@ class Convertidor(json.JSONEncoder):
 class RecursoBusquedaVista():
     id = 0
     nombre = ""
-    unidadesExistentes=""
-    unidad_medida=""
-    fechaTransaccion=""
-    bodegaActual=""
+    unidadesExistentes = ""
+    unidad_medida = ""
+    fechaTransaccion = ""  # Fecha en string
+    bodegaActual = ""
+    hidden1 = ""
 
 
 class RecursoBusquedaDetalleVista():
     id=0
     fecha = ""
     recurso = ""
-    tipoTransaccion = ""
+    tipoTransaccion = ""  # TIPOTRX
     bodegaOrigen = ""
+    nivel_origen = ""
+    seccion_origen = ""
     bodegaDestino = ""
+    nivel_destino = ""
+    seccion_destino = ""
+    cantidad = ""
+    unidad_medida = ""
     usuario = ""
     autoriza = ""
     comentarios = ""
+    estadoTrans = ""  # STATUSTRX
 
 
 class ProductoVista():
@@ -63,6 +71,7 @@ class ProductoVista():
     unidad_medida = ""
     unidad_unitaria = ""
     imageFile = ""
+    proveedor = ""
 
 class TransaccionVista():
     id = 0
