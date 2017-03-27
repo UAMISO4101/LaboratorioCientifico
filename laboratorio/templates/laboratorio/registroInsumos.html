@@ -67,6 +67,7 @@
               <br>
               <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
                <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4" minlength="1"><br>
+              <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
               <label for="id_imageFile">Imagen:</label><input id="imageFile" name="imageFile" type="file" required/>
                 <br>
               <input type="submit" value="Guardar" class="btn btn-primary"/>
@@ -100,6 +101,17 @@
         })
     })();
 
+    (function() {
+        $.getJSON("../obtenerProveedores").done(function (data) {
+            data = $.parseJSON(data);
+            var tipoBodega = $("#proveedor");
+            tipoBodega.append($("<option />").val("").text("Seleccione un Proveedor..."));
+            $(data).each(function () {
+                tipoBodega.append($("<option />").val(this.pk).text(this.fields.first_name));
+            });
+        })
+    })();
+
     $("#mensaje").hide();
 
 
@@ -125,6 +137,7 @@
             medida: "required",
             cantidad: "required",
             imageFile: "required",
+            proveedor: "required",
         },
 
         //specify validation error messages
@@ -150,6 +163,7 @@
             medida: "Es necesario elegir una unidad de medida para la creación del recurso",
             cantidad: "Es necesario elegir una cantidad unitaria para la creación del recurso",
             imageFile: "Es necesario subir una imagen para la creación del recurso",
+            proveedor: "Es necesario elegir un proveedor para la creación del recurso"
         },
 
         //submitHandler: function(form){
