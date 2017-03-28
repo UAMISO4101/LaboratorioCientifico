@@ -64,6 +64,9 @@ class ProductoVista():
     unidad_unitaria = ""
     imageFile = ""
 
+# HU-LCINV-13
+# GZ
+# Vista para formatear los datos a presentar en el UI
 class TransaccionVista():
     id = 0
     tipo = ""
@@ -82,6 +85,9 @@ class TransaccionVista():
     comentarios = ""
     usuario = ""
 
+# HU-LCINV-13
+# GZ
+# Manejo de fechas en formato ISO para presentar en el UI
 
 def json_default(value):
     if isinstance(value, datetime.date):

@@ -273,7 +273,8 @@ def obtenerTransacciones(request):
     json_string = json.dumps(listaTransacciones, cls=Convertidor, ensure_ascii=False, default=json_default)
     return JsonResponse(json_string, safe=False)
 
-
+#HU-LCINV-13
+#GZ
 #Obtiene la lista de transacciones para mostrarla en la tabla del UI
 @csrf_exempt
 def obtenerTransaccion(request):
@@ -293,6 +294,8 @@ def obtenerBodega(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
 
+#HU-LCINV-13
+#GZ
 #Crea una transaccion de inventario:
 #Recibe bodega origen con localizacion (Nivel, Seccion)
 #Bodega destino con localizacion (Nivel, Seccion)
@@ -326,8 +329,10 @@ def crear_transaccion(request):
         transaccion.save()
         tran_json = json.loads(serializers.serialize('json', [transaccion]));
         return JsonResponse(tran_json, safe=False)
-      
 
+
+# HU-LCINV-13
+# GZ
 #Ejecuta la transaccion de inventario: Afecta las cantidades de producto por un movimento pedido
 #Resta de la bodega origen y suma o crea registro en la bodega destino
 
@@ -373,7 +378,8 @@ def ejecutar_transaccion(transaccion):
     except Exception as e:
         print 'EXCEPCION: %s (%s)' % (e.message, type(e))
 
-        
+# HU-LCINV-13
+# GZ
 #Funcion GET que trae listas de valores segun el tipo
 @csrf_exempt
 def obtenerTipos(request):
@@ -381,7 +387,9 @@ def obtenerTipos(request):
     qs = Tipo.objects.filter(grupo=grupo)
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
-      
+
+# HU-LCINV-13
+# GZ
 # Obtiene los productos de la bodega seleccionada
 @csrf_exempt
 def obtenerProductosBodega(request):
