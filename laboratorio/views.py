@@ -572,7 +572,9 @@ def obtenerProductosBodega(request):
     json_pb = json.dumps(listaProductosBodegas, cls=Convertidor)
     return JsonResponse(json_pb, safe=False)        
         
-        
+# HU-LCINV-12
+# DA
+# Obtiene los experimentos en la aplicacion
 @csrf_exempt
 def obtenerExperimentos(request):
     qs = Experimento.objects.all().prefetch_related('asignado')
@@ -585,6 +587,9 @@ def obtenerExperimentos(request):
         respT.append(resp)
     return JsonResponse(respT, safe=False)
 
+# HU-LCINV-12
+# DA
+# Obtiene los experimentos en la aplicacion por username del usuario 'username'
 @csrf_exempt
 def obtenerExperimentosPorUsuario(request):
     usuario = Usuario.objects.get(username=request.GET['username'])
@@ -592,6 +597,9 @@ def obtenerExperimentosPorUsuario(request):
     qs_json = serializers.serialize('json', exp_usuario)
     return JsonResponse(qs_json, safe=False)
 
+# HU-LCINV-12
+# DA
+# Obtiene los protocolos asociados a un experimento segun su codigo 'codigo'
 @csrf_exempt
 def obtenerProtocolosPorExperimento(request):
     exp = Experimento.objects.filter(codigo=request.GET['codigo'])
@@ -599,6 +607,9 @@ def obtenerProtocolosPorExperimento(request):
     qs_json = serializers.serialize('json', prots_exp)
     return JsonResponse(qs_json, safe=False)
 
+# HU-LCINV-12
+# DA
+# Los productosprotocolo (objeto con enlace a un producto y la cantidad usada por el mismo) por protocolo segun su id
 @csrf_exempt
 def obtenerPPPorProtocolo(request):
     prot = Protocolo.objects.filter(id=request.GET['id'])
@@ -610,6 +621,9 @@ def obtenerPPPorProtocolo(request):
     resp = {'productoprotocolo': struct, 'producto': producto}
     return JsonResponse(resp, safe=False)
 
+# HU-LCINV-12
+# DA
+# Hace el render de la plantilla para la visualización de productos/insumos por experimento
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
