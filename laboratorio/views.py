@@ -682,7 +682,7 @@ def guardarEdicionInsumo(request):
         modificacion = False
         error = False
         if producto != None:
-            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
                 if producto.codigo != codigo or producto.nombre != nombre:
                     try:
                         Producto.objects.get(codigo=codigo)

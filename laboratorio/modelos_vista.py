@@ -101,9 +101,7 @@ class ProductoVista():
     imageFile = ""
     proveedor = ""
 
-# HU-LCINV-13
-# GZ
-# Vista para formatear los datos a presentar en el UI
+
 """Clase - Auxiliar  TransaccionVista.
 
 Clase que sirve de vista para objetos a mostrar al usuario
