@@ -161,8 +161,11 @@ def crearBodega(request):
     return JsonResponse({"mensaje": mensaje})
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# request: Petición desde el form de usuario.
+# return: Página html con la plantilla y los resultados de la búsqueda asociada.
 @csrf_exempt
 def verProductoBusqueda(request):
     global bproducto
@@ -183,8 +186,12 @@ def verProductoBusqueda(request):
     return render(request, "laboratorio/busquedaproducto.html")
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# Aquí puntualmente es donde se hace el filtro.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 @csrf_exempt
 def busquedaProducto(request):
     # Filtra por la expresion; si no hay nada, muestra todos los productos
@@ -198,22 +205,17 @@ def busquedaProducto(request):
         else: #Filtro por producto y bodega
             qs = ProductosEnBodega.objects.filter(producto__codigo=bproducto, bodega__serial=bBodega)
 
-    #fecha1 = bFechaTransaccion
     listaRecurso = []
 
     for peb in qs:
         req = RecursoBusquedaVista()
         req.id = peb.id
         req.nombre = peb.producto.nombre
-        #req.unidadesExistentes = obtenerUnidadesProducto(recurso.id)
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
         req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
-        # dtfechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 3)
-        # req.bodegaActual=obtenerBodegaAcutalxRecursoxPEB(recurso)
         req.bodegaActual = peb.bodega.nombre
-        #req.bodegaActual = bFechaTransaccion  # ##########
-        req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion
+        req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion  #Variable oculta para debug en html
 
         if bFechaTransaccion == "":
             listaRecurso.append(req)
@@ -226,8 +228,12 @@ def busquedaProducto(request):
     return JsonResponse(json_string, safe=False)
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Obtiene la última transacción ordenada por fecha de ejecucuón (la más reciente).
+# peb: Petición desde el form de usuario.
+# campo: El campo que se requiere retornar.
+# return: El dato puntual solicitado.
 def obtenerBodegaAcutalxPEBxTransaccion(peb, campo):
     qs = TransaccionInventario.objects.filter(producto_bodega_destino=peb).order_by('-fecha_ejecucion')[:1]
     retorno="N/A"
@@ -242,8 +248,11 @@ def obtenerBodegaAcutalxPEBxTransaccion(peb, campo):
     return retorno
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Obtiene el nombre completo del usuario consultado.
+# usuario: Id de usuario.
+# return: Nombre de usuario compuesto por Nombre y Apellido.
 def obtenerNombreUsuarioxId(usuario):
     qs = Usuario.objects.filter(id=usuario)[:1]
 
@@ -254,8 +263,11 @@ def obtenerNombreUsuarioxId(usuario):
     return retorno
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Muestra el detalle de transacciones para un Producto dado.
+# request: Petición desde el form de usuario.
+# return: Página html con la plantilla y los resultados de la búsqueda asociada.
 @csrf_exempt
 def verProductoBusquedaDetalle(request):
     global globvar
@@ -264,8 +276,11 @@ def verProductoBusquedaDetalle(request):
     return render(request, "laboratorio/busquedaproductodetalle.html")
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Muestra el detalle de transacciones para un Producto dado. Esta es la búsqueda como tal.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 def busquedaProductoDetalle(request):
     idpeb = int(globvar)
     qs = TransaccionInventario.objects.filter(producto_bodega_destino_id=idpeb).order_by('-fecha_creacion')
@@ -278,37 +293,32 @@ def busquedaProductoDetalle(request):
         req.recurso = transaccion.producto.nombre
         fecha = localtime(transaccion.fecha_ejecucion)
         req.fecha = fecha.strftime('%Y-%m-%d %H:%M:%S')
-        req.tipoTransaccion = transaccion.tipo.nombre  #TIPOTRX
+        req.tipoTransaccion = transaccion.tipo.nombre  # TIPOTRX
         req.estadoTrans = transaccion.estado.nombre  # STATUSTRX
         req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
-        req.nivel_origen = ""  #ya
-        req.seccion_origen = ""  #ya
+        req.nivel_origen = ""  # n/a
+        req.seccion_origen = ""  # n/a
         req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
-        req.nivel_destino = ""  #ya
-        req.seccion_destino = ""  #ya
+        req.nivel_destino = ""  # n/a
+        req.seccion_destino = ""  # n/a
         req.cantidad = str(transaccion.cantidad)
         req.unidad_medida = transaccion.unidad_medida.nombre
         req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
         req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
-        # req.usuario = obtenerNombreUsuarioxId(            transaccion.usuario.id)
-        # req.autoriza = obtenerNombreUsuarioxId(            transaccion.autoriza.id)
+        # req.usuario = obtenerNombreUsuarioxId(transaccion.usuario.id)
+        # req.autoriza = obtenerNombreUsuarioxId(transaccion.autoriza.id)
         req.comentarios = transaccion.comentarios
         listaTrans.append(req)
-
-
-
-
-
-
-
-
 
     json_string = json.dumps(listaTrans, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Lista los productos, esto se utiliza para mostrar el listado en el html para la búsqueda.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 @csrf_exempt
 def llenarListadoProductosBusqueda(request):
     qs = Producto.objects.all().order_by('nombre')
@@ -316,32 +326,16 @@ def llenarListadoProductosBusqueda(request):
     return JsonResponse(qs_json, safe=False)
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Lista las bodegas, esto se utiliza para mostrar el listado en el html para la búsqueda.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 @csrf_exempt
 def llenarListadoBodegasBusqueda(request):
     qs = Bodega.objects.all().order_by('nombre')
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
-
-
-# LCINV-5
-# FB
-#def obtenerBodegaAcutalxRecursoxPEB(recurso):
-#    qs = ProductosEnBodega.objects.filter(producto=recurso)[:1]
-#    retorno="N/A"
-#    if qs.exists():
-#        retorno = qs[0].bodega.nombre
-#    return retorno
-
-# LCINV-5
-# FB
-#def obtenerUnidadesProducto(idProducto):
-#    qs = ProductosEnBodega.objects.filter(producto__id=idProducto)[:1]
-#    retorno="N/A"
-#    if qs.exists():
-#        retorno = qs[0].cantidad
-#    return retorno
 
 
 @csrf_exempt
