@@ -50,6 +50,7 @@
 
 
 <script>
+    //Coloca encabezado y pie de pagina
     (function(){
         try {
             $("#encabezado").load("../encabezado");
@@ -60,6 +61,7 @@
             alert(exc.message);
         }
     })();
+    //Trae la lista de transacciones
     $(function () {
         $.getJSON("../obtenerTransacciones").done(function (data) {
             datos =  $.parseJSON(data);
