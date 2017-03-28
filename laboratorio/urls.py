@@ -50,4 +50,5 @@ urlpatterns = [
     url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
     url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
+
 ]
