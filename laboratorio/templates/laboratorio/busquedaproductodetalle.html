@@ -27,6 +27,7 @@
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Estado Transacción</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Origen</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Destino</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Cantidad</th>";
                     //tablaresult=tablaresult+"<th style=\"text-align: center;\">Usuario</th>";
                     //tablaresult=tablaresult+"<th style=\"text-align: center;\">Autorizó</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Comentarios</th>";
@@ -43,6 +44,7 @@
                         result=result+"<td>"+this.estadoTrans+"</td>";
                         result=result+"<td>"+this.bodegaOrigen+"</td>";
                         result=result+"<td>"+this.bodegaDestino+"</td>";
+                        result=result+"<td>"+this.cantidad+" "+this.unidad_medida+"</td>";
                         //result=result+"<td>"+this.usuario+"</td>";
                         //result=result+"<td>"+this.autoriza+"</td>";
                         result=result+"<td>"+this.comentarios+"</td>";
@@ -74,7 +76,7 @@
         <h2 id="tituloprod"></h2>
     </div>
     <div class="panel-body" style="padding-bottom:0px">
-        <div id="resultados" class="col-md-6 col-sm-offset-3" style="">
+        <div id="resultados">
         </div>
     </div>
     <div id="volver" align="center">

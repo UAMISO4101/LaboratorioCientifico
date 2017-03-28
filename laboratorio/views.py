@@ -234,7 +234,14 @@ def busquedaProducto(request):
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
         req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
-        req.bodegaActual = peb.bodega.nombre
+
+        localizacion = ""
+        if str(peb.nivel) != "":
+            localizacion = ", Nivel " + str(peb.nivel)
+        if str(peb.seccion) != "":
+            localizacion = localizacion + ", Seccion " + str(peb.seccion)
+
+        req.bodegaActual = peb.bodega.nombre + localizacion
         req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion  #Variable oculta para debug en html
 
         if bFechaTransaccion == "":
@@ -315,16 +322,32 @@ def busquedaProductoDetalle(request):
         req.fecha = fecha.strftime('%Y-%m-%d %H:%M:%S')
         req.tipoTransaccion = transaccion.tipo.nombre  # TIPOTRX
         req.estadoTrans = transaccion.estado.nombre  # STATUSTRX
-        req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
+
+        localizacion1 = ""
+        if str(transaccion.nivel_origen) != "":
+            localizacion1 = localizacion1 + ", Nivel " + str(transaccion.nivel_origen)
+        if str(transaccion.seccion_origen) != "":
+            localizacion1 = localizacion1 + ", Seccion " + str(transaccion.seccion_origen)
+
+        # req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
+        req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + localizacion1
         req.nivel_origen = ""  # n/a
         req.seccion_origen = ""  # n/a
-        req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
+
+        localizacion2 = ""
+        if str(transaccion.nivel_destino) != "":
+            localizacion2 = localizacion2 + ", Nivel " + str(transaccion.nivel_destino)
+        if str(transaccion.seccion_destino) != "":
+            localizacion2 = localizacion2 + ", Seccion " + str(transaccion.seccion_destino)
+
+        # req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
+        req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + localizacion2
         req.nivel_destino = ""  # n/a
         req.seccion_destino = ""  # n/a
         req.cantidad = str(transaccion.cantidad)
         req.unidad_medida = transaccion.unidad_medida.nombre
-        req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
-        req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
+        #req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
+        #req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
         # req.usuario = obtenerNombreUsuarioxId(transaccion.usuario.id)
         # req.autoriza = obtenerNombreUsuarioxId(transaccion.autoriza.id)
         req.comentarios = transaccion.comentarios
