@@ -136,3 +136,6 @@ AUTH_USER_MODEL = 'laboratorio.Usuario'
 #EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_HOST_USER = 'reservanaturalapp@gmail.com'
 #EMAIL_PORT = 587
+
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()

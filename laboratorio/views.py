@@ -82,10 +82,8 @@ def ir_transacciones(request):
 
 
 """Metodo obtener los tipos de bodega.
-
 HU: EC-LCINV2: Crear Bodega
 Sirve para obtener de la tabla Tipos los tipos de bodega en el sistema
-
 request, es la peticion dada por el usuario
 return, formato json con los tipos de bodega
 """
@@ -96,10 +94,8 @@ def obtenerTiposBodega(request):
     return JsonResponse(qs_json, safe=False)
 
 """Metodo obtener los tipos de unidad de medida.
-
 HU: EC-LCINV4 - EC-LCINV14: Mostrar Unidades de Medida
 Sirve para obtener de la tabla Tipos los tipos de unidad de medida
-
 request, es la peticion dada por el usuario
 return, formato json con los tipos de unidad de medida
 """
@@ -111,10 +107,8 @@ def obtenerUnidadesMedida(request):
 
 
 """Metodo obtener los usuarios del sistema.
-
 HU: EC-LCINV2: Crear Bodega
 Sirve para obtener los usuarios que existen en el sistema
-
 request, es la peticion dada por el usuario
 return, formato json con los usuarios
 """
@@ -125,10 +119,8 @@ def obtenerUsuarios(request):
     return JsonResponse(qs_json, safe=False)
 
 """Metodo crear bodega.
-
 HU: EC-LCINV2: Crear Bodega
 Sirve para la creacion o actualizacion de bodegas del sistema
-
 request, es la peticion dada por el usuario
 return, formato json con un mensaje indicando si fue exitoso o no
 """
