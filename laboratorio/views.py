@@ -52,12 +52,25 @@ def ir_crear_bodega(request):
 """
 def ir_bodegas(request):
     return render(request, "laboratorio/bodegas.html")
+
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al menu de registro de materiales e insumos
 def ir_recursos(request):
     return render(request, "laboratorio/recursos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al formulario de registro de insumos
 def ir_regitrarInsumos(request):
     return render(request, "laboratorio/registroInsumos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar a la lista de recursos
 def ir_ver_recursos(request):
     return render(request, "laboratorio/verRecursos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al formulario de edicion de insumos
 def ir_editarRecurso(request, recurso_id=1):
     return render(request, "laboratorio/edicionInsumos.html")
 
@@ -585,6 +598,12 @@ def obtenerPPPorProtocolo(request):
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST que hace el registro de un nuevo recurso (Insumo/Reactivo)
+#Recibe los campos ingresados en el formulario de registro de recursos
+#Si no hay otro recurso con el mismo codigo o nombre se hace el registro y se retorna un mensaje ok en formato JSON
+#En caso contrario se indica el respectivo mensaje de error en formato JSON
 @csrf_exempt
 def registrarInsumoReactivo(request):
     mensaje = ""
@@ -632,12 +651,20 @@ def registrarInsumoReactivo(request):
 
     return JsonResponse({"mensaje":mensaje})
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar un JSON con un arreglo las medidas (unidades del S.I)
+#con las que se caracteriza un recurso
 @csrf_exempt
 def obtenerTiposMedida(request):
     qs = Tipo.objects.filter(grupo="MEDIDAPRODUCTO")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar todos los recursos/productos guardados
+#en la base de datos en un arreglo con formato JSON
 @csrf_exempt
 def obtenerRecursos(request):
     qs = Producto.objects.all()
@@ -659,6 +686,10 @@ def obtenerRecursos(request):
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar un recurso en formato JSON cuando en el
+#request de la peticion llega el id de ese recurso
 @csrf_exempt
 def obtenerRecurso(request):
     time.sleep(0.3)
@@ -668,6 +699,12 @@ def obtenerRecurso(request):
     json_recurso = json.dumps(struct[0])
     return JsonResponse({"producto": json_recurso})
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para guardar la edicion que se ha hecho de un recurso
+#Solo se guardara la edicion si no se presentan conflictos de codigo o nombre con otros recursos
+#y si estan todos los campos completos a excepcion de la imagen que es opcional, se retorna un
+#mensaje en formato JSON
 @csrf_exempt
 def guardarEdicionInsumo(request):
 
@@ -753,6 +790,10 @@ def guardarEdicionInsumo(request):
 
     return JsonResponse({"mensaje": mensaje})
 
+#HU: LCINV-4, 12
+#SA - EC
+#Metodo que representa el servicio REST para la conversion de unidades que sera
+#invocado en la capa de presentacion, retorna el valor numerico de la conversion solicitada en formato JSON
 @csrf_exempt
 def convertirUnidad(request):
 
@@ -762,6 +803,10 @@ def convertirUnidad(request):
     res = utils.convertir(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
     return JsonResponse({"conversion":res})
 
+#HU: SA-LCVIN-3
+#SA
+#Metodo que representa el servicio REST para obtener los proveedores actuales de insumos
+#se retornara una lista de los proveedores en formato JSON
 @csrf_exempt
 def obtenerProveedores(request):
 
