@@ -93,6 +93,7 @@ x<br />
 </body>
 
 <script>
+    //Llena la lista de valores de tipos de transaccion
     (function(){
         $.getJSON("../obtenerTipos/?grupo=TIPOTRX").done(function (data) {
             data =  $.parseJSON(data);
@@ -102,7 +103,7 @@ x<br />
                 tipo.append($("<option />").val(this.pk).text(this.fields.nombre));
             });
         });
-
+        //Obtiene los usuarios
         $.getJSON("../obtenerUsuarios").done(function (data) {
             data =  $.parseJSON(data);
             var responsable = $("#responsable");
@@ -112,7 +113,7 @@ x<br />
             });
         });
     })();
-
+    //Cuando cambia la bodega origen resetea los productos en la lista de productos
     $('#bodega_origen').change(function() {
         var bodega = $("#bodega_origen option:selected").val();
         $('#producto_bodega_origen').empty();
@@ -132,7 +133,7 @@ x<br />
 
         });
     });
-
+    //Cuando es una recepcion de productos del proveedor trae el catalogo de productos
     function actualizarProductosGeneral() {
         $('#producto_bodega_origen').empty();
         $.getJSON("../obtenerRecursos").done(function (data) {
@@ -149,7 +150,7 @@ x<br />
 
         });
     }
-
+    //Segun el tipo de transaccion actualiza las listas de bodega origen y destino
     function actualizarBodegasporTipo() {
         $.getJSON("../obtenerBodegas/").done(function (data) {
             data =  $.parseJSON(data);
@@ -232,7 +233,7 @@ x<br />
         });
 
     }
-
+    //Cuando el tipo de transaccion cambia refresca parametros de diabled, limpia lista de productos
     $('#tipo').change(function () {
         $('#bodega_origen').prop('disabled', false);
         $('#producto_bodega_origen').empty();
@@ -240,7 +241,7 @@ x<br />
     });
 
 
-
+    // Una vez seleccionado un producto actualiza los valores de nivel y seccion
     $('#producto_bodega_origen').change(function () {
         $('#nivel_origen').text($('#nivellinea' + $("#producto_bodega_origen").val()).text());
         $('#seccion_origen').text($('#seccionlinea' + $("#producto_bodega_origen").val()).text());
@@ -267,7 +268,7 @@ x<br />
 
     });
 
-
+    // Coloca el encabezado y pie de pagina
     (function(){
         try {
             $("#encabezado").load("../encabezado");

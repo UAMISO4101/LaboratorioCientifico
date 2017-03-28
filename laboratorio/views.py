@@ -273,6 +273,8 @@ def obtenerTransacciones(request):
     json_string = json.dumps(listaTransacciones, cls=Convertidor, ensure_ascii=False, default=json_default)
     return JsonResponse(json_string, safe=False)
 
+
+#Obtiene la lista de transacciones para mostrarla en la tabla del UI
 @csrf_exempt
 def obtenerTransaccion(request):
     time.sleep(0.3)
@@ -291,6 +293,10 @@ def obtenerBodega(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
 
+#Crea una transaccion de inventario:
+#Recibe bodega origen con localizacion (Nivel, Seccion)
+#Bodega destino con localizacion (Nivel, Seccion)
+#Producto y cantidad a mover
 
 @csrf_exempt
 def crear_transaccion(request):
@@ -321,6 +327,10 @@ def crear_transaccion(request):
         tran_json = json.loads(serializers.serialize('json', [transaccion]));
         return JsonResponse(tran_json, safe=False)
       
+
+#Ejecuta la transaccion de inventario: Afecta las cantidades de producto por un movimento pedido
+#Resta de la bodega origen y suma o crea registro en la bodega destino
+
 @csrf_exempt
 def ejecutar_transaccion(transaccion):
     try:
