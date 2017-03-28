@@ -2,6 +2,11 @@ import json
 import decimal
 import datetime
 
+"""Clase - Auxiliar  BodegaVista.
+
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class BodegaVista():
     id = 0
     serial = ""
@@ -15,7 +20,11 @@ class BodegaVista():
     tipo_bodega = ""
     responsable = ""
 
+"""Clase - Auxiliar  ProductosBodegaVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class ProductosBodegaVista():
     id = 0
     bodega = ""
@@ -25,32 +34,59 @@ class ProductosBodegaVista():
     cantidad = 0
     unidad_medida = ""
 
+"""Clase -  Convertidor.
+
+Clase que sirve como convertidor de json a objeto
+
+"""
 class Convertidor(json.JSONEncoder):
+    """Metodo por defecto de la clase.
+    """
     def default(self, obj):
         return obj.__dict__
 
+"""Clase - Auxiliar  RecursoBusquedaVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class RecursoBusquedaVista():
     id = 0
     nombre = ""
-    unidadesExistentes=""
-    unidad_medida=""
-    fechaTransaccion=""
-    bodegaActual=""
+    unidadesExistentes = ""
+    unidad_medida = ""
+    fechaTransaccion = ""  # Fecha en string
+    bodegaActual = ""
+    hidden1 = ""
 
+"""Clase - Auxiliar  RecursoBusquedaDetalleVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class RecursoBusquedaDetalleVista():
     id=0
     fecha = ""
     recurso = ""
-    tipoTransaccion = ""
+    tipoTransaccion = ""  # TIPOTRX
     bodegaOrigen = ""
+    nivel_origen = ""
+    seccion_origen = ""
     bodegaDestino = ""
+    nivel_destino = ""
+    seccion_destino = ""
+    cantidad = ""
+    unidad_medida = ""
     usuario = ""
     autoriza = ""
     comentarios = ""
+    estadoTrans = ""  # STATUSTRX
 
+"""Clase - Auxiliar  ProductoVista.
 
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class ProductoVista():
     id = 0
     codigo = ""
@@ -63,10 +99,16 @@ class ProductoVista():
     unidad_medida = ""
     unidad_unitaria = ""
     imageFile = ""
+    proveedor = ""
 
 # HU-LCINV-13
 # GZ
 # Vista para formatear los datos a presentar en el UI
+"""Clase - Auxiliar  TransaccionVista.
+
+Clase que sirve de vista para objetos a mostrar al usuario
+
+"""
 class TransaccionVista():
     id = 0
     tipo = ""
@@ -88,7 +130,8 @@ class TransaccionVista():
 # HU-LCINV-13
 # GZ
 # Manejo de fechas en formato ISO para presentar en el UI
-
+"""Metodo que formatea a json
+"""
 def json_default(value):
     if isinstance(value, datetime.date):
         return datetime.date.isoformat(value)
