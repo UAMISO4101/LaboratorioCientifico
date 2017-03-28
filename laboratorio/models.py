@@ -27,7 +27,7 @@ class Tipo(models.Model):
 """Clase - Modelo Bodega.
 """
 class Bodega(models.Model):
-    serial = models.CharField(max_length=50, unique=True, null=False)
+    serial = models.CharField(max_length=50, unique=True, null=True)
     nombre = models.CharField(max_length=100, null=True)
     ubicacion = models.CharField(max_length=100, null=True)
     niveles = models.IntegerField(null=True)
