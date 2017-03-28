@@ -3,9 +3,7 @@ import decimal
 import datetime
 
 """Clase - Auxiliar  BodegaVista.
-
 Clase que sirve de vista para objetos a mostrar al usuario
-
 """
 class BodegaVista():
     id = 0
@@ -19,11 +17,10 @@ class BodegaVista():
     estado = ""
     tipo_bodega = ""
     responsable = ""
+    unidad_medida = ""
 
 """Clase - Auxiliar  ProductosBodegaVista.
-
 Clase que sirve de vista para objetos a mostrar al usuario
-
 """
 class ProductosBodegaVista():
     id = 0
@@ -35,9 +32,7 @@ class ProductosBodegaVista():
     unidad_medida = ""
 
 """Clase -  Convertidor.
-
 Clase que sirve como convertidor de json a objeto
-
 """
 class Convertidor(json.JSONEncoder):
     """Metodo por defecto de la clase.
@@ -46,9 +41,7 @@ class Convertidor(json.JSONEncoder):
         return obj.__dict__
 
 """Clase - Auxiliar  RecursoBusquedaVista.
-
 Clase que sirve de vista para objetos a mostrar al usuario
-
 """
 class RecursoBusquedaVista():
     id = 0
@@ -60,9 +53,7 @@ class RecursoBusquedaVista():
     hidden1 = ""
 
 """Clase - Auxiliar  RecursoBusquedaDetalleVista.
-
 Clase que sirve de vista para objetos a mostrar al usuario
-
 """
 class RecursoBusquedaDetalleVista():
     id=0
@@ -83,9 +74,7 @@ class RecursoBusquedaDetalleVista():
     estadoTrans = ""  # STATUSTRX
 
 """Clase - Auxiliar  ProductoVista.
-
 Clase que sirve de vista para objetos a mostrar al usuario
-
 """
 class ProductoVista():
     id = 0
@@ -103,9 +92,7 @@ class ProductoVista():
 
 
 """Clase - Auxiliar  TransaccionVista.
-
 Clase que sirve de vista para objetos a mostrar al usuario
-
 """
 class TransaccionVista():
     id = 0

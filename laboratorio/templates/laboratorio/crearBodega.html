@@ -72,6 +72,10 @@
             <select id="tipo_bodega" name="tipo_bodega" class="selectpicker form-control" required>
             </select>
             <br/>
+            <label >Unidad de Medida</label>
+            <select id="unidad_medida" name="unidad_medida" class="selectpicker form-control" required>
+            </select>
+            <br/>
             <br/>
             <br/>
             <input type="submit" value="Guardar" class="btn btn-primary"/>
@@ -105,6 +109,14 @@
             tipoBodega.append($("<option />").val("").text("Seleccione Tipo..."));
             $(data).each(function() {
                 tipoBodega.append($("<option />").val(this.pk).text(this.fields.nombre));
+            });
+        });
+        $.getJSON("../obtenerUnidadesMedida").done(function (data) {
+            data =  $.parseJSON(data);
+            var unidad_medida = $("#unidad_medida");
+            unidad_medida.append($("<option />").val("").text("Seleccione Unidad..."));
+            $(data).each(function() {
+                unidad_medida.append($("<option />").val(this.pk).text(this.fields.nombre));
             });
         });
         $.getJSON("../obtenerUsuarios").done(function (data) {
@@ -154,6 +166,7 @@
                         $("#responsable").val(bodega.fields["usuario"]);
                         $("#tipo_bodega").val(bodega.fields["tipo_bodega"]);
                         $("#id_bodega_guardada").val(bodega.pk);
+                        $("#unidad_medida").val(bodega.fields["unidad_medida"]);
                     }
                 });
             }

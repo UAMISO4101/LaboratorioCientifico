@@ -52,12 +52,25 @@ def ir_crear_bodega(request):
 """
 def ir_bodegas(request):
     return render(request, "laboratorio/bodegas.html")
+
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al menu de registro de materiales e insumos
 def ir_recursos(request):
     return render(request, "laboratorio/recursos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al formulario de registro de insumos
 def ir_regitrarInsumos(request):
     return render(request, "laboratorio/registroInsumos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar a la lista de recursos
 def ir_ver_recursos(request):
     return render(request, "laboratorio/verRecursos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al formulario de edicion de insumos
 def ir_editarRecurso(request, recurso_id=1):
     return render(request, "laboratorio/edicionInsumos.html")
 
@@ -69,10 +82,8 @@ def ir_transacciones(request):
 
 
 """Metodo obtener los tipos de bodega.
-
 HU: EC-LCINV2: Crear Bodega
 Sirve para obtener de la tabla Tipos los tipos de bodega en el sistema
-
 request, es la peticion dada por el usuario
 return, formato json con los tipos de bodega
 """
@@ -82,13 +93,22 @@ def obtenerTiposBodega(request):
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+"""Metodo obtener los tipos de unidad de medida.
+HU: EC-LCINV4 - EC-LCINV14: Mostrar Unidades de Medida
+Sirve para obtener de la tabla Tipos los tipos de unidad de medida
+request, es la peticion dada por el usuario
+return, formato json con los tipos de unidad de medida
+"""
+@csrf_exempt
+def obtenerUnidadesMedida(request):
+    qs = Tipo.objects.filter(grupo__contains="CONVERSION").distinct('nombre')
+    qs_json = serializers.serialize('json', qs)
+    return JsonResponse(qs_json, safe=False)
 
 
 """Metodo obtener los usuarios del sistema.
-
 HU: EC-LCINV2: Crear Bodega
 Sirve para obtener los usuarios que existen en el sistema
-
 request, es la peticion dada por el usuario
 return, formato json con los usuarios
 """
@@ -99,10 +119,8 @@ def obtenerUsuarios(request):
     return JsonResponse(qs_json, safe=False)
 
 """Metodo crear bodega.
-
 HU: EC-LCINV2: Crear Bodega
 Sirve para la creacion o actualizacion de bodegas del sistema
-
 request, es la peticion dada por el usuario
 return, formato json con un mensaje indicando si fue exitoso o no
 """
@@ -121,7 +139,8 @@ def crearBodega(request):
                         ubicacion = request.POST['ubicacion'],
                         fecha_creacion = datetime.now(),
                         tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first(),
-                        usuario=Usuario.objects.filter(id=request.POST['responsable']).first())
+                        usuario=Usuario.objects.filter(id=request.POST['responsable']).first(),
+                        unidad_medida=Tipo.objects.filter(id=request.POST['unidad_medida']).first())
 
             if not Bodega.objects.filter(serial=bodega.serial).exists():
                 bodega.temperatura_minima.quantize(dosLugares, 'ROUND_DOWN')
@@ -143,6 +162,7 @@ def crearBodega(request):
                 bodega.ubicacion = request.POST['ubicacion']
                 bodega.tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first()
                 bodega.usuario = Usuario.objects.filter(id=request.POST['responsable']).first()
+                bodega.unidad_medida = Tipo.objects.filter(id=request.POST['unidad_medida']).first()
 
                 bodegaBDs = Bodega.objects.filter(serial=bodega.serial)
                 actualizar = True
@@ -376,6 +396,7 @@ def obtenerBodegas(request):
         bod.temperatura_media = str(bodega.temperatura_media)
         bod.ubicacion = bodega.ubicacion
         bod.tipo_bodega = bodega.tipo_bodega.nombre
+        bod.unidad_medida = bodega.unidad_medida.nombre
         if bodega.estado:
             bod.estado = "Activo"
         else:
@@ -457,8 +478,8 @@ def crear_transaccion(request):
             producto_bodega_origen = ProductosEnBodega.objects.filter(id=json_tran['producto_bodega_origen']).first(),
             producto=Producto.objects.get(pk=json_tran['producto']),
             cantidad=json_tran['cantidad'],
-            unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida']),
-            estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada').first().id),
+            unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida'], grupo='MEDIDAPRODUCTO'),
+            estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSTRX').first().id),
             fecha_creacion=datetime.now(),
             fecha_ejecucion=datetime.now(),
             usuario=Usuario.objects.get(pk=1),
@@ -592,6 +613,12 @@ def obtenerPPPorProtocolo(request):
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST que hace el registro de un nuevo recurso (Insumo/Reactivo)
+#Recibe los campos ingresados en el formulario de registro de recursos
+#Si no hay otro recurso con el mismo codigo o nombre se hace el registro y se retorna un mensaje ok en formato JSON
+#En caso contrario se indica el respectivo mensaje de error en formato JSON
 @csrf_exempt
 def registrarInsumoReactivo(request):
     mensaje = ""
@@ -639,12 +666,20 @@ def registrarInsumoReactivo(request):
 
     return JsonResponse({"mensaje":mensaje})
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar un JSON con un arreglo las medidas (unidades del S.I)
+#con las que se caracteriza un recurso
 @csrf_exempt
 def obtenerTiposMedida(request):
     qs = Tipo.objects.filter(grupo="MEDIDAPRODUCTO")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar todos los recursos/productos guardados
+#en la base de datos en un arreglo con formato JSON
 @csrf_exempt
 def obtenerRecursos(request):
     qs = Producto.objects.all()
@@ -666,6 +701,10 @@ def obtenerRecursos(request):
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar un recurso en formato JSON cuando en el
+#request de la peticion llega el id de ese recurso
 @csrf_exempt
 def obtenerRecurso(request):
     time.sleep(0.3)
@@ -675,6 +714,12 @@ def obtenerRecurso(request):
     json_recurso = json.dumps(struct[0])
     return JsonResponse({"producto": json_recurso})
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para guardar la edicion que se ha hecho de un recurso
+#Solo se guardara la edicion si no se presentan conflictos de codigo o nombre con otros recursos
+#y si estan todos los campos completos a excepcion de la imagen que es opcional, se retorna un
+#mensaje en formato JSON
 @csrf_exempt
 def guardarEdicionInsumo(request):
 
@@ -760,6 +805,10 @@ def guardarEdicionInsumo(request):
 
     return JsonResponse({"mensaje": mensaje})
 
+#HU: LCINV-4, 12
+#SA - EC
+#Metodo que representa el servicio REST para la conversion de unidades que sera
+#invocado en la capa de presentacion, retorna el valor numerico de la conversion solicitada en formato JSON
 @csrf_exempt
 def convertirUnidad(request):
 
@@ -769,6 +818,10 @@ def convertirUnidad(request):
     res = utils.convertir(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
     return JsonResponse({"conversion":res})
 
+#HU: SA-LCVIN-3
+#SA
+#Metodo que representa el servicio REST para obtener los proveedores actuales de insumos
+#se retornara una lista de los proveedores en formato JSON
 @csrf_exempt
 def obtenerProveedores(request):
 
