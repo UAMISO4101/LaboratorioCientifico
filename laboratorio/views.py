@@ -24,25 +24,53 @@ from psycopg2.extensions import JSON
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
-from laboratorio.utils.utils import Utils
+from laboratorio.utils.utils import utils
 
+# Navegacion de paginas
 
+"""Metodo a navegar index.
+"""
 def ir_index(request):
     return render(request,"laboratorio/index.html")
+
+"""Metodo a navegar pie de pagina.
+"""
 def ir_pie(request):
     return render(request,"laboratorio/pie.html")
+
+"""Metodo a navegar encabezado.
+"""
 def ir_encabezado(request):
     return render(request,"laboratorio/encabezado.html")
+
+"""Metodo a navegar crear bodega.
+"""
 def ir_crear_bodega(request):
     return render(request, "laboratorio/crearBodega.html")
+
+"""Metodo a navegar lista de bodegas.
+"""
 def ir_bodegas(request):
     return render(request, "laboratorio/bodegas.html")
+
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al menu de registro de materiales e insumos
 def ir_recursos(request):
     return render(request, "laboratorio/recursos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al formulario de registro de insumos
 def ir_regitrarInsumos(request):
     return render(request, "laboratorio/registroInsumos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar a la lista de recursos
 def ir_ver_recursos(request):
     return render(request, "laboratorio/verRecursos.html")
+#HU: SA-LCINV-3
+#SA
+#Metodo a navegar al formulario de edicion de insumos
 def ir_editarRecurso(request, recurso_id=1):
     return render(request, "laboratorio/edicionInsumos.html")
 
@@ -53,18 +81,57 @@ def ir_transacciones(request):
     return render(request,"laboratorio/transacciones.html")
 
 
+"""Metodo obtener los tipos de bodega.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para obtener de la tabla Tipos los tipos de bodega en el sistema
+
+request, es la peticion dada por el usuario
+return, formato json con los tipos de bodega
+"""
 @csrf_exempt
 def obtenerTiposBodega(request):
     qs = Tipo.objects.filter(grupo="BODEGA")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+"""Metodo obtener los tipos de unidad de medida.
+
+HU: EC-LCINV4 - EC-LCINV14: Mostrar Unidades de Medida
+Sirve para obtener de la tabla Tipos los tipos de unidad de medida
+
+request, es la peticion dada por el usuario
+return, formato json con los tipos de unidad de medida
+"""
+@csrf_exempt
+def obtenerUnidadesMedida(request):
+    qs = Tipo.objects.filter(grupo__contains="CONVERSION").distinct('nombre')
+    qs_json = serializers.serialize('json', qs)
+    return JsonResponse(qs_json, safe=False)
+
+
+"""Metodo obtener los usuarios del sistema.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para obtener los usuarios que existen en el sistema
+
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
 @csrf_exempt
 def obtenerUsuarios(request):
     qs = Usuario.objects.all()
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+"""Metodo crear bodega.
+
+HU: EC-LCINV2: Crear Bodega
+Sirve para la creacion o actualizacion de bodegas del sistema
+
+request, es la peticion dada por el usuario
+return, formato json con un mensaje indicando si fue exitoso o no
+"""
 @csrf_exempt
 def crearBodega(request):
     mensaje = ""
@@ -80,7 +147,8 @@ def crearBodega(request):
                         ubicacion = request.POST['ubicacion'],
                         fecha_creacion = datetime.now(),
                         tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first(),
-                        usuario=Usuario.objects.filter(id=request.POST['responsable']).first())
+                        usuario=Usuario.objects.filter(id=request.POST['responsable']).first(),
+                        unidad_medida=Tipo.objects.filter(id=request.POST['unidad_medida']).first())
 
             if not Bodega.objects.filter(serial=bodega.serial).exists():
                 bodega.temperatura_minima.quantize(dosLugares, 'ROUND_DOWN')
@@ -102,6 +170,7 @@ def crearBodega(request):
                 bodega.ubicacion = request.POST['ubicacion']
                 bodega.tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first()
                 bodega.usuario = Usuario.objects.filter(id=request.POST['responsable']).first()
+                bodega.unidad_medida = Tipo.objects.filter(id=request.POST['unidad_medida']).first()
 
                 bodegaBDs = Bodega.objects.filter(serial=bodega.serial)
                 actualizar = True
@@ -120,8 +189,11 @@ def crearBodega(request):
     return JsonResponse({"mensaje": mensaje})
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# request: Petición desde el form de usuario.
+# return: Página html con la plantilla y los resultados de la búsqueda asociada.
 @csrf_exempt
 def verProductoBusqueda(request):
     global bproducto
@@ -142,8 +214,12 @@ def verProductoBusqueda(request):
     return render(request, "laboratorio/busquedaproducto.html")
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# Aquí puntualmente es donde se hace el filtro.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 @csrf_exempt
 def busquedaProducto(request):
     # Filtra por la expresion; si no hay nada, muestra todos los productos
@@ -157,22 +233,17 @@ def busquedaProducto(request):
         else: #Filtro por producto y bodega
             qs = ProductosEnBodega.objects.filter(producto__codigo=bproducto, bodega__serial=bBodega)
 
-    #fecha1 = bFechaTransaccion
     listaRecurso = []
 
     for peb in qs:
         req = RecursoBusquedaVista()
         req.id = peb.id
         req.nombre = peb.producto.nombre
-        #req.unidadesExistentes = obtenerUnidadesProducto(recurso.id)
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
         req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
-        # dtfechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 3)
-        # req.bodegaActual=obtenerBodegaAcutalxRecursoxPEB(recurso)
         req.bodegaActual = peb.bodega.nombre
-        #req.bodegaActual = bFechaTransaccion  # ##########
-        req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion
+        req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion  #Variable oculta para debug en html
 
         if bFechaTransaccion == "":
             listaRecurso.append(req)
@@ -185,8 +256,12 @@ def busquedaProducto(request):
     return JsonResponse(json_string, safe=False)
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Obtiene la última transacción ordenada por fecha de ejecucuón (la más reciente).
+# peb: Petición desde el form de usuario.
+# campo: El campo que se requiere retornar.
+# return: El dato puntual solicitado.
 def obtenerBodegaAcutalxPEBxTransaccion(peb, campo):
     qs = TransaccionInventario.objects.filter(producto_bodega_destino=peb).order_by('-fecha_ejecucion')[:1]
     retorno="N/A"
@@ -201,8 +276,11 @@ def obtenerBodegaAcutalxPEBxTransaccion(peb, campo):
     return retorno
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Obtiene el nombre completo del usuario consultado.
+# usuario: Id de usuario.
+# return: Nombre de usuario compuesto por Nombre y Apellido.
 def obtenerNombreUsuarioxId(usuario):
     qs = Usuario.objects.filter(id=usuario)[:1]
 
@@ -213,8 +291,11 @@ def obtenerNombreUsuarioxId(usuario):
     return retorno
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Muestra el detalle de transacciones para un Producto dado.
+# request: Petición desde el form de usuario.
+# return: Página html con la plantilla y los resultados de la búsqueda asociada.
 @csrf_exempt
 def verProductoBusquedaDetalle(request):
     global globvar
@@ -223,8 +304,11 @@ def verProductoBusquedaDetalle(request):
     return render(request, "laboratorio/busquedaproductodetalle.html")
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Muestra el detalle de transacciones para un Producto dado. Esta es la búsqueda como tal.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 def busquedaProductoDetalle(request):
     idpeb = int(globvar)
     qs = TransaccionInventario.objects.filter(producto_bodega_destino_id=idpeb).order_by('-fecha_creacion')
@@ -237,37 +321,32 @@ def busquedaProductoDetalle(request):
         req.recurso = transaccion.producto.nombre
         fecha = localtime(transaccion.fecha_ejecucion)
         req.fecha = fecha.strftime('%Y-%m-%d %H:%M:%S')
-        req.tipoTransaccion = transaccion.tipo.nombre  #TIPOTRX
+        req.tipoTransaccion = transaccion.tipo.nombre  # TIPOTRX
         req.estadoTrans = transaccion.estado.nombre  # STATUSTRX
         req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
-        req.nivel_origen = ""  #ya
-        req.seccion_origen = ""  #ya
+        req.nivel_origen = ""  # n/a
+        req.seccion_origen = ""  # n/a
         req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
-        req.nivel_destino = ""  #ya
-        req.seccion_destino = ""  #ya
+        req.nivel_destino = ""  # n/a
+        req.seccion_destino = ""  # n/a
         req.cantidad = str(transaccion.cantidad)
         req.unidad_medida = transaccion.unidad_medida.nombre
         req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
         req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
-        # req.usuario = obtenerNombreUsuarioxId(            transaccion.usuario.id)
-        # req.autoriza = obtenerNombreUsuarioxId(            transaccion.autoriza.id)
+        # req.usuario = obtenerNombreUsuarioxId(transaccion.usuario.id)
+        # req.autoriza = obtenerNombreUsuarioxId(transaccion.autoriza.id)
         req.comentarios = transaccion.comentarios
         listaTrans.append(req)
-
-
-
-
-
-
-
-
 
     json_string = json.dumps(listaTrans, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Lista los productos, esto se utiliza para mostrar el listado en el html para la búsqueda.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 @csrf_exempt
 def llenarListadoProductosBusqueda(request):
     qs = Producto.objects.all().order_by('nombre')
@@ -275,32 +354,16 @@ def llenarListadoProductosBusqueda(request):
     return JsonResponse(qs_json, safe=False)
 
 
-# LCINV-5
-# FB
+# HU: LCINV-5
+# FB.
+# Lista las bodegas, esto se utiliza para mostrar el listado en el html para la búsqueda.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
 @csrf_exempt
 def llenarListadoBodegasBusqueda(request):
     qs = Bodega.objects.all().order_by('nombre')
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
-
-
-# LCINV-5
-# FB
-#def obtenerBodegaAcutalxRecursoxPEB(recurso):
-#    qs = ProductosEnBodega.objects.filter(producto=recurso)[:1]
-#    retorno="N/A"
-#    if qs.exists():
-#        retorno = qs[0].bodega.nombre
-#    return retorno
-
-# LCINV-5
-# FB
-#def obtenerUnidadesProducto(idProducto):
-#    qs = ProductosEnBodega.objects.filter(producto__id=idProducto)[:1]
-#    retorno="N/A"
-#    if qs.exists():
-#        retorno = qs[0].cantidad
-#    return retorno
 
 
 @csrf_exempt
@@ -318,6 +381,7 @@ def obtenerBodegas(request):
         bod.temperatura_media = str(bodega.temperatura_media)
         bod.ubicacion = bodega.ubicacion
         bod.tipo_bodega = bodega.tipo_bodega.nombre
+        bod.unidad_medida = bodega.unidad_medida.nombre
         if bodega.estado:
             bod.estado = "Activo"
         else:
@@ -354,6 +418,9 @@ def obtenerTransacciones(request):
     json_string = json.dumps(listaTransacciones, cls=Convertidor, ensure_ascii=False, default=json_default)
     return JsonResponse(json_string, safe=False)
 
+#HU-LCINV-13
+#GZ
+#Obtiene la lista de transacciones para mostrarla en la tabla del UI
 @csrf_exempt
 def obtenerTransaccion(request):
     time.sleep(0.3)
@@ -372,6 +439,12 @@ def obtenerBodega(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
 
+#HU-LCINV-13
+#GZ
+#Crea una transaccion de inventario:
+#Recibe bodega origen con localizacion (Nivel, Seccion)
+#Bodega destino con localizacion (Nivel, Seccion)
+#Producto y cantidad a mover
 
 @csrf_exempt
 def crear_transaccion(request):
@@ -401,7 +474,13 @@ def crear_transaccion(request):
         transaccion.save()
         tran_json = json.loads(serializers.serialize('json', [transaccion]));
         return JsonResponse(tran_json, safe=False)
-      
+
+
+# HU-LCINV-13
+# GZ
+#Ejecuta la transaccion de inventario: Afecta las cantidades de producto por un movimento pedido
+#Resta de la bodega origen y suma o crea registro en la bodega destino
+
 @csrf_exempt
 def ejecutar_transaccion(transaccion):
     try:
@@ -444,7 +523,8 @@ def ejecutar_transaccion(transaccion):
     except Exception as e:
         print 'EXCEPCION: %s (%s)' % (e.message, type(e))
 
-        
+# HU-LCINV-13
+# GZ
 #Funcion GET que trae listas de valores segun el tipo
 @csrf_exempt
 def obtenerTipos(request):
@@ -452,7 +532,9 @@ def obtenerTipos(request):
     qs = Tipo.objects.filter(grupo=grupo)
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
-      
+
+# HU-LCINV-13
+# GZ
 # Obtiene los productos de la bodega seleccionada
 @csrf_exempt
 def obtenerProductosBodega(request):
@@ -516,6 +598,12 @@ def obtenerPPPorProtocolo(request):
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST que hace el registro de un nuevo recurso (Insumo/Reactivo)
+#Recibe los campos ingresados en el formulario de registro de recursos
+#Si no hay otro recurso con el mismo codigo o nombre se hace el registro y se retorna un mensaje ok en formato JSON
+#En caso contrario se indica el respectivo mensaje de error en formato JSON
 @csrf_exempt
 def registrarInsumoReactivo(request):
     mensaje = ""
@@ -563,12 +651,20 @@ def registrarInsumoReactivo(request):
 
     return JsonResponse({"mensaje":mensaje})
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar un JSON con un arreglo las medidas (unidades del S.I)
+#con las que se caracteriza un recurso
 @csrf_exempt
 def obtenerTiposMedida(request):
     qs = Tipo.objects.filter(grupo="MEDIDAPRODUCTO")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar todos los recursos/productos guardados
+#en la base de datos en un arreglo con formato JSON
 @csrf_exempt
 def obtenerRecursos(request):
     qs = Producto.objects.all()
@@ -590,6 +686,10 @@ def obtenerRecursos(request):
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para retornar un recurso en formato JSON cuando en el
+#request de la peticion llega el id de ese recurso
 @csrf_exempt
 def obtenerRecurso(request):
     time.sleep(0.3)
@@ -599,6 +699,12 @@ def obtenerRecurso(request):
     json_recurso = json.dumps(struct[0])
     return JsonResponse({"producto": json_recurso})
 
+#HU: SA-LCINV-3
+#SA
+#Metodo que representa el servicio REST para guardar la edicion que se ha hecho de un recurso
+#Solo se guardara la edicion si no se presentan conflictos de codigo o nombre con otros recursos
+#y si estan todos los campos completos a excepcion de la imagen que es opcional, se retorna un
+#mensaje en formato JSON
 @csrf_exempt
 def guardarEdicionInsumo(request):
 
@@ -629,7 +735,7 @@ def guardarEdicionInsumo(request):
         modificacion = False
         error = False
         if producto != None:
-            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
                 if producto.codigo != codigo or producto.nombre != nombre:
                     try:
                         Producto.objects.get(codigo=codigo)
@@ -684,15 +790,23 @@ def guardarEdicionInsumo(request):
 
     return JsonResponse({"mensaje": mensaje})
 
+#HU: LCINV-4, 12
+#SA - EC
+#Metodo que representa el servicio REST para la conversion de unidades que sera
+#invocado en la capa de presentacion, retorna el valor numerico de la conversion solicitada en formato JSON
 @csrf_exempt
 def convertirUnidad(request):
 
     cantidad = request.GET['cantidad']
     medidaOrigen = request.GET['medidaOrigen']
     medidaDestino = request.GET['medidaDestino']
-    res = Utils.conversion(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
+    res = utils.convertir(cantidad=cantidad, medidaOrigen=medidaOrigen, medidaDestino=medidaDestino)
     return JsonResponse({"conversion":res})
 
+#HU: SA-LCVIN-3
+#SA
+#Metodo que representa el servicio REST para obtener los proveedores actuales de insumos
+#se retornara una lista de los proveedores en formato JSON
 @csrf_exempt
 def obtenerProveedores(request):
 

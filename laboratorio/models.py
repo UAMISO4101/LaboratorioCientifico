@@ -4,20 +4,28 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 # Create your models here.
+"""Clase - Modelo Rol.
+"""
 class Rol(models.Model):
     nombre = models.CharField(max_length=100)
 
+"""Clase - Modelo Usuario.
+"""
 class Usuario(AbstractUser):
     telefono = models.CharField(max_length=1000)
     imageFile = models.ImageField(upload_to='images', null=True,  blank=True)
     roles = models.ManyToManyField(Rol)
 
+"""Clase - Modelo Tipo.
+"""
 class Tipo(models.Model):
     grupo = models.CharField(max_length=100, null=True)
     nombre = models.CharField(max_length=100, null=True)
     medidaDestino = models.CharField(max_length=100, null=True)
     valor = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
+"""Clase - Modelo Bodega.
+"""
 class Bodega(models.Model):
     serial = models.CharField(max_length=50, unique=True, null=False)
     nombre = models.CharField(max_length=100, null=True)
@@ -31,10 +39,12 @@ class Bodega(models.Model):
     usuario_actualizacion = models.IntegerField(null=True)
     fecha_creacion = models.DateTimeField(null=True)
     fecha_actualizacion = models.DateTimeField(null=True)
-    #tipo_bodega = models.ForeignKey(Tipo, null=True)
+    unidad_medida = models.ForeignKey(Tipo, null=True)
     tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  #Segun el excel se toma el nombre BODEGA
     usuario = models.ForeignKey(Usuario, null=True)
 
+"""Clase - Modelo Producto.
+"""
 class Producto(models.Model):
     codigo = models.CharField(max_length=10, unique= True, null= True)
     nombre = models.CharField(max_length=50, unique=True)
@@ -78,6 +88,8 @@ class Producto(models.Model):
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
     proveedor = models.ForeignKey(Usuario, null=True)
 
+"""Clase - Modelo ProductosEnBodega.
+"""
 class ProductosEnBodega(models.Model):
     bodega = models.ForeignKey(Bodega, null=True)
     producto = models.ForeignKey(Producto, null=True)
@@ -86,6 +98,8 @@ class ProductosEnBodega(models.Model):
     cantidad = models.IntegerField(null=True)
     unidad_medida = models.ForeignKey(Tipo, related_name="prodbod_tipo_unidadmedida", null=True)
 
+"""Clase - Modelo TransaccionInventario.
+"""
 class TransaccionInventario(models.Model):
     fecha_creacion = models.DateTimeField(null=False)
     fecha_ejecucion = models.DateTimeField(null=False)
@@ -106,6 +120,8 @@ class TransaccionInventario(models.Model):
     autoriza = models.ForeignKey(Usuario, related_name="autorizaTrx", null=True)
     comentarios = models.CharField(max_length=200, null=True)
 
+"""Clase - Modelo Protocolo.
+"""
 class Protocolo(models.Model):
 
     version = models.BigIntegerField(null=True)
@@ -113,6 +129,8 @@ class Protocolo(models.Model):
     fecha = models.DateField(null=True)
     descripcion = models.CharField(max_length=1000)
 
+"""Clase - Modelo ProductoProtocolo.
+"""
 class ProductoProtocolo(models.Model):
 
     descripcion = models.CharField(max_length=50)
@@ -120,6 +138,8 @@ class ProductoProtocolo(models.Model):
     protocolo = models.ForeignKey(Protocolo, on_delete=models.CASCADE, null=True)
     producto = models.ForeignKey(Producto, null=True)
 
+"""Clase - Modelo Experimento.
+"""
 class Experimento(models.Model):
 
     codigo = models.CharField(max_length=10, unique=True, null=True)

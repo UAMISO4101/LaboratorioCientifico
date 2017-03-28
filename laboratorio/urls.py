@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
+    url(r'^obtenerUnidadesMedida/$', views.obtenerUnidadesMedida, name='obtenerUnidadesMedida'),
 
     url(r'^transaccion/$', views.ir_crear_transaccion, name='transaccion'),
     url(r'^crearTransaccion/$', views.crear_transaccion, name='crearTransaccion'),
@@ -48,5 +49,5 @@ urlpatterns = [
     url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
     url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
     url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
-    # url(r'^buscarproducto/$', views.busquedaProducto, name='buscarproducto'),
+    url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 ]

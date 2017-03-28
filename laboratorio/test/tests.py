@@ -5,9 +5,20 @@ from django.http.request import HttpRequest
 
 from laboratorio.views import crearBodega, obtenerBodega
 
+"""Clase BodegaTestCase.
 
+Clase encargada de generar las pruebas unitarias para creacion de bodegas
+
+"""
 class BodegaTestCase(unittest.TestCase):
 
+    """Metodo test existe bodega.
+
+    Prueba unitaria que verifica si una bodega existe en el sistema, el metodo de view: crearBodega
+
+    La respuesta debe contener la cadena "ok", creando asi una bodega en base de datos
+
+    """
     def test_1_crear_bodega(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -36,6 +47,13 @@ class BodegaTestCase(unittest.TestCase):
         jsonResponse = crearBodega(request)
         self.assertIn("ok", jsonResponse.content)
 
+    """Metodo test existe bodega.
+
+    Prueba unitaria que verifica si una bodega existe en el sistema, el metodo de view: crearBodega
+
+    La respuesta debe contener la cadena "ya existe", si encontro una bodega
+
+    """
     def test_2_existe_bodega(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -51,6 +69,14 @@ class BodegaTestCase(unittest.TestCase):
         jsonResponse = crearBodega(request)
         self.assertIn("ya existe", jsonResponse.content)
 
+    """Metodo test actualizar bodega guardada donde serial esta repetido.
+
+    Prueba unitaria que verifica si una bodega no se actualiza debido a su serial,
+    el metodo a verificar de view es: crearBodega
+
+    La respuesta debe contener la cadena "ya existe", si encontro una bodega con el mismo serial
+
+    """
     def test_3_actualizar_bodega_guardada_serial_repetido(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -67,6 +93,14 @@ class BodegaTestCase(unittest.TestCase):
         jsonResponse = crearBodega(request)
         self.assertIn("ya existe", jsonResponse.content)
 
+    """Metodo test actualizar bodega guardada donde serial no esta repetido.
+
+    Prueba unitaria que verifica si una bodega se actualiza correctamente en el sistema,
+    el metodo a verificar de view es: crearBodega
+
+    La respuesta debe contener la cadena "ok", si encontro una bodega y la actualizo
+
+    """
     def test_4_actualizar_bodega_guardada_serial_no_repetido(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -90,5 +124,7 @@ class BodegaTestCase(unittest.TestCase):
         bodega = json.loads(bodega["bodega"])
         self.assertEquals("prueba12", bodega["fields"]["serial"])
 
+"""Metodo principal de test.
+"""
 if __name__ == '__main__':
     unittest.main()
