@@ -95,6 +95,19 @@ def obtenerTiposBodega(request):
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
+"""Metodo obtener los tipos de unidad de medida.
+
+HU: EC-LCINV4 - EC-LCINV14: Mostrar Unidades de Medida
+Sirve para obtener de la tabla Tipos los tipos de unidad de medida
+
+request, es la peticion dada por el usuario
+return, formato json con los tipos de unidad de medida
+"""
+@csrf_exempt
+def obtenerUnidadesMedida(request):
+    qs = Tipo.objects.filter(grupo__contains="CONVERSION").distinct('nombre')
+    qs_json = serializers.serialize('json', qs)
+    return JsonResponse(qs_json, safe=False)
 
 
 """Metodo obtener los usuarios del sistema.
@@ -134,7 +147,8 @@ def crearBodega(request):
                         ubicacion = request.POST['ubicacion'],
                         fecha_creacion = datetime.now(),
                         tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first(),
-                        usuario=Usuario.objects.filter(id=request.POST['responsable']).first())
+                        usuario=Usuario.objects.filter(id=request.POST['responsable']).first(),
+                        unidad_medida=Tipo.objects.filter(id=request.POST['unidad_medida']).first())
 
             if not Bodega.objects.filter(serial=bodega.serial).exists():
                 bodega.temperatura_minima.quantize(dosLugares, 'ROUND_DOWN')
@@ -156,6 +170,7 @@ def crearBodega(request):
                 bodega.ubicacion = request.POST['ubicacion']
                 bodega.tipo_bodega = Tipo.objects.filter(id=request.POST['tipo_bodega']).first()
                 bodega.usuario = Usuario.objects.filter(id=request.POST['responsable']).first()
+                bodega.unidad_medida = Tipo.objects.filter(id=request.POST['unidad_medida']).first()
 
                 bodegaBDs = Bodega.objects.filter(serial=bodega.serial)
                 actualizar = True
@@ -366,6 +381,7 @@ def obtenerBodegas(request):
         bod.temperatura_media = str(bodega.temperatura_media)
         bod.ubicacion = bodega.ubicacion
         bod.tipo_bodega = bodega.tipo_bodega.nombre
+        bod.unidad_medida = bodega.unidad_medida.nombre
         if bodega.estado:
             bod.estado = "Activo"
         else:

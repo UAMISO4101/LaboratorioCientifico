@@ -19,6 +19,7 @@ class BodegaVista():
     estado = ""
     tipo_bodega = ""
     responsable = ""
+    unidad_medida = ""
 
 """Clase - Auxiliar  ProductosBodegaVista.
 
