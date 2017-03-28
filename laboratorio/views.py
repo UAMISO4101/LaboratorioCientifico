@@ -389,6 +389,9 @@ def obtenerTransacciones(request):
     json_string = json.dumps(listaTransacciones, cls=Convertidor, ensure_ascii=False, default=json_default)
     return JsonResponse(json_string, safe=False)
 
+#HU-LCINV-13
+#GZ
+#Obtiene la lista de transacciones para mostrarla en la tabla del UI
 @csrf_exempt
 def obtenerTransaccion(request):
     time.sleep(0.3)
@@ -407,6 +410,12 @@ def obtenerBodega(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
 
+#HU-LCINV-13
+#GZ
+#Crea una transaccion de inventario:
+#Recibe bodega origen con localizacion (Nivel, Seccion)
+#Bodega destino con localizacion (Nivel, Seccion)
+#Producto y cantidad a mover
 
 @csrf_exempt
 def crear_transaccion(request):
@@ -436,7 +445,13 @@ def crear_transaccion(request):
         transaccion.save()
         tran_json = json.loads(serializers.serialize('json', [transaccion]));
         return JsonResponse(tran_json, safe=False)
-      
+
+
+# HU-LCINV-13
+# GZ
+#Ejecuta la transaccion de inventario: Afecta las cantidades de producto por un movimento pedido
+#Resta de la bodega origen y suma o crea registro en la bodega destino
+
 @csrf_exempt
 def ejecutar_transaccion(transaccion):
     try:
@@ -479,7 +494,8 @@ def ejecutar_transaccion(transaccion):
     except Exception as e:
         print 'EXCEPCION: %s (%s)' % (e.message, type(e))
 
-        
+# HU-LCINV-13
+# GZ
 #Funcion GET que trae listas de valores segun el tipo
 @csrf_exempt
 def obtenerTipos(request):
@@ -487,7 +503,9 @@ def obtenerTipos(request):
     qs = Tipo.objects.filter(grupo=grupo)
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
-      
+
+# HU-LCINV-13
+# GZ
 # Obtiene los productos de la bodega seleccionada
 @csrf_exempt
 def obtenerProductosBodega(request):
@@ -664,7 +682,7 @@ def guardarEdicionInsumo(request):
         modificacion = False
         error = False
         if producto != None:
-            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
                 if producto.codigo != codigo or producto.nombre != nombre:
                     try:
                         Producto.objects.get(codigo=codigo)
