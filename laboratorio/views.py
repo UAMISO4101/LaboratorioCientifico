@@ -235,6 +235,10 @@ def busquedaProducto(request):
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
         req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
+        #Convertir a unidades de preferencia
+        req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre, peb.bodega.unidad_medida.nombre))
+
+
 
         localizacion = ""
         if str(peb.nivel) != "":
@@ -446,6 +450,12 @@ def obtenerTransaccion(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"transaccion": json_bodega})
   
+"""Metodo obtenerBodega.
+HU: EC-LCINV2: Crear Bodega
+Sirve para la consulta de una bodega en especifica
+request, es la peticion dada por el usuario
+return, formato json de la bodega
+"""
 @csrf_exempt
 def obtenerBodega(request):
     time.sleep(0.3)
@@ -454,6 +464,20 @@ def obtenerBodega(request):
     struct = json.loads(qs_json)
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
+
+"""Metodo obtenerTipo.
+HU: EC-LCINV4: Insumes Volumen, Peso
+Sirve para la consulta de un tipo en especifico
+request, es la peticion dada por el usuario
+return, formato json del tipo
+"""
+@csrf_exempt
+def obtenerTipo(request):
+    qs = Tipo.objects.filter(id=request.GET['id_tipo'])
+    qs_json = serializers.serialize('json', qs)
+    struct = json.loads(qs_json)
+    json_tipo = json.dumps(struct[0])
+    return JsonResponse({"tipo": json_tipo})
 
 #HU-LCINV-13
 #GZ
@@ -573,7 +597,9 @@ def obtenerProductosBodega(request):
     json_pb = json.dumps(listaProductosBodegas, cls=Convertidor)
     return JsonResponse(json_pb, safe=False)        
         
-        
+# HU-LCINV-12
+# DA
+# Obtiene los experimentos en la aplicacion
 @csrf_exempt
 def obtenerExperimentos(request):
     qs = Experimento.objects.all().prefetch_related('asignado')
@@ -586,6 +612,9 @@ def obtenerExperimentos(request):
         respT.append(resp)
     return JsonResponse(respT, safe=False)
 
+# HU-LCINV-12
+# DA
+# Obtiene los experimentos en la aplicacion por username del usuario 'username'
 @csrf_exempt
 def obtenerExperimentosPorUsuario(request):
     usuario = Usuario.objects.get(username=request.GET['username'])
@@ -593,6 +622,9 @@ def obtenerExperimentosPorUsuario(request):
     qs_json = serializers.serialize('json', exp_usuario)
     return JsonResponse(qs_json, safe=False)
 
+# HU-LCINV-12
+# DA
+# Obtiene los protocolos asociados a un experimento segun su codigo 'codigo'
 @csrf_exempt
 def obtenerProtocolosPorExperimento(request):
     exp = Experimento.objects.filter(codigo=request.GET['codigo'])
@@ -600,6 +632,9 @@ def obtenerProtocolosPorExperimento(request):
     qs_json = serializers.serialize('json', prots_exp)
     return JsonResponse(qs_json, safe=False)
 
+# HU-LCINV-12
+# DA
+# Los productosprotocolo (objeto con enlace a un producto y la cantidad usada por el mismo) por protocolo segun su id
 @csrf_exempt
 def obtenerPPPorProtocolo(request):
     prot = Protocolo.objects.filter(id=request.GET['id'])
@@ -611,6 +646,9 @@ def obtenerPPPorProtocolo(request):
     resp = {'productoprotocolo': struct, 'producto': producto}
     return JsonResponse(resp, safe=False)
 
+# HU-LCINV-12
+# DA
+# Hace el render de la plantilla para la visualización de productos/insumos por experimento
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
