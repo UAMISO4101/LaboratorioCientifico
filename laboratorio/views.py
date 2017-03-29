@@ -5,6 +5,7 @@ import json
 import time
 from datetime import datetime
 from django.utils.timezone import localtime
+from operator import attrgetter
 
 from decimal import Decimal
 
@@ -250,8 +251,8 @@ def busquedaProducto(request):
             if bFechaTransaccion in req.fechaTransaccion:
                 listaRecurso.append(req)
 
+    listaRecurso.sort(key=attrgetter('fechaTransaccion'), reverse=True)
     json_string = json.dumps(listaRecurso, cls=Convertidor)
-
     return JsonResponse(json_string, safe=False)
 
 
