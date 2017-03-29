@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from laboratorio.models import Tipo
 
 """Clase utilidades que servira para cualquier funcionalidad de la aplicacion
@@ -19,5 +21,5 @@ class utils(object):
 
         tipo = Tipo.objects.filter(grupo__contains='CONVERSION', nombre=medidaOrigen, medidaDestino=medidaDestino).first()
         valor = tipo.valor
-        res = cantidad*valor
+        res = Decimal(cantidad)*valor
         return res

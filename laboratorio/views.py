@@ -445,6 +445,12 @@ def obtenerTransaccion(request):
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"transaccion": json_bodega})
   
+"""Metodo obtenerBodega.
+HU: EC-LCINV2: Crear Bodega
+Sirve para la consulta de una bodega en especifica
+request, es la peticion dada por el usuario
+return, formato json de la bodega
+"""
 @csrf_exempt
 def obtenerBodega(request):
     time.sleep(0.3)
@@ -453,6 +459,20 @@ def obtenerBodega(request):
     struct = json.loads(qs_json)
     json_bodega = json.dumps(struct[0])
     return JsonResponse({"bodega": json_bodega})
+
+"""Metodo obtenerTipo.
+HU: EC-LCINV4: Insumes Volumen, Peso
+Sirve para la consulta de un tipo en especifico
+request, es la peticion dada por el usuario
+return, formato json del tipo
+"""
+@csrf_exempt
+def obtenerTipo(request):
+    qs = Tipo.objects.filter(id=request.GET['id_tipo'])
+    qs_json = serializers.serialize('json', qs)
+    struct = json.loads(qs_json)
+    json_tipo = json.dumps(struct[0])
+    return JsonResponse({"tipo": json_tipo})
 
 #HU-LCINV-13
 #GZ
