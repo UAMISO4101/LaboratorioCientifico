@@ -87,7 +87,7 @@
                     {targets: 0,mData: "imageFile", sTitle: "Image File",
                         "render": function ( mData, type, full, meta )
                         {
-                            return '<img src="../../'+mData+'" class="img-responsive" style="width:120px"></img>';
+                            return '<img src="../../'+mData+'" class="img-responsive" style="width:76px" onerror="this.onerror = null; this.src=\'../../../images/TestTube.png\'"></img>';
                         }}
                 ],
             })
@@ -111,5 +111,6 @@
             })
         })
     });
+
 </script>
 </html>

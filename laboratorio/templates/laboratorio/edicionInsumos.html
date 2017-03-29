@@ -135,6 +135,7 @@
                 $("#clasificacion").val(producto.fields["clasificacion"]);
                 $("#unidades").val(producto.fields["unidadesExistentes"]);
                 $("#imagen").attr('src', "../../../"+producto.fields['imageFile']);
+                $("#imagen").attr('onerror', "this.onerror = null; this.src='../../../images/TestTube.png'")
                 $("#id_producto_guardado").val(param)
                 $("#proveedor").val(producto.fields["proveedor"])
             }
