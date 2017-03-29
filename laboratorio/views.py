@@ -5,6 +5,7 @@ import json
 import time
 from datetime import datetime
 from django.utils.timezone import localtime
+from operator import attrgetter
 
 from decimal import Decimal
 
@@ -237,8 +238,6 @@ def busquedaProducto(request):
         #Convertir a unidades de preferencia
         req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre, peb.bodega.unidad_medida.nombre))
 
-
-
         localizacion = ""
         if str(peb.nivel) != "":
             localizacion = ", Nivel " + str(peb.nivel)
@@ -254,8 +253,8 @@ def busquedaProducto(request):
             if bFechaTransaccion in req.fechaTransaccion:
                 listaRecurso.append(req)
 
+    listaRecurso.sort(key=attrgetter('fechaTransaccion'), reverse=True)
     json_string = json.dumps(listaRecurso, cls=Convertidor)
-
     return JsonResponse(json_string, safe=False)
 
 
@@ -311,6 +310,7 @@ def verProductoBusquedaDetalle(request):
 # FB.
 # Muestra el detalle de transacciones para un Producto dado. Esta es la búsqueda como tal.
 # request: Petición desde el form de usuario.
+# globvar: El Id de ProductosEnBodega (Producto).
 # return: json con los datos encontrados
 def busquedaProductoDetalle(request):
     idpeb = int(globvar)
