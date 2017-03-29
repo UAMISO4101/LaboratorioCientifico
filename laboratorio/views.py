@@ -234,6 +234,10 @@ def busquedaProducto(request):
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
         req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
+        #Convertir a unidades de preferencia
+        req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre, peb.bodega.unidad_medida.nombre))
+
+
 
         localizacion = ""
         if str(peb.nivel) != "":

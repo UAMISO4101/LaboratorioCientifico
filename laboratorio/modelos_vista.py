@@ -51,6 +51,7 @@ class RecursoBusquedaVista():
     fechaTransaccion = ""  # Fecha en string
     bodegaActual = ""
     hidden1 = ""
+    cantidad_convertida = ""
 
 """Clase - Auxiliar  RecursoBusquedaDetalleVista.
 Clase que sirve de vista para objetos a mostrar al usuario

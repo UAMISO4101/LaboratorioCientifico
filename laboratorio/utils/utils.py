@@ -18,8 +18,9 @@ class utils(object):
     """
     @staticmethod
     def convertir(cantidad, medidaOrigen, medidaDestino):
-
+        res = 0
         tipo = Tipo.objects.filter(grupo__contains='CONVERSION', nombre=medidaOrigen, medidaDestino=medidaDestino).first()
-        valor = tipo.valor
-        res = Decimal(cantidad)*valor
+        if tipo is not None:
+            valor = tipo.valor
+            res = Decimal(cantidad)*valor
         return res

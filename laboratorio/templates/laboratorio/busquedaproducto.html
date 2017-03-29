@@ -26,7 +26,9 @@
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Bodega Actual</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidades</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Medida</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidades Preferencia Bodega</th>";
                     tablaresult=tablaresult+"<th style=\"text-align: center;\">Fecha Ejecución</th>";
+
                     tablaresult=tablaresult+"</tr>";
                     tablaresult=tablaresult+"</thead>"
 
@@ -38,6 +40,7 @@
                         result=result+"<td>"+this.bodegaActual+"</td>";
                         result=result+"<td style=\"text-align: right\">"+this.unidadesExistentes+"</td>";
                         result=result+"<td style=\"text-align: right\">"+this.unidad_medida+"</td>";
+                        result=result+"<td style=\"text-align: right\">"+this.cantidad_convertida+"</td>";
                         result=result+"<td style=\"text-align: right\"><a href=\"../verproductobusquedadetalle/?id="+this.id+"\">"+this.fechaTransaccion+"</a></td>";
                         result=result+"</tr>";
                         hd1.val(this.hidden1);
