@@ -234,7 +234,14 @@ def busquedaProducto(request):
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
         req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
-        req.bodegaActual = peb.bodega.nombre
+
+        localizacion = ""
+        if str(peb.nivel) != "":
+            localizacion = ", Nivel " + str(peb.nivel)
+        if str(peb.seccion) != "":
+            localizacion = localizacion + ", Seccion " + str(peb.seccion)
+
+        req.bodegaActual = peb.bodega.nombre + localizacion
         req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion  #Variable oculta para debug en html
 
         if bFechaTransaccion == "":
@@ -315,16 +322,32 @@ def busquedaProductoDetalle(request):
         req.fecha = fecha.strftime('%Y-%m-%d %H:%M:%S')
         req.tipoTransaccion = transaccion.tipo.nombre  # TIPOTRX
         req.estadoTrans = transaccion.estado.nombre  # STATUSTRX
-        req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
+
+        localizacion1 = ""
+        if str(transaccion.nivel_origen) != "":
+            localizacion1 = localizacion1 + ", Nivel " + str(transaccion.nivel_origen)
+        if str(transaccion.seccion_origen) != "":
+            localizacion1 = localizacion1 + ", Seccion " + str(transaccion.seccion_origen)
+
+        # req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
+        req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + localizacion1
         req.nivel_origen = ""  # n/a
         req.seccion_origen = ""  # n/a
-        req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
+
+        localizacion2 = ""
+        if str(transaccion.nivel_destino) != "":
+            localizacion2 = localizacion2 + ", Nivel " + str(transaccion.nivel_destino)
+        if str(transaccion.seccion_destino) != "":
+            localizacion2 = localizacion2 + ", Seccion " + str(transaccion.seccion_destino)
+
+        # req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
+        req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + localizacion2
         req.nivel_destino = ""  # n/a
         req.seccion_destino = ""  # n/a
         req.cantidad = str(transaccion.cantidad)
         req.unidad_medida = transaccion.unidad_medida.nombre
-        req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
-        req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
+        #req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
+        #req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
         # req.usuario = obtenerNombreUsuarioxId(transaccion.usuario.id)
         # req.autoriza = obtenerNombreUsuarioxId(transaccion.autoriza.id)
         req.comentarios = transaccion.comentarios
@@ -455,8 +478,8 @@ def crear_transaccion(request):
             producto_bodega_origen = ProductosEnBodega.objects.filter(id=json_tran['producto_bodega_origen']).first(),
             producto=Producto.objects.get(pk=json_tran['producto']),
             cantidad=json_tran['cantidad'],
-            unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida']),
-            estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada').first().id),
+            unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida'], grupo='MEDIDAPRODUCTO'),
+            estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSTRX').first().id),
             fecha_creacion=datetime.now(),
             fecha_ejecucion=datetime.now(),
             usuario=Usuario.objects.get(pk=1),
@@ -549,7 +572,9 @@ def obtenerProductosBodega(request):
     json_pb = json.dumps(listaProductosBodegas, cls=Convertidor)
     return JsonResponse(json_pb, safe=False)        
         
-        
+# HU-LCINV-12
+# DA
+# Obtiene los experimentos en la aplicacion
 @csrf_exempt
 def obtenerExperimentos(request):
     qs = Experimento.objects.all().prefetch_related('asignado')
@@ -562,6 +587,9 @@ def obtenerExperimentos(request):
         respT.append(resp)
     return JsonResponse(respT, safe=False)
 
+# HU-LCINV-12
+# DA
+# Obtiene los experimentos en la aplicacion por username del usuario 'username'
 @csrf_exempt
 def obtenerExperimentosPorUsuario(request):
     usuario = Usuario.objects.get(username=request.GET['username'])
@@ -569,6 +597,9 @@ def obtenerExperimentosPorUsuario(request):
     qs_json = serializers.serialize('json', exp_usuario)
     return JsonResponse(qs_json, safe=False)
 
+# HU-LCINV-12
+# DA
+# Obtiene los protocolos asociados a un experimento segun su codigo 'codigo'
 @csrf_exempt
 def obtenerProtocolosPorExperimento(request):
     exp = Experimento.objects.filter(codigo=request.GET['codigo'])
@@ -576,6 +607,9 @@ def obtenerProtocolosPorExperimento(request):
     qs_json = serializers.serialize('json', prots_exp)
     return JsonResponse(qs_json, safe=False)
 
+# HU-LCINV-12
+# DA
+# Los productosprotocolo (objeto con enlace a un producto y la cantidad usada por el mismo) por protocolo segun su id
 @csrf_exempt
 def obtenerPPPorProtocolo(request):
     prot = Protocolo.objects.filter(id=request.GET['id'])
@@ -587,6 +621,9 @@ def obtenerPPPorProtocolo(request):
     resp = {'productoprotocolo': struct, 'producto': producto}
     return JsonResponse(resp, safe=False)
 
+# HU-LCINV-12
+# DA
+# Hace el render de la plantilla para la visualización de productos/insumos por experimento
 def experimentos(request):
     return render(request, "laboratorio/experimentos.html")
 
