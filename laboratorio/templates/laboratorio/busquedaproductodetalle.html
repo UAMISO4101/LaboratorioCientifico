@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>s
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css"/>
 
     <script>
         (function(){
@@ -67,11 +68,14 @@
 
 </head>
 <body>
-<div id="encabezado"></div>
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+
 <br>
 <div id="principal" class="panel panel-default">
     <div class="page-header" style="margin-bottom: 0px;">
-        <h2 id="tituloprod"></h2>
+        <h2 id="tituloprod" style="text-align: center;"></h2>
     </div>
     <div class="panel-body" style="padding-bottom:0px">
         <div id="resultados" class="col-md-6 col-sm-offset-3" style="">
@@ -82,7 +86,9 @@
     </div>
     <br>
 </div>
+    </div>
 <div id="pie" align="center"></div>
+</div>
 </body>
 <script>
             (function(){

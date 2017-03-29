@@ -8,6 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../images/struc.css"/>
 
     <script>
         (function(){
@@ -89,13 +90,15 @@
 
 </head>
 <body>
-<div id="encabezado"></div>
-<br>
+<div id="wrapper">
+    <div id="encabezado"></div>
+    <div id="content">
+        <br>
 <br>
 <form id="formBuscarProducto" action="../verproductobusqueda/" method="post">
 <div id="principal" class="panel panel-default">
     <div class="page-header" style="margin-bottom: 0px;">
-        <h2 id="tituloprod">Localización Productos</h2>
+        <h2 id="tituloprod" style="text-align: center;">Localización Productos</h2>
     </div>
     <div class="panel-body">
         <div id="busqueda" class="col-md-6 col-sm-offset-3" style="margin-left: 25%">
@@ -132,7 +135,9 @@
     </div>
 </div>
 </form>
+    </div>
 <div id="pie" align="center"></div>
+</div>
 </body>
 <script>
             (function(){
