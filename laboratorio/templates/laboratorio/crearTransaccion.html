@@ -118,7 +118,6 @@ x<br />
         var bodega = $("#bodega_origen option:selected").val();
         $('#producto_bodega_origen').empty();
         // Si trae los productos existentes en la bodega seleccionada
-
         $.getJSON("../obtenerProductosBodega/?bodega=" + bodega).done(function (data) {
             data = $.parseJSON(data);
             var pbOrig = $("#producto_bodega_origen");
@@ -130,14 +129,10 @@ x<br />
                 pbOrig.prepend('<div><label id="nivellinea' + this.id + '">' + this.nivel + '</label><label id="seccionlinea' + this.id + '">' + this.seccion + '</label>' +
                     '<label id="cantidadlinea' + this.id + '">' + this.cantidad + '</label>' + '<label id="unidadlinea' + this.id + '">' + this.unidad_medida + '</label>' + '<label id="prod_idlinea' + this.id + '">' + this.prod_id + '</label>' +'</div>');
             });
-
         });
     });
-
     $('#bodega_destino').change(function() {
-
         $('#nivel_destino').attr({
-
             "max": $('#nivellineades' + $("#bodega_destino").val()).text()
         });
         $('#nivelMax').text('Máximo: ' + $('#nivellineades' + $("#bodega_destino").val()).text());
@@ -146,7 +141,6 @@ x<br />
         });
         $('#seccionMax').text('Máximo: ' + $('#seccionlineades' + $("#bodega_destino").val()).text());
     });
-
     //Cuando es una recepcion de productos del proveedor trae el catalogo de productos
     function actualizarProductosGeneral() {
         $('#producto_bodega_origen').empty();
@@ -161,14 +155,12 @@ x<br />
                     pbOrig.prepend('<div><label id="nivellinea' + this.id + '">' + "0" + '</label><label id="seccionlinea' + this.id + '">' + "0" + '</label>' +
                         '<label id="cantidadlinea' + this.id + '">' + "0" + '</label>' + '<label id="unidadlinea' + this.id + '">' + this.unidad_medida + '</label>' + '<label id="prod_idlinea' + this.id + '">' + this.id + '</label>' + '</div>');
                 });
-
         });
     }
     //Segun el tipo de transaccion actualiza las listas de bodega origen y destino
     function actualizarBodegasporTipo() {
         $.getJSON("../obtenerBodegas/").done(function (data) {
             data =  $.parseJSON(data);
-
             var bodega = $("#bodega_origen");
             var bodega_destino = $("#bodega_destino");
             $('#bodega_origen').empty();
@@ -177,13 +169,11 @@ x<br />
             bodega_destino.append($("<option />").val("").text("Seleccione destino..."));
             console.log("Filtrando bodegas .. " + $("#tipo option[value='" + $('#tipo').val() + "']").text());
             $(data).each(function() {
-
                 //Filtra las bodegas destino de acuerdo al tipo de transaccion
                 if ($("#tipo option[value='" + $('#tipo').val() + "']").text() == 'Traslado a experimento') {
                     if (this.tipo_bodega == 'Experimento') {
                         bodega_destino.append($("<option />").val(this.id).text(this.nombre));
                         bodega_destino.prepend('<div><label id="nivellineades' + this.id + '">' + this.niveles + '</label><label id="seccionlineades' + this.id + '">' + this.secciones + '</label>');
-
                     }
                     if (this.tipo_bodega != 'Externa' &&  this.tipo_bodega != 'Desperdicio') {
                         bodega.append($('<option />').val(this.id).text(this.nombre));
@@ -214,7 +204,6 @@ x<br />
                                 if (this.tipo_bodega != 'Externa' && this.tipo_bodega != 'Desperdicio' ) {
                                     bodega_destino.append($("<option />").val(this.id).text(this.nombre));
                                     bodega_destino.prepend('<div><label id="nivellineades' + this.id + '">' + this.niveles + '</label><label id="seccionlineades' + this.id + '">' + this.secciones + '</label>');
-
                                 }
                                 if (this.tipo_bodega == 'Externa') {
                                     bodega.append($('<option />').val(this.id).text(this.nombre));
@@ -239,7 +228,6 @@ x<br />
                         }
                     }
                 }
-
                 if (this.tipo_bodega == 'Externa') {
                     $('#bodega_externa_entrada').val(this.id);
                 }
@@ -252,9 +240,7 @@ x<br />
                 $('#bodega_origen').prop('disabled', true);
                 actualizarProductosGeneral();
             }
-
         });
-
     }
     //Cuando el tipo de transaccion cambia refresca parametros de diabled, limpia lista de productos
     $('#tipo').change(function () {
@@ -262,14 +248,11 @@ x<br />
         $('#producto_bodega_origen').empty();
         actualizarBodegasporTipo();
     });
-
-
     // Una vez seleccionado un producto actualiza los valores de nivel y seccion
     $('#producto_bodega_origen').change(function () {
         $('#nivel_origen').text($('#nivellinea' + $("#producto_bodega_origen").val()).text());
         $('#seccion_origen').text($('#seccionlinea' + $("#producto_bodega_origen").val()).text());
         $('#prod_id').val($('#prod_idlinea' + $("#producto_bodega_origen").val()).text());
-
         if ($("#tipo option[value='" + $('#tipo').val() + "']").text() != 'Recepcion de Proveedor') {
             $('#cantidad').attr({
                 "max": $('#cantidadlinea' + $("#producto_bodega_origen").val()).text()
@@ -286,11 +269,8 @@ x<br />
             $('#nivel_origen').hide();
             $('#seccion_origen').hide();
         }
-
         $('#unidad_medida').text($('#unidadlinea' + $("#producto_bodega_origen").val()).text());
-
     });
-
     // Coloca el encabezado y pie de pagina
     (function(){
         try {
@@ -306,17 +286,13 @@ x<br />
               step: 0.01,
               numberFormat: "n"
             });
-
         }catch (exc){
             alert(exc.message);
         }
     })();
-
     $("#mensaje").hide();
     $("#mensajeSuc").hide();
-
     $('form').submit(function (e) {
-
         var formData = new FormData($("#transaccion")[0]);
             v_valida = validarForma();
             if (v_valida) {
@@ -336,7 +312,6 @@ x<br />
                             producto_bodega_origen: $('#producto_bodega_origen').val(),
                             producto: $('#prod_id').val(),
                             comentarios: $('#comentarios').val()
-
                         }
                     ),
                     contentType: "application/json; charset=utf-8",
@@ -361,9 +336,7 @@ x<br />
             else {
                 return false;
             }
-
     });
-
     function validarForma() {
         if ($('#bodega_destino').val() == "") {
             alert("La bodega destino debe ser seleccionada")
@@ -384,14 +357,11 @@ x<br />
             alert("Revisar los campos de: La sección no puede ser superior a la capacidad de la bodega")
             return false;
         }
-
         if ($("#tipo option[value='" + $('#tipo').val() + "']").text() == 'Mover por perdida o desperdicio' && $('#comentarios').val() == "" ) {
             alert("Para registrar desperdicios por favor actualice el campo de comentarios con el motivo ")
             return false;
         }
         return true;
-
     }
-
     </script>
 </html>
