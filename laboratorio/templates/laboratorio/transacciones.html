@@ -98,6 +98,9 @@
         $.getJSON("../obtenerTransacciones").done(function (data) {
             datos =  $.parseJSON(data);
             var tabla = $('#tabla').DataTable( {
+                "language": {
+                    "url": "../../../images/assets/js/dataTables.spanish.lang"
+                },
                 bProcessing: true,
                 "scrollX": true,
                 aaData: datos,

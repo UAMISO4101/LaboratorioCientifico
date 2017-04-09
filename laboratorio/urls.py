@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
+from laboratorio import views_orden_pedido
 from . import views
 
 urlpatterns = [
@@ -52,4 +53,5 @@ urlpatterns = [
     url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 
+    url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_producto, name='verordenespedido'),
 ]
