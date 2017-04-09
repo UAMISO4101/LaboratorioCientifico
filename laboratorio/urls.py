@@ -53,5 +53,9 @@ urlpatterns = [
     url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 
-    url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_producto, name='verordenespedido'),
+    url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_pedido, name='verordenespedido'),
+    url(r'^ordenpedido/$', views_orden_pedido.ir_orden_pedido, name='ordenpedido'),
+    url(r'^obtenerSoloUsuarios/$', views_orden_pedido.obtenerSoloUsuarios, name='obtenerSoloUsuarios'),
+    url(r'^obtenerEstadosOP/$', views_orden_pedido.obtenerEstadosOP, name='obtenerEstadosOP'),
+    url(r'^obtenerFechaActual/$', views_orden_pedido.obtener_fecha_actual, name='obtenerFechaActual'),
 ]
