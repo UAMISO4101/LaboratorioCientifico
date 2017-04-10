@@ -102,18 +102,11 @@
                 "scrollX": true,
                 aaData: datos,
                 aoColumns: [
-                    { mData: "id" , sTitle: "Id"},
-                    { mData: "nombre" , sTitle: "Nombre"},
-                    { mData: "serial" , sTitle: "Serial"},
-                    { mData: "niveles" , sTitle: "Niveles"},
-                    { mData: "secciones" , sTitle: "Secciones"},
-                    { mData: "temperatura_minima" , sTitle: "Temperatura Minima"},
-                    { mData: "temperatura_media" , sTitle: "Temperatura Media"},
-                    { mData: "ubicacion" , sTitle: "Ubicacion"},
-                    { mData: "tipo_bodega" , sTitle: "Tipo Bodega"},
-                    { mData: "estado" , sTitle: "Estado"},
-                    { mData: "responsable" , sTitle: "Responsable"},
-                    { mData: "unidad_medida" , sTitle: "Unidad Medida"}
+                    { mData: "id" , sTitle: "Código"},
+                    { mData: "nombre" , sTitle: "Fecha Petición"},
+                    { mData: "serial" , sTitle: "Estado Orden"},
+                    { mData: "niveles" , sTitle: "Usuario Creación"},
+                    { mData: "secciones" , sTitle: "Usuario Aprobación"}
                 ],
             } );
             $('#tabla tbody').on( 'click', 'tr', function () {

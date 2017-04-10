@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
 
@@ -72,3 +72,30 @@ return, formato json con los usuarios
 def obtener_fecha_actual(request):
     fecha_actual = time.strftime("%c")
     return JsonResponse({"fecha": fecha_actual})
+
+"""Metodo a navegar actualizar orden de pedido.
+HU: EC-LCINV-17: Crear Orden de Pedido
+"""
+def ir_act_orden_pedido(request):
+    return render(request, "laboratorio/act_orden_pedido.html")
+
+"""Metodo crear orden de pedido.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para crear una orden de pedido en el sistema
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def crear_orden_pedido(request):
+    mensaje = ""
+    if request.method == 'POST':
+        orden_pedido = OrdenPedido(fecha_peticion=datetime.strptime(request.POST['fecha_creacion'], '%c'),
+                        estado=Tipo.objects.filter(id=request.POST['estado']).first(),
+                        usuario_creacion=Usuario.objects.filter(id=request.POST['usuario_creacion']).first(),
+                        proveedor=Usuario.objects.filter(id=request.POST['proveedor']).first(),
+                        observaciones=request.POST['observaciones'])
+
+        orden_pedido.save()
+        mensaje = orden_pedido.id
+
+    return JsonResponse({"id": mensaje})

@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^crearTransaccion/$', views.crear_transaccion, name='crearTransaccion'),
     url(r'^obtenerTipos/$', views.obtenerTipos, name='obtenerTipos'),
     url(r'^obtenerProductosBodega/$', views.obtenerProductosBodega, name='obtenerProductosBodega'),
-  
+
     url(r'^obtenerExperimentos/$', views.obtenerExperimentos, name='obtenerExperimentos'),
     url(r'^obtenerExperimentosPorUsuario/$', views.obtenerExperimentosPorUsuario, name='obtenerExperimentosPorUsuario'),
     url(r'^obtenerProtocolosPorExperimento/$', views.obtenerProtocolosPorExperimento, name='obtenerProtocolosPorExperimento'),
@@ -54,8 +54,10 @@ urlpatterns = [
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 
     url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_pedido, name='verordenespedido'),
+    url(r'^actordenpedido/$', views_orden_pedido.ir_act_orden_pedido, name='actordenpedido'),
     url(r'^ordenpedido/$', views_orden_pedido.ir_orden_pedido, name='ordenpedido'),
     url(r'^obtenerSoloUsuarios/$', views_orden_pedido.obtenerSoloUsuarios, name='obtenerSoloUsuarios'),
     url(r'^obtenerEstadosOP/$', views_orden_pedido.obtenerEstadosOP, name='obtenerEstadosOP'),
     url(r'^obtenerFechaActual/$', views_orden_pedido.obtener_fecha_actual, name='obtenerFechaActual'),
+    url(r'^crearOPedido/$', views_orden_pedido.crear_orden_pedido, name='crearOPedido'),
 ]
