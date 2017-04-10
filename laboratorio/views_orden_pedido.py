@@ -3,7 +3,9 @@
 import decimal
 import json
 import time
-from datetime import datetime
+from dateutil import tz
+from datetime import datetime, timedelta
+
 from django.utils.timezone import localtime
 from operator import attrgetter
 
@@ -22,7 +24,8 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
-from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
+from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default, \
+    OrdenPedidoVista
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
@@ -99,3 +102,65 @@ def crear_orden_pedido(request):
         mensaje = orden_pedido.id
 
     return JsonResponse({"id": mensaje})
+
+"""Metodo obtener orden de pedido.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para obtener la orden de pedido dado el id de la orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtener_op(request):
+    time.sleep(0.3)
+    qs = OrdenPedido.objects.filter(id=request.GET['id_op'])
+    qs_json = serializers.serialize('json', qs)
+    struct = json.loads(qs_json)
+    json_op = json.dumps(struct[0])
+    return JsonResponse({"op": json_op})
+
+"""Metodo obtener orden de pedido.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para obtener la orden de pedido dado el id de la orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtener_fecha_peticion_op(request):
+    time.sleep(0.3)
+    qs = OrdenPedido.objects.filter(id=request.GET['id_op'])
+    orden_pedido = qs.first()
+    dh = timedelta(hours=5)
+    return JsonResponse({"fecha_peticion": (orden_pedido.fecha_peticion - dh).strftime("%c")})
+
+
+"""Metodo obtener ordenes de pedido.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para obtener las ordenes de pedido que tiene el sistema
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtenerOrdenesPedido(request):
+    qs = OrdenPedido.objects.all()
+    listaOps = []
+    for orden_pedido in qs:
+        orden = OrdenPedidoVista()
+        orden.id = orden_pedido.id
+        if orden_pedido.usuario_creacion != None:
+            orden.nombreUsuarioCreacion = orden_pedido.usuario_creacion.first_name + " " + orden_pedido.usuario_creacion.last_name
+        else:
+            orden.nombreUsuarioCreacion = " "
+        if orden_pedido.usuario_aprobacion != None:
+            orden.nombreUsuarioAprobacion = orden_pedido.usuario_aprobacion.first_name + " " + orden_pedido.usuario_aprobacion.last_name
+        else:
+            orden.nombreUsuarioAprobacion = " "
+        if orden_pedido.proveedor != None:
+            orden.nombreProveedor = orden_pedido.proveedor.first_name + " " + orden_pedido.proveedor.last_name
+        else:
+            orden.nombreProveedor = " "
+        orden.estado = orden_pedido.estado.nombre
+        dh = timedelta(hours=5)
+        orden.fechaPeticion = (orden_pedido.fecha_peticion - dh).strftime("%c")
+        listaOps.append(orden)
+    json_string = json.dumps(listaOps, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)

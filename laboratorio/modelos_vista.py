@@ -113,6 +113,17 @@ class TransaccionVista():
     comentarios = ""
     usuario = ""
 
+"""Clase - Auxiliar  OrdenPedidoVista.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class OrdenPedidoVista():
+    id = 0
+    nombreUsuarioCreacion = ""
+    nombreUsuarioAprobacion = ""
+    nombreProveedor = ""
+    estado = ""
+    fechaPeticion = ""
+
 # HU-LCINV-13
 # GZ
 # Manejo de fechas en formato ISO para presentar en el UI

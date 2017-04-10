@@ -49,17 +49,21 @@
                     <div class="col-md-10 col-sm-offset-1">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Ordenes de Pedido</h4>
-                                <p class="category">Actualizar Ordenes de Pedido</p>
+                                <h4 class="title">Orden de Pedido</h4>
+                            </div>
+                            <div id="mensaje_ok" class="alert alert-info">
+                                <label id="mensaje1_ok">La orden de pedido se registró correctamente</label>
                             </div>
                             <div id="mensaje" class="alert alert-danger">
                                 <label id="mensaje1"></label>
                             </div>
-                            <form id="formCrearOrden" action="../crearOPedido/" method="post" style="padding: 30px">
+                            <form id="formCrearOrden" action="..//" method="post" style="padding: 30px">
+                                <input id="id_op_guardada" name="id_op_guardada" type="hidden" />
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Fecha Petición</b></label></div>
                                     <div class="col-6 col-sm-3" style="font-weight: bold; border: 1px solid #e3e3e3;border-radius: 4px;">
-                                        <label id="fecha_creacion"></label>
+                                        <input id="fecha_creacion" name="fecha_creacion" type="text" class="form-control input-md"
+                                            readonly/>
                                     </div>
                                     <div class="col-6 col-sm-3"><label><b>Estado</b></label></div>
                                     <div class="col-6 col-sm-3">
@@ -77,6 +81,12 @@
                                     <div class="col-6 col-sm-3">
                                        <select id="usuario_creacion" name="usuario_creacion" class="selectpicker form-control" required>
                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Observaciones</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <textarea class="form-control" rows="3" id="observaciones" name="observaciones"></textarea>
                                     </div>
                                 </div>
                                 <br/>
@@ -112,10 +122,6 @@
     }
 
     (function(){
-        $.getJSON("../obtenerFechaActual").done(function (data) {
-            var fecha_creacion = $("#fecha_creacion");
-            fecha_creacion.text(data.fecha);
-        });
         $.getJSON("../obtenerEstadosOP").done(function (data) {
             data =  $.parseJSON(data);
             var estado = $("#estado");
@@ -146,45 +152,40 @@
         try {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
-            var niveles = $( "#niveles" ).spinner();
-            var secciones = $( "#secciones" ).spinner();
-            var temperaturaMinima = $( "#temperaturaMinima" ).spinner({
-                step: 0.01,
-                numberFormat: "n"
-            });
-            var temperaturaMedia = $( "#temperaturaMedia" ).spinner({
-                step: 0.01,
-                numberFormat: "n"
-            });
-
-            var parametro = GetParameterValues("id_bodega");
-            if (parametro){
-                $('#hCrear').hide();
-                $('#hEditar').show();
+            var parametroMsj = GetParameterValues("msj");
+            if (parametroMsj && parametroMsj=='ok'){
+                $("#mensaje_ok").show();
+            }else{
+                $("#mensaje_ok").hide();
+            }
+            var parametroOP = GetParameterValues("id_op");
+            if (parametroOP){
                 //cargar informacion
-                $.getJSON("../obtenerBodega",{
-                    id_bodega: parametro
+                $.getJSON("../obtener_op",{
+                    id_op: parametroOP
                 }).done(function (data) {
                     if (data){
-                        bodega =  $.parseJSON(data.bodega);
-                        $("#serial").val(bodega.fields["serial"]);
-                        $("#nombre").val(bodega.fields["nombre"]);
-                        $("#niveles").val(bodega.fields["niveles"]);
-                        $("#secciones").val(bodega.fields["secciones"]);
-                        $("#ubicacion").val(bodega.fields["ubicacion"]);
-                        $("#temperatura_minima").val(bodega.fields["temperatura_minima"]);
-                        $("#temperatura_media").val(bodega.fields["temperatura_media"]);
-                        $("#responsable").val(bodega.fields["usuario"]);
-                        $("#tipo_bodega").val(bodega.fields["tipo_bodega"]);
-                        $("#id_bodega_guardada").val(bodega.pk);
-                        $("#unidad_medida").val(bodega.fields["unidad_medida"]);
+                        op =  $.parseJSON(data.op);
+                        $("#observaciones").val(op.fields["observaciones"]);
+                        $("#fecha_creacion").val(op.fields["fecha_peticion"]);
+                        $("#id_op_guardada").val(op.pk);
+                        $("#usuario_creacion").val(op.fields["usuario_creacion"]);
+                        $("#proveedor").val(op.fields["proveedor"]);
+                        $("#estado").val(op.fields["estado"]);
+                    }
+                });
+
+                $.getJSON("../obtenerFP",{
+                    id_op: parametroOP
+                }).done(function (data) {
+                    if (data){
+                        $("#fecha_creacion").val(data.fecha_peticion);
                     }
                 });
             }
             else
             {
-                $('#hCrear').show();
-                $('#hEditar').hide();
+
             }
 
 
@@ -197,7 +198,7 @@
 
 
     $('form').submit(function (e) {
-        var formData = new FormData($("#formCrearBodega")[0]);
+        var formData = new FormData($("#formCrearOrden")[0]);
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
@@ -209,7 +210,7 @@
                     $("#mensaje1").text(data.mensaje);
                     $("#mensaje").show();
                 } else {
-                    window.location = "../bodegas";
+                    window.location = "../verordenespedido";
                 }
             }
         });

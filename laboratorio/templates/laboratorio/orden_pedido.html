@@ -83,7 +83,7 @@
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Observaciones</b></label></div>
                                     <div class="col-6 col-sm-3">
-                                       <textarea class="form-control" rows="5" id="observaciones" name="observaciones"></textarea>
+                                       <textarea class="form-control" rows="3" id="observaciones" name="observaciones"></textarea>
                                     </div>
                                 </div>
                                 <br/>
@@ -161,7 +161,7 @@
             processData: false,
             success: function (data) {
                 if (data && data.id) {
-                    window.location = "../actordenpedido";
+                    window.location = "../actordenpedido?msj=ok&id_op="+data.id;
                 } else {
                     window.location = "../ordenpedido";
                 }

@@ -60,4 +60,7 @@ urlpatterns = [
     url(r'^obtenerEstadosOP/$', views_orden_pedido.obtenerEstadosOP, name='obtenerEstadosOP'),
     url(r'^obtenerFechaActual/$', views_orden_pedido.obtener_fecha_actual, name='obtenerFechaActual'),
     url(r'^crearOPedido/$', views_orden_pedido.crear_orden_pedido, name='crearOPedido'),
+    url(r'^obtener_op/$', views_orden_pedido.obtener_op, name='obtener_op'),
+    url(r'^obtenerFP/$', views_orden_pedido.obtener_fecha_peticion_op, name='obtenerFP'),
+    url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
 ]

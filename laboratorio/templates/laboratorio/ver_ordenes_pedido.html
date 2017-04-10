@@ -20,9 +20,12 @@
   <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src=" https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
+
 </head>
 <body>
 <div id="wrapper">
@@ -57,7 +60,7 @@
                     <form id="formOP" style="padding: 20px">
                     <div style="text-align: center;">
                         <a href="../ordenpedido" class="btn btn-primary" role="button">Crear Orden de Pedido</a>
-                        <a id="btnEditarBodega" href="../bodega" class="btn btn-primary" role="button">Editar Orden de Pedido</a>
+                        <a id="btnEditarOP" href="../actordenpedido" class="btn btn-primary" role="button">Editar Orden de Pedido</a>
                         <a href="../">Cancelar</a>
                     </div>
                         <table id="tabla" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%"></table>
@@ -85,14 +88,14 @@
         try {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
-            $('#btnEditarBodega').attr('disabled', true);
-            $('#btnEditarBodega').bind('click', false);
+            $('#btnEditarOP').attr('disabled', true);
+            $('#btnEditarOP').bind('click', false);
         }catch (exc){
             alert(exc.message);
         }
     })();
     $(function () {
-        $.getJSON("../obtenerBodegas").done(function (data) {
+        $.getJSON("../obtenerOrdenesPedido").done(function (data) {
             datos =  $.parseJSON(data);
             var tabla = $('#tabla').DataTable( {
                 "language": {
@@ -103,29 +106,30 @@
                 aaData: datos,
                 aoColumns: [
                     { mData: "id" , sTitle: "Código"},
-                    { mData: "nombre" , sTitle: "Fecha Petición"},
-                    { mData: "serial" , sTitle: "Estado Orden"},
-                    { mData: "niveles" , sTitle: "Usuario Creación"},
-                    { mData: "secciones" , sTitle: "Usuario Aprobación"}
+                    { mData: "fechaPeticion" , sTitle: "Fecha Petición"},
+                    { mData: "estado" , sTitle: "Estado Orden"},
+                    { mData: "nombreUsuarioCreacion" , sTitle: "Usuario Creación"},
+                    { mData: "nombreUsuarioAprobacion" , sTitle: "Usuario Aprobación"},
+                    { mData: "nombreProveedor" , sTitle: "Proveedor"}
                 ],
             } );
             $('#tabla tbody').on( 'click', 'tr', function () {
                 if ( $(this).hasClass('selected') ) {
                     $(this).removeClass('selected');
-                    $('#btnEditarBodega').attr('disabled', true);
-                    $('#btnEditarBodega').bind('click', false);
+                    $('#btnEditarOP').attr('disabled', true);
+                    $('#btnEditarOP').bind('click', false);
                 }
                 else {
                     tabla.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
-                    valor = $("#btnEditarBodega").attr('href');
-                    if (valor.indexOf("id_bodega")!=-1){
+                    valor = $("#btnEditarOP").attr('href');
+                    if (valor.indexOf("id_op")!=-1){
                         valor = valor.split("?")[0];
                     }
-                    valor += "?id_bodega="+$(this).children()[0].innerText;
-                    $("#btnEditarBodega").attr("href", valor);
-                    $('#btnEditarBodega').unbind('click', false);
-                    $('#btnEditarBodega').attr('disabled', false);
+                    valor += "?id_op="+$(this).children()[0].innerText;
+                    $("#btnEditarOP").attr("href", valor);
+                    $('#btnEditarOP').unbind('click', false);
+                    $('#btnEditarOP').attr('disabled', false);
                 }
             });
         });
