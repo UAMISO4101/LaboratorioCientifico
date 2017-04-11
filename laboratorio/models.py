@@ -150,3 +150,26 @@ class Experimento(models.Model):
     protocolo = models.ManyToManyField(Protocolo)
     asignado = models.ManyToManyField(Usuario)
 
+"""Clase - Orden de Pedido.
+"""
+class OrdenPedido(models.Model):
+    fecha_peticion = models.DateTimeField(null=True)
+    fecha_recepcion = models.DateTimeField(null=True)
+    observaciones = models.CharField(max_length=500)
+    usuario_creacion = models.ForeignKey(Usuario, related_name="op_usuario_creacion", null=True)
+    usuario_aprobacion = models.ForeignKey(Usuario, related_name="op_usuario_aprobacion", null=True)
+    proveedor = models.ForeignKey(Usuario, related_name="op_proveedor", null=True)
+    notas_aprobacion = models.CharField(max_length=500)
+    estado = models.ForeignKey(Tipo, related_name="op_estado", null=True)
+
+"""Clase - Detalle Orden Pedido.
+"""
+class DetalleOrden(models.Model):
+    producto = models.ForeignKey(Producto, null=True)
+    cantidad = models.DecimalField(null=True, max_digits=11, decimal_places=8)
+    estado = models.ForeignKey(Tipo, related_name="do_estado", null=True)
+    transaccion_inventario = models.ForeignKey(TransaccionInventario, related_name="do_transaccion", null=True)
+    fecha_movimiento = models.DateTimeField(null=True)
+    bodega = models.ForeignKey(Bodega, null=True)
+    nivel_bodega_destino = models.IntegerField(null=True)
+    seccion_bodega_destino = models.IntegerField(null=True)

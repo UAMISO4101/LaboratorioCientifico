@@ -119,6 +119,9 @@
             console.log(data)
             datos =  data;
             $('#tabla').DataTable( {
+                "language": {
+                    "url": "../../../images/assets/js/dataTables.spanish.lang"
+                },
                 bProcessing: true,
                 "scrollX": true,
                 aaData: datos,
@@ -154,6 +157,9 @@
                         $('#tabla_protocolos').dataTable().fnAddData(datos);
                     }else{
                         $('#tabla_protocolos').DataTable( {
+                        "language": {
+                          "url": "../../../images/assets/js/dataTables.spanish.lang"
+                        },
                         bProcessing: true,
                         "scrollX": true,
                         aaData: datos,
@@ -189,6 +195,9 @@
                                     $('#tabla_insumos').dataTable().fnAddData(datos);
                             }else {
                             $('#tabla_insumos').DataTable({
+                                        "language": {
+                                            "url": "../../../images/assets/js/dataTables.spanish.lang"
+                                        },
                                         bProcessing: true,
                                         "scrollX": true,
                                         aaData: datos,

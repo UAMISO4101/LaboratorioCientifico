@@ -42,6 +42,12 @@
                         <p>Localización Recursos</p>
                     </a>
                 </li>
+                <li id="op">
+                    <a href="/laboratorio/verordenespedido">
+                        <i class="pe-7s-note"></i>
+                        <p>Ordenar Pedido</p>
+                    </a>
+                </li>
             </ul>
 </body>
 
@@ -67,6 +73,10 @@
         else if(url.includes("busqueda"))
         {
             $("#bus").attr('class', 'active');
+        }
+        else if(url.includes("ordenpedido"))
+        {
+            $("#op").attr('class', 'active');
         }
     })();
 

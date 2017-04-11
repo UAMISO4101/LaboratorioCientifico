@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
+    <title>.:Laboratorio Científico:.</title>
+    <!-- Bootstrap core CSS     -->
+    <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animation library for notifications   -->
+    <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+    <!--     Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+    <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js"></script>
+</head>
+<body>
+<div id="wrapper">
+    <div class="sidebar" data-color="blue" data-image="../../../images/assets/img/sidebar-5.jpg" style="position: fixed">
+        <div class="sidebar-wrapper" style="position: fixed">
+            <div id="encabezado"></div>
+        </div>
+    </div>
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header"> <a class="navbar-brand" href="#">Profile</a> </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li> <a href="#">
+                            Log out
+                        </a> </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <br>
+        <div id="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-10 col-sm-offset-1">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Ordenes de Pedido</h4>
+                                <p class="category" id="hCrear">Registro de Ordenes de Pedido</p>
+                            </div>
+                            <div id="mensaje" class="alert alert-danger">
+                                <label id="mensaje1"></label>
+                            </div>
+                            <form id="formCrearOrden" action="../crearOPedido/" method="post" style="padding: 30px">
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Fecha Petición</b></label></div>
+                                    <div class="col-6 col-sm-3" style="font-weight: bold; border: 1px solid #e3e3e3;border-radius: 4px;">
+                                        <input id="fecha_creacion" name="fecha_creacion" type="text" class="form-control input-md"
+                                            readonly/>
+                                    </div>
+                                    <div class="col-6 col-sm-3"><label><b>Estado</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <select id="estado" name="estado" class="selectpicker form-control" required>
+                                       </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Proveedor</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <select id="proveedor" name="proveedor" class="selectpicker form-control" required>
+                                       </select>
+                                    </div>
+                                    <div class="col-6 col-sm-3"><label><b>Usuario Creación</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <select id="usuario_creacion" name="usuario_creacion" class="selectpicker form-control" required>
+                                       </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Observaciones</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <textarea class="form-control" rows="3" id="observaciones" name="observaciones"></textarea>
+                                    </div>
+                                </div>
+                                <br/>
+                                <input type="submit" value="Guardar" class="btn btn-primary"/>
+                                <a href="../verordenespedido">Cancelar</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="pie"></div>
+    </div>
+</div>
+</body>
+<!--  Checkbox, Radio & Switch Plugins -->
+<script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+<!--  Charts Plugin -->
+<script src="../../../images/assets/js/chartist.min.js"></script>
+<!--  Notifications Plugin    -->
+<script src="../../../images/assets/js/bootstrap-notify.js"></script>
+<!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+<script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
+<script>
+    (function(){
+        $.getJSON("../obtenerFechaActual").done(function (data) {
+            var fecha_creacion = $("#fecha_creacion");
+            fecha_creacion.val(data.fecha);
+        });
+        $.getJSON("../obtenerEstadosOP").done(function (data) {
+            data =  $.parseJSON(data);
+            var estado = $("#estado");
+            estado.append($("<option />").val("").text("Seleccione Estado..."));
+            $(data).each(function() {
+                estado.append($("<option />").val(this.pk).text(this.fields.nombre));
+            });
+        });
+        $.getJSON("../obtenerProveedores").done(function (data) {
+            data =  $.parseJSON(data);
+            var proveedor = $("#proveedor");
+            proveedor.append($("<option />").val("").text("Seleccione Proveedor..."));
+            $(data).each(function() {
+                proveedor.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+            });
+        });
+        $.getJSON("../obtenerSoloUsuarios").done(function (data) {
+            data =  $.parseJSON(data);
+            var usuario_creacion = $("#usuario_creacion");
+            usuario_creacion.append($("<option />").val("").text("Seleccione Usuario..."));
+            $(data).each(function() {
+                usuario_creacion.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+            });
+        });
+    })();
+
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+
+    $("#mensaje").hide();
+
+
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formCrearOrden")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.id) {
+                    window.location = "../actordenpedido?msj=ok&id_op="+data.id;
+                } else {
+                    window.location = "../ordenpedido";
+                }
+            }
+        });
+        e.preventDefault();
+    });
+    /*(function(){
+     $.getJSON("isLogged").done(function (data) {
+     if (data.mensaje == 'no'){
+     $("#add_user").show();
+     $("#cerrar_session").hide();
+     $("#mod_user").hide();
+     $("#mod_pass").hide();
+     $("#user_menu").hide();
+     $("#login_user").show();
+     $("#mi_perfil").hide();
+     $("#datos_usuario_login").hide();
+     }else{
+     $("#add_user").hide();
+     $("#cerrar_session").show();
+     $("#mod_user").show();
+     $("#mod_pass").show();
+     $("#user_menu").show();
+     $("#login_user").hide();
+     $("#mi_perfil").show();
+     $("#datos_usuario_login").show();
+     if (data.usuario){
+     data = $.parseJSON(data.usuario);
+     $("#imagen_usuario").attr("title", data.fields.first_name+" "+data.fields.last_name);
+     $("#imagen_usuario").attr("src", "../"+data.fields.imageFile);
+     }
+     }
+     });
+     })();
+     function logout(){
+     $.getJSON("logout").done(function (data) {
+     if (data.mensaje == 'ok'){
+     location.reload();
+     }else{
+     alert("Hubo un error");
+     }
+     });
+     }
+
+     */
+</script>
+</html>
