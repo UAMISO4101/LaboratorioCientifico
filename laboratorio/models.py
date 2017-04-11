@@ -100,6 +100,8 @@ class Producto(models.Model):
     frecuencia_minima_uso = models.CharField(max_length=26, choices=frecuencia_uso)
     cantidad_media_uso = models.DecimalField(max_digits=15, decimal_places=8, null=True)
     tiempo_reaprovisionamiento = models.IntegerField()
+    stock_seguridad = models.DecimalField(max_digits=15, decimal_places=8, null=True)
+    punto_pedido = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
 """Clase - Modelo ProductosEnBodega.
 """
