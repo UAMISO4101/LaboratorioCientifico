@@ -95,7 +95,33 @@
                     <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
                     <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
                     <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
-                    <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
+                    <label id="lab1"><b>Frecuencia media de Uso</b></label><select class="form-control" id="frecuencia_media" name="frecuencia_media" required>
+                        <option value="" selected="selected">Seleccione una frecuencia...</option>
+                    <optgroup label="Continua">
+                        <option value="Continua">Muchas veces al día</option>
+                    </optgroup>
+                    <optgroup label="Frecuente">
+                        <option value="Frecuente">Al menos 1 vez al día</option>
+                    </optgroup>
+                    <optgroup label="Ocasional">
+                        <option value="Ocasional">Al menos 1 vez a la semana</option>
+                    </optgroup>
+                    <optgroup label="Poco usual">
+                        <option value="PocoUsual">Al menos 1 vez al mes</option>
+                    </optgroup>
+                    <optgroup label="Rara">
+                        <option value="Rara">Unas pocas veces al año</option>
+                    </optgroup>
+                    <optgroup label="Muy rara">
+                        <option value="MuyRara">Al menos 1 vez al año</option>
+                    </optgroup>
+                    </select><br id="1">
+                    <label id="lab2"><b>Cantidad media por cada uso</b></label><input class="form-control input-md" id="cantidad_media" name="cantidad_media" type="number" required><br id="2">
+                     <label id="lab3"><b>Frecuencia mínima de Uso</b></label><select class="form-control" id="frecuencia_minima" name="frecuencia_minima" required>
+                        <option value="" selected="selected">Seleccione una frecuencia...</option>
+                    </select><br id="3">
+                    <label id="lab4"><b>Tiempo de reaprovisionamiento</b></label><input class="form-control input-md" id="tiempo" name="tiempo" type="number" required><br id="4">
+                    <label for="imageFile"><b>Imagen</b></label><input id="imageFile" name="imageFile" type="file"/>
                     <br>
                     <input type="submit" value="Guardar" class="btn btn-primary"/>
                     <a href="../verRecursos">Cancelar</a></form>
@@ -118,13 +144,85 @@
   <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
 <script>
     (function(){
-        try {
+        try
+        {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
-        }catch (exc){
+            $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+        }
+        catch (exc){
             alert(exc.message);
         }
     })();
+
+    $(document).ready(function ()
+    {
+        $("#proveedor").change(function () {
+            if ($("#proveedor option:selected").text().includes("Interno"))
+            {
+                $("#lab1").hide();
+                $("#frecuencia_media").hide();
+                $("#1").hide();
+                $("#lab2").hide();
+                $("#cantidad_media").hide();
+                $("#2").hide();
+                $("#lab3").hide();
+                $("#frecuencia_minima").hide();
+                $("#3").hide();
+                $("#lab4").hide();
+                $("#tiempo").hide();
+                $("#4").hide();
+            }
+            else
+            {
+                if($("#lab1").is(":visible")== false)
+                {
+                    $("#lab1").show();
+                    $("#frecuencia_media").show();
+                    $("#1").show();
+                    $("#lab2").show();
+                    $("#cantidad_media").show();
+                    $("#2").show();
+                    $("#lab3").show();
+                    $("#frecuencia_minima").show();
+                    $("#3").show();
+                    $("#lab4").show();
+                    $("#tiempo").show();
+                    $("#4").show();
+                }
+            }
+        });
+
+        $("#frecuencia_media").change(function ()
+        {
+            var val = $(this).val();
+
+            if (val == "Continua")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+            }
+            else if (val == "Frecuente")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+            }
+            else if (val == "Ocasional")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+            }
+            else if(val == "PocoUsual")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+            }
+            else if(val == "Rara")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+            }
+            else if(val == "MuyRara")
+            {
+                $("#frecuencia_minima").html("<optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+            }
+        });
+    });
 
     (function() {
         $.getJSON("../obtenerTiposMedida").done(function (data) {

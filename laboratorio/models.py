@@ -87,6 +87,19 @@ class Producto(models.Model):
     unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
     proveedor = models.ForeignKey(Usuario, null=True)
+    frecuencia_uso = (
+        ('Continua', 'Muchas veces al dia'),
+        ('Frecuente', 'Al menos 1 vez al dia'),
+        ('Ocasional', 'Al menos 1 vez a la semana'),
+        ('PocoUsual', 'Al menos 1 vez al mes'),
+        ('Rara', 'Unas pocas veces al anio'),
+        ('MuyRara', 'Al menos 1 vez al anio'),
+        ('NA','NA')
+    )
+    frecuencia_media_uso = models.CharField(max_length=26, choices=frecuencia_uso)
+    frecuencia_minima_uso = models.CharField(max_length=26, choices=frecuencia_uso)
+    cantidad_media_uso = models.DecimalField(max_digits=15, decimal_places=8, null=True)
+    tiempo_reaprovisionamiento = models.IntegerField()
 
 """Clase - Modelo ProductosEnBodega.
 """
