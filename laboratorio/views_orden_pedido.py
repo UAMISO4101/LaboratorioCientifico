@@ -164,3 +164,17 @@ def obtenerOrdenesPedido(request):
         listaOps.append(orden)
     json_string = json.dumps(listaOps, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
+
+"""Metodo obtener los usuarios del sistema sin proveedores y sin admin.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para obtener los usuarios que existen en el sistema que no son proveedores y no admin
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtenerProductos(request):
+    prov=Usuario()
+    prov.id = request.GET["id_proveedor"];
+    qs = Producto.objects.filter(proveedor=prov)
+    qs_json = serializers.serialize('json', qs)
+    return JsonResponse(qs_json, safe=False)

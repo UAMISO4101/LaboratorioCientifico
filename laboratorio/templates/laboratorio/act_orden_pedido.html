@@ -57,7 +57,7 @@
                             <div id="mensaje" class="alert alert-danger">
                                 <label id="mensaje1"></label>
                             </div>
-                            <form id="formCrearOrden" action="..//" method="post" style="padding: 30px">
+                            <form id="formDetalleOrden" action="..//" method="post" style="padding: 30px">
                                 <input id="id_op_guardada" name="id_op_guardada" type="hidden" />
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Fecha Petición</b></label></div>
@@ -87,6 +87,42 @@
                                     <div class="col-6 col-sm-3"><label><b>Observaciones</b></label></div>
                                     <div class="col-6 col-sm-3">
                                        <textarea class="form-control" rows="3" id="observaciones" name="observaciones"></textarea>
+                                    </div>
+                                </div>
+                                <div class="header">
+                                    <h4 class="title">Detalle de la Orden de Pedido</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
+                                    <div class="col-6 col-sm-3" style="font-weight: bold; border: 1px solid #e3e3e3;border-radius: 4px;">
+                                        <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
+                                            readonly/>
+                                    </div>
+                                    <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <select id="producto" name="producto" class="selectpicker form-control" required>
+                                       </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
+                                    <div class="col-6 col-sm-3" style="font-weight: bold; border: 1px solid #e3e3e3;border-radius: 4px;">
+                                        <input id="cantidad" name="cantidad" type="number" class="form-control input-md"/>
+                                    </div>
+                                    <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
+                                    <div class="col-6 col-sm-3">
+                                       <select id="bodega" name="bodega" class="selectpicker form-control" required>
+                                       </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
+                                    <div class="col-6 col-sm-3" style="font-weight: bold; border: 1px solid #e3e3e3;border-radius: 4px;">
+                                        <input id="nivel" name="nivel" type="number" class="form-control input-md"/>
+                                    </div>
+                                    <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
+                                    <div class="col-6 col-sm-3" style="font-weight: bold; border: 1px solid #e3e3e3;border-radius: 4px;">
+                                        <input id="seccion" name="seccion" type="number" class="form-control input-md"/>
                                     </div>
                                 </div>
                                 <br/>
@@ -122,6 +158,10 @@
     }
 
     (function(){
+        $.getJSON("../obtenerFechaActual").done(function (data) {
+            var fecha_movimiento = $("#fecha_movimiento");
+            fecha_movimiento.val(data.fecha);
+        });
         $.getJSON("../obtenerEstadosOP").done(function (data) {
             data =  $.parseJSON(data);
             var estado = $("#estado");
@@ -144,6 +184,14 @@
             usuario_creacion.append($("<option />").val("").text("Seleccione Usuario..."));
             $(data).each(function() {
                 usuario_creacion.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+            });
+        });
+        $.getJSON("../obtenerBodegas/").done(function (data) {
+            data =  $.parseJSON(data);
+            var bodega = $("#bodega");
+            bodega.append($("<option />").val("").text("Seleccione Bodega..."));
+            $(data).each(function() {
+                bodega.append($("<option />").val(this.id).text(this.nombre));
             });
         });
     })();
@@ -173,6 +221,16 @@
                         $("#proveedor").val(op.fields["proveedor"]);
                         $("#estado").val(op.fields["estado"]);
                     }
+                    $.getJSON("../obtenerProductos",{
+                            id_proveedor: $("#proveedor option:selected").val()
+                        }).done(function (data) {
+                        data =  $.parseJSON(data);
+                            var producto = $("#producto");
+                            producto.append($("<option />").val("").text("Seleccione Producto..."));
+                            $(data).each(function() {
+                                producto.append($("<option />").val(this.pk).text(this.fields.nombre));
+                            });
+                        });
                 });
 
                 $.getJSON("../obtenerFP",{
@@ -198,7 +256,7 @@
 
 
     $('form').submit(function (e) {
-        var formData = new FormData($("#formCrearOrden")[0]);
+        var formData = new FormData($("#formDetalleOrden")[0]);
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
