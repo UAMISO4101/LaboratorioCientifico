@@ -40,7 +40,7 @@ class Bodega(models.Model):
     fecha_creacion = models.DateTimeField(null=True)
     fecha_actualizacion = models.DateTimeField(null=True)
     unidad_medida = models.ForeignKey(Tipo, null=True)
-    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  #Segun el excel se toma el nombre BODEGA
+    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  # Segun el excel se toma el nombre BODEGA
     usuario = models.ForeignKey(Usuario, null=True)
 
 """Clase - Modelo Producto.
