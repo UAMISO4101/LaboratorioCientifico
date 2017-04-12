@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
-from laboratorio import views_orden_pedido
+from laboratorio import views_orden_pedido, views_busqueda_producto
 from . import views
 
 urlpatterns = [
@@ -45,12 +45,12 @@ urlpatterns = [
     url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
     url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
 
-    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
-    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
-    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
-    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
-    url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
-    url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
+    url(r'^busquedaproducto/$', views_busqueda_producto.busqueda_producto, name='busquedaproducto'),
+    url(r'^busquedaproductodetalle/$', views_busqueda_producto.busqueda_producto_detalle, name='busquedaproductodetalle'),
+    url(r'^verproductobusquedadetalle/$', views_busqueda_producto.ver_producto_busqueda_detalle, name='verproductobusquedadetalle'),
+    url(r'^verproductobusqueda/$', views_busqueda_producto.ver_producto_busqueda, name='verproductobusqueda'),
+    url(r'^obtenerlistaproductos/$', views_busqueda_producto.llenar_listado_productos_busqueda, name='obtenerlistaproductos'),
+    url(r'^obtenerlistabodegas/$', views_busqueda_producto.llenar_listado_bodegas_busqueda, name='obtenerlistabodegas'),
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 
     url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_pedido, name='verordenespedido'),
