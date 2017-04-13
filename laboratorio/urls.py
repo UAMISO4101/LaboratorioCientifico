@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
-from laboratorio import views_orden_pedido, views_busqueda_producto
+from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos
 from . import views
 
 urlpatterns = [
@@ -63,4 +63,6 @@ urlpatterns = [
     url(r'^obtener_op/$', views_orden_pedido.obtener_op, name='obtener_op'),
     url(r'^obtenerFP/$', views_orden_pedido.obtener_fecha_peticion_op, name='obtenerFP'),
     url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
+
+    url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
 ]
