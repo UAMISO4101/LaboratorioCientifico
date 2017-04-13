@@ -47,7 +47,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-10 col-sm-offset-1">
-                        <div class="card">
+                        <div class="card" style="margin-bottom: 10px;">
                             <div class="header">
                                 <h4 class="title">Orden de Pedido</h4>
                             </div>
@@ -93,58 +93,28 @@
                                             style="padding: 0px 4px;height:30px;"></textarea>
                                     </div>
                                 </div>
-                                <div class="header" style="padding:5px;">
-                                    <h4 class="title">Detalle de la Orden de Pedido</h4>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
-                                    <div class="col-6 col-sm-3" style="font-weight: bold; ">
-                                        <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
-                                            style="padding: 0px 4px;height:30px;" readonly/>
-                                    </div>
-                                    <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
-                                    <div class="col-6 col-sm-3">
-                                       <select id="producto" name="producto" class="selectpicker form-control" required
-                                            style="padding: 0px 4px;height:30px;">
-                                       </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
-                                    <div class="col-6 col-sm-3" style="font-weight: bold; ">
-                                        <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
-                                            style="padding: 0px 4px;height:30px;"/>
-                                    </div>
-                                    <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
-                                    <div class="col-6 col-sm-3">
-                                       <select id="bodega" name="bodega" class="selectpicker form-control"
-                                               style="padding: 0px 4px;height:30px;" required>
-                                       </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
-                                    <div class="col-6 col-sm-3" style="font-weight: bold;">
-                                        <input id="nivel" name="nivel" type="number" class="form-control input-md"
-                                                style="padding: 0px 4px;height:30px;"/>
-                                    </div>
-                                    <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
-                                    <div class="col-6 col-sm-3" style="font-weight: bold;">
-                                        <input id="seccion" name="seccion" type="number" class="form-control input-md"
-                                                style="padding: 0px 4px;height:30px;"/>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
-                                    <div class="col-6 col-sm-3" style="font-weight: bold;">
-                                        <input id="valor_unitario" name="valor_unitario" type="number" class="form-control input-md"
-                                               style="padding: 0px 4px;height:30px;" readonly/>
-                                    </div>
-                                </div>
-                                <br/>
-                                <input type="submit" value="Guardar" class="btn btn-primary"/>
-                                <a href="../verordenespedido">Cancelar</a>
                             </form>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-10 col-sm-offset-1">
+                        <div class="card" style="margin-bottom: 10px;">
+                            <div class="header">
+                                <h4 class="title">Detalle de la Orden de Pedido</h4>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                                Launch demo modal
+                            </button>
+                            <input type="submit" value="Guardar" class="btn btn-primary"/>
+                            <a href="../verordenespedido">Cancelar</a>
                         </div>
                     </div>
                 </div>
@@ -152,8 +122,10 @@
         </div>
         <div id="pie"></div>
     </div>
+    <div id="modal1" class="card"></div>
 </div>
 </body>
+<script src="../../../images/assets/js/bootstrap.min.js"></script>
 <!--  Checkbox, Radio & Switch Plugins -->
 <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
 <!--  Charts Plugin -->
@@ -174,46 +146,8 @@
     }
 
     (function(){
-        $.getJSON("../obtenerFechaActual").done(function (data) {
-            var fecha_movimiento = $("#fecha_movimiento");
-            fecha_movimiento.val(data.fecha);
-        });
-        $.getJSON("../obtenerEstadosOP").done(function (data) {
-            data =  $.parseJSON(data);
-            var estado = $("#estado");
-            estado.append($("<option />").val("").text("Seleccione Estado..."));
-            $(data).each(function() {
-                estado.append($("<option />").val(this.pk).text(this.fields.nombre));
-            });
-        });
-        $.getJSON("../obtenerProveedores").done(function (data) {
-            data =  $.parseJSON(data);
-            var proveedor = $("#proveedor");
-            proveedor.append($("<option />").val("").text("Seleccione Proveedor..."));
-            $(data).each(function() {
-                proveedor.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
-            });
-        });
-        $.getJSON("../obtenerSoloUsuarios").done(function (data) {
-            data =  $.parseJSON(data);
-            var usuario_creacion = $("#usuario_creacion");
-            usuario_creacion.append($("<option />").val("").text("Seleccione Usuario..."));
-            $(data).each(function() {
-                usuario_creacion.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
-            });
-        });
-        $.getJSON("../obtenerBodegas/").done(function (data) {
-            data =  $.parseJSON(data);
-            var bodega = $("#bodega");
-            bodega.append($("<option />").val("").text("Seleccione Bodega..."));
-            $(data).each(function() {
-                bodega.append($("<option />").val(this.id).text(this.nombre));
-            });
-        });
-    })();
-
-    (function(){
         try {
+            $("#modal1").load("../modal_do");
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
             var parametroMsj = GetParameterValues("msj");
@@ -222,6 +156,36 @@
             }else{
                 $("#mensaje_ok").hide();
             }
+
+            $.getJSON("../obtenerFechaActual").done(function (data) {
+                var fecha_movimiento = $("#fecha_movimiento");
+                fecha_movimiento.val(data.fecha);
+            });
+            $.getJSON("../obtenerEstadosOP").done(function (data) {
+                data =  $.parseJSON(data);
+                var estado = $("#estado");
+                estado.append($("<option />").val("").text("Seleccione Estado..."));
+                $(data).each(function() {
+                    estado.append($("<option />").val(this.pk).text(this.fields.nombre));
+                });
+            });
+            $.getJSON("../obtenerProveedores").done(function (data) {
+                data =  $.parseJSON(data);
+                var proveedor = $("#proveedor");
+                proveedor.append($("<option />").val("").text("Seleccione Proveedor..."));
+                $(data).each(function() {
+                    proveedor.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+                });
+            });
+            $.getJSON("../obtenerSoloUsuarios").done(function (data) {
+                data =  $.parseJSON(data);
+                var usuario_creacion = $("#usuario_creacion");
+                usuario_creacion.append($("<option />").val("").text("Seleccione Usuario..."));
+                $(data).each(function() {
+                    usuario_creacion.append($("<option />").val(this.pk).text(this.fields.first_name+' '+this.fields.last_name));
+                });
+            });
+
             var parametroOP = GetParameterValues("id_op");
             if (parametroOP){
                 //cargar informacion
@@ -231,7 +195,7 @@
                     if (data){
                         op =  $.parseJSON(data.op);
                         $("#observaciones").val(op.fields["observaciones"]);
-                        $("#fecha_creacion").val(op.fields["fecha_peticion"]);
+
                         $("#id_op_guardada").val(op.pk);
                         $("#usuario_creacion").val(op.fields["usuario_creacion"]);
                         $("#proveedor").val(op.fields["proveedor"]);
@@ -245,6 +209,19 @@
                             producto.append($("<option />").val("").text("Seleccione Producto..."));
                             $(data).each(function() {
                                 producto.append($("<option data-vu='"+this.fields.valorUnitario+"'/>").val(this.pk).text(this.fields.nombre));
+                            });
+                            $('#producto').on('change', function() {
+                                var valorUnitario = $(this).find('option:selected').data('vu');
+                                $('#valor_unitario').val(valorUnitario);
+                            });
+
+                            $.getJSON("../obtenerBodegas/").done(function (data) {
+                                data =  $.parseJSON(data);
+                                var bodega = $("#bodega");
+                                bodega.append($("<option />").val("").text("Seleccione Bodega..."));
+                                $(data).each(function() {
+                                    bodega.append($("<option />").val(this.id).text(this.nombre));
+                                });
                             });
                         });
                 });
@@ -261,8 +238,6 @@
             {
 
             }
-
-
         }catch (exc){
             alert(exc.message);
         }
@@ -283,11 +258,6 @@
                 });
             }
         });
-    });
-
-    $('#producto').on('change', function() {
-        var valorUnitario = $(this).find('option:selected').data('vu');
-        $('#valor_unitario').val(valorUnitario);
     });
 
     $('form').submit(function (e) {

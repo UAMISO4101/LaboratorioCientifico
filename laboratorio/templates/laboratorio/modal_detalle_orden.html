@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="width: 60%">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Detalle Orden</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
+                <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                    <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
+                        style="padding: 0px 4px;height:30px;" readonly/>
+                </div>
+                <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
+                <div class="col-6 col-sm-3">
+                   <select id="producto" name="producto" class="selectpicker form-control" required
+                        style="padding: 0px 4px;height:30px;">
+                   </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
+                <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                    <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
+                        style="padding: 0px 4px;height:30px;"/>
+                </div>
+                <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
+                <div class="col-6 col-sm-3">
+                   <select id="bodega" name="bodega" class="selectpicker form-control"
+                           style="padding: 0px 4px;height:30px;" required>
+                   </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
+                <div class="col-6 col-sm-3" style="font-weight: bold;">
+                    <input id="nivel" name="nivel" type="number" class="form-control input-md"
+                            style="padding: 0px 4px;height:30px;"/>
+                </div>
+                <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
+                <div class="col-6 col-sm-3" style="font-weight: bold;">
+                    <input id="seccion" name="seccion" type="number" class="form-control input-md"
+                            style="padding: 0px 4px;height:30px;"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
+                <div class="col-6 col-sm-3" style="font-weight: bold;">
+                    <input id="valor_unitario" name="valor_unitario" type="number" class="form-control input-md"
+                           style="padding: 0px 4px;height:30px;" readonly/>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</body>
+</html>

@@ -40,6 +40,11 @@ def ir_ver_ordenes_pedido(request):
 def ir_orden_pedido(request):
     return render(request, "laboratorio/orden_pedido.html")
 
+"""Metodo a navegar pie de pagina.
+"""
+def ir_modal_do(request):
+    return render(request,"laboratorio/modal_detalle_orden.html")
+
 """Metodo obtener los usuarios del sistema sin proveedores y sin admin.
 HU: EC-LCINV-17: Crear Orden de Pedido
 Sirve para obtener los usuarios que existen en el sistema que no son proveedores y no admin
@@ -126,7 +131,6 @@ return, formato json con los usuarios
 """
 @csrf_exempt
 def obtener_fecha_peticion_op(request):
-    time.sleep(0.3)
     qs = OrdenPedido.objects.filter(id=request.GET['id_op'])
     orden_pedido = qs.first()
     dh = timedelta(hours=5)
