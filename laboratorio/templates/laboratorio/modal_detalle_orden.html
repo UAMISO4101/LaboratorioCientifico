@@ -3,68 +3,111 @@
 <head>
 </head>
 <body>
-    <!-- Modal -->
+<!-- Modal -->
+<form id="formItemOrden" method="post">
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document" style="width: 60%">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Detalle Orden</h4>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-                <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
-                <div class="col-6 col-sm-3" style="font-weight: bold; ">
-                    <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
-                        style="padding: 0px 4px;height:30px;" readonly/>
+        <div class="modal-dialog" role="document" style="width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Detalle Orden</h4>
                 </div>
-                <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
-                <div class="col-6 col-sm-3">
-                   <select id="producto" name="producto" class="selectpicker form-control" required
-                        style="padding: 0px 4px;height:30px;">
-                   </select>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                            <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" readonly/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
+                        <div class="col-6 col-sm-3">
+                            <select id="producto" name="producto" class="selectpicker form-control" required
+                                    style="padding: 0px 4px;height:30px;">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                            <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3">
+                            <select id="bodega" name="bodega" class="selectpicker form-control"
+                                    style="padding: 0px 4px;height:30px;" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="nivel" name="nivel" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="seccion" name="seccion" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="valor_unitario" name="valor_unitario" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" readonly/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Adicionar Item" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
-                <div class="col-6 col-sm-3" style="font-weight: bold; ">
-                    <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
-                        style="padding: 0px 4px;height:30px;"/>
-                </div>
-                <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
-                <div class="col-6 col-sm-3">
-                   <select id="bodega" name="bodega" class="selectpicker form-control"
-                           style="padding: 0px 4px;height:30px;" required>
-                   </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
-                <div class="col-6 col-sm-3" style="font-weight: bold;">
-                    <input id="nivel" name="nivel" type="number" class="form-control input-md"
-                            style="padding: 0px 4px;height:30px;"/>
-                </div>
-                <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
-                <div class="col-6 col-sm-3" style="font-weight: bold;">
-                    <input id="seccion" name="seccion" type="number" class="form-control input-md"
-                            style="padding: 0px 4px;height:30px;"/>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
-                <div class="col-6 col-sm-3" style="font-weight: bold;">
-                    <input id="valor_unitario" name="valor_unitario" type="number" class="form-control input-md"
-                           style="padding: 0px 4px;height:30px;" readonly/>
-                </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
         </div>
-      </div>
     </div>
-</div>
+</form>
+<script>
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formItemOrden")[0]);
+        if (formData) {
+            str = "<tr class=\"bg-info\">";
+            str +=  "<td style=\"border: 1px solid #ddd;\">"+(contadorItems)+"</td>";
+            str +=  "<td style=\"border: 1px solid #ddd;\">"+$("#producto option:selected").text()+"</td>";
+            str +=  "<td style=\"border: 1px solid #ddd;\">"+$("#bodega option:selected").text()+"</td>";
+            str +=  "<td style=\"border: 1px solid #ddd;\">"+$("#nivel").val()+"</td>";
+            str +=  "<td style=\"border: 1px solid #ddd;\">"+$("#seccion").val()+"</td>";
+            str +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#valor_unitario").val()+"</td>";
+            str +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#cantidad").val()+"</td>";
+            var subTotal = $("#valor_unitario").val() * $("#cantidad").val();
+            str +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+            str +=  "</tr>";
+
+            $('#tablaItems tr:last').after(str);
+
+            detalleOrden = new DetalleOrden();
+            detalleOrden.no = contadorItems++;
+            detalleOrden.idProducto = $("#producto option:selected").val();
+            detalleOrden.nombreProducto = $("#producto option:selected").text();
+            detalleOrden.idBodega = $("#bodega option:selected").val();
+            detalleOrden.nombreBodega = $("#bodega option:selected").text();
+            detalleOrden.nivel = $("#nivel").val();
+            detalleOrden.seccion = $("#seccion").val();
+            detalleOrden.cantidad = $("#cantidad").val();
+            detalleOrden.valorUnitario = $("#valor_unitario").val();
+            detalleOrden.fechaMovimiento = $("#fecha_movimiento").val();
+            orden.items.push(detalleOrden);
+            $('#producto').prop('selectedIndex',0);
+            $('#bodega').prop('selectedIndex',0);
+            $("#nivel").val("");
+            $("#seccion").val("");
+            $("#valor_unitario").val("");
+            $("#cantidad").val("");
+            $("#valor_unitario").val("");
+            $('#myModal').modal('hide');
+        }
+        e.preventDefault();
+    });
+</script>
 </body>
 </html>

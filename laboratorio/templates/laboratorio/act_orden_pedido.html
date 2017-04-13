@@ -21,6 +21,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js"></script>
+    <script src="../../../images/assets/js/Orden.js"></script>
+    <script src="../../../images/assets/js/DetalleOrden.js"></script>
 </head>
 <body>
 <div id="wrapper">
@@ -63,41 +65,38 @@
                                     <div class="col-6 col-sm-3"><label><b>Fecha Petición</b></label></div>
                                     <div class="col-6 col-sm-3" style="font-weight: bold;">
                                         <input id="fecha_creacion" name="fecha_creacion" type="text" class="form-control input-md"
-                                            style="padding: 0px 4px;height:30px;" readonly/>
+                                               style="padding: 0px 4px;height:30px;" readonly/>
                                     </div>
                                     <div class="col-6 col-sm-3"><label><b>Estado</b></label></div>
                                     <div class="col-6 col-sm-3">
-                                       <select id="estado" name="estado" class="selectpicker form-control" required
-                                            style="padding: 0px 4px;height:30px;">
-                                       </select>
+                                        <select id="estado" name="estado" class="selectpicker form-control" required
+                                                style="padding: 0px 4px;height:30px;">
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Proveedor</b></label></div>
                                     <div class="col-6 col-sm-3">
-                                       <select id="proveedor" name="proveedor" class="selectpicker form-control" required
-                                            style="padding: 0px 4px;height:30px;">
-                                       </select>
+                                        <select id="proveedor" name="proveedor" class="selectpicker form-control" required
+                                                style="padding: 0px 4px;height:30px;">
+                                        </select>
                                     </div>
                                     <div class="col-6 col-sm-3"><label><b>Usuario Creación</b></label></div>
                                     <div class="col-6 col-sm-3">
-                                       <select id="usuario_creacion" name="usuario_creacion" class="selectpicker form-control" required
-                                            style="padding: 0px 4px;height:30px;">
-                                       </select>
+                                        <select id="usuario_creacion" name="usuario_creacion" class="selectpicker form-control" required
+                                                style="padding: 0px 4px;height:30px;">
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Observaciones</b></label></div>
                                     <div class="col-6 col-sm-3">
-                                       <textarea class="form-control" rows="1" id="observaciones" name="observaciones"
-                                            style="padding: 0px 4px;height:30px;"></textarea>
+                                       <textarea class="form-control" rows="3" id="observaciones" name="observaciones"
+                                                 style="padding: 0px 4px;"></textarea>
                                     </div>
                                 </div>
                             </form>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>
@@ -110,9 +109,37 @@
                             <div class="header">
                                 <h4 class="title">Detalle de la Orden de Pedido</h4>
                             </div>
-                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-                                Launch demo modal
-                            </button>
+                            <div style="text-align: center;width: 100%;">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" title="Adicionar Item Orden">
+                                    <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" onclick="irEditarItem();" class="btn btn-primary btn-sm" title="Editar Item Orden">
+                                    <i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" title="Quitar Item Orden">
+                                    <i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <br />
+                            <div class="table-responsive">
+                                <table id="tablaItems" class="table">
+                                    <thead>
+                                    <tr class="bg-primary">
+                                        <th style="color:white;text-align: center;">No.</th>
+                                        <th style="color:white;text-align: center;">Nombre Producto</th>
+                                        <th style="color:white;text-align: center;">Bodega</th>
+                                        <th style="color:white;text-align: center;">Nivel</th>
+                                        <th style="color:white;text-align: center;">Sección</th>
+                                        <th style="color:white;text-align: center;">Valor Unitario</th>
+                                        <th style="color:white;text-align: center;">Cantidad</th>
+                                        <th style="color:white;text-align: center;">Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br />
                             <input type="submit" value="Guardar" class="btn btn-primary"/>
                             <a href="../verordenespedido">Cancelar</a>
                         </div>
@@ -135,6 +162,9 @@
 <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
 <script>
+    contadorItems = 1;
+    orden = new Orden();
+    itemEditar = null;
     function GetParameterValues(param) {
         var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
         for (var i = 0; i < url.length; i++) {
@@ -157,10 +187,6 @@
                 $("#mensaje_ok").hide();
             }
 
-            $.getJSON("../obtenerFechaActual").done(function (data) {
-                var fecha_movimiento = $("#fecha_movimiento");
-                fecha_movimiento.val(data.fecha);
-            });
             $.getJSON("../obtenerEstadosOP").done(function (data) {
                 data =  $.parseJSON(data);
                 var estado = $("#estado");
@@ -195,35 +221,44 @@
                     if (data){
                         op =  $.parseJSON(data.op);
                         $("#observaciones").val(op.fields["observaciones"]);
-
                         $("#id_op_guardada").val(op.pk);
                         $("#usuario_creacion").val(op.fields["usuario_creacion"]);
                         $("#proveedor").val(op.fields["proveedor"]);
                         $("#estado").val(op.fields["estado"]);
+                        orden.id = op.pk;
+                        orden.idEstado = op.fields["estado"];
+                        orden.idProveedor = op.fields["proveedor"];
+                        orden.idUsuarioCreacion = op.fields["usuario_creacion"];
+                        orden.observaciones = op.fields["observaciones"];
                     }
                     $.getJSON("../obtenerProductos",{
-                            id_proveedor: $("#proveedor option:selected").val()
-                        }).done(function (data) {
+                        id_proveedor: $("#proveedor option:selected").val()
+                    }).done(function (data) {
                         data =  $.parseJSON(data);
-                            var producto = $("#producto");
-                            producto.append($("<option />").val("").text("Seleccione Producto..."));
-                            $(data).each(function() {
-                                producto.append($("<option data-vu='"+this.fields.valorUnitario+"'/>").val(this.pk).text(this.fields.nombre));
-                            });
-                            $('#producto').on('change', function() {
-                                var valorUnitario = $(this).find('option:selected').data('vu');
-                                $('#valor_unitario').val(valorUnitario);
-                            });
+                        var producto = $("#producto");
+                        producto.append($("<option />").val("").text("Seleccione Producto..."));
+                        $(data).each(function() {
+                            producto.append($("<option data-vu='"+this.fields.valorUnitario+"'/>").val(this.pk).text(this.fields.nombre));
+                        });
+                        $('#producto').on('change', function() {
+                            var valorUnitario = $(this).find('option:selected').data('vu');
+                            $('#valor_unitario').val(valorUnitario);
+                        });
 
-                            $.getJSON("../obtenerBodegas/").done(function (data) {
-                                data =  $.parseJSON(data);
-                                var bodega = $("#bodega");
-                                bodega.append($("<option />").val("").text("Seleccione Bodega..."));
-                                $(data).each(function() {
-                                    bodega.append($("<option />").val(this.id).text(this.nombre));
-                                });
+                        $.getJSON("../obtenerBodegas/").done(function (data) {
+                            data =  $.parseJSON(data);
+                            var bodega = $("#bodega");
+                            bodega.append($("<option />").val("").text("Seleccione Bodega..."));
+                            $(data).each(function() {
+                                bodega.append($("<option />").val(this.id).text(this.nombre));
                             });
                         });
+
+                        $.getJSON("../obtenerFechaActual").done(function (data) {
+                            var fecha_movimiento = $("#fecha_movimiento");
+                            fecha_movimiento.val(data.fecha);
+                        });
+                    });
                 });
 
                 $.getJSON("../obtenerFP",{
@@ -262,23 +297,51 @@
 
     $('form').submit(function (e) {
         var formData = new FormData($("#formDetalleOrden")[0]);
-        $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                if (data && data.mensaje && data.mensaje != "ok") {
-                    $("#mensaje1").text(data.mensaje);
-                    $("#mensaje").show();
-                } else {
-                    window.location = "../verordenespedido";
+        if (formData) {
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data && data.mensaje && data.mensaje != "ok") {
+                        $("#mensaje1").text(data.mensaje);
+                        $("#mensaje").show();
+                    } else {
+                        window.location = "../verordenespedido";
+                    }
                 }
-            }
-        });
+            });
+        }
         e.preventDefault();
     });
+
+    $('#tablaItems').on('click', '.bg-info', function(event) {
+        var numero = this.children[0].textContent;
+        for (var i=0;i<orden.items.length;i++){
+            var item = orden.items[i];
+            if (item.no == numero){
+                itemEditar = item;
+                break;
+            }
+        }
+        $(this).addClass('active').siblings().removeClass('active');
+    });
+
+    function irEditarItem(){
+        if (itemEditar){
+            $('#producto').val(itemEditar.idProducto);
+            $('#bodega').val(itemEditar.idBodega);
+            $("#nivel").val(itemEditar.nivel);
+            $("#seccion").val(itemEditar.seccion);
+            $("#valor_unitario").val(itemEditar.valorUnitario);
+            $("#cantidad").val(itemEditar.cantidad);
+            $("#fecha_movimiento").val(itemEditar.fechaMovimiento);
+
+            $('#myModal').modal('show');
+        }
+    }
     /*(function(){
      $.getJSON("isLogged").done(function (data) {
      if (data.mensaje == 'no'){
