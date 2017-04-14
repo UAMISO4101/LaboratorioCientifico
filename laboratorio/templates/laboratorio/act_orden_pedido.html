@@ -116,7 +116,7 @@
                                 <button type="button" onclick="irEditarItem();" class="btn btn-primary btn-sm" title="Editar Item Orden">
                                     <i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i>
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm" title="Quitar Item Orden">
+                                <button type="button" onclick="eliminarItem();" class="btn btn-primary btn-sm" title="Quitar Item Orden">
                                     <i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -340,6 +340,44 @@
             $("#fecha_movimiento").val(itemEditar.fechaMovimiento);
 
             $('#myModal').modal('show');
+        }
+    }
+
+    function eliminarItem(){
+        if (itemEditar) {
+            var trs = $('#tablaItems tr');
+            for (var i = 1; i < trs.length; i++) {
+                var tr = trs[i];
+                var numero = tr.children[0].textContent;
+                if (itemEditar.no == numero) {
+                    $(tr).remove();
+                    break;
+                }
+            }
+            for (var i = 0; i < orden.items.length; i++){
+                var item = orden.items[i];
+                if (itemEditar.no == item.no) {
+                    orden.items.splice(i, 1);
+                    break;
+                }
+            }
+
+            trs = $('#tablaItems tr');
+            for (var i = 1; i < trs.length; i++) {
+                var tr = trs[i];
+                tr.children[0].textContent = i;
+            }
+
+            for (var i = 0; i < orden.items.length; i++){
+                orden.items[i].no = i+1;
+            }
+            if (orden.items.length > 0) {
+                contadorItems = orden.items[orden.items.length - 1].no;
+                contadorItems++;
+            }else{
+                contadorItems=1;
+            }
+            itemEditar = null;
         }
     }
     /*(function(){
