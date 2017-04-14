@@ -6,5 +6,3 @@ function Orden(idEstado, idProveedor, idUsuarioCreacion,
     this.observaciones = observaciones;
     this.items = new Array();
 }
-
-
