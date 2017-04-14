@@ -13,3 +13,4 @@ function DetalleOrden(no, idProducto, nombreProducto,
     this.cantidad = cantidad;
     this.fechaMovimiento = fechaMovimiento;
 }
+
