@@ -65,4 +65,5 @@ urlpatterns = [
     url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
 
     url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
+    url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),
 ]
