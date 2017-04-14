@@ -138,6 +138,12 @@
                                     <tbody>
                                     </tbody>
                                 </table>
+                                <table id="tablaTotal" class="table">
+                                    <tr class="bg-success">
+                                        <td style="width: 90%; text-align: right;">Total Orden</td>
+                                        <td style="text-align: right;"></td>
+                                    </tr>
+                                </table>
                             </div>
                             <br />
                             <input type="submit" value="Guardar" class="btn btn-primary"/>
@@ -253,6 +259,7 @@
                                 bodega.append($("<option />").val(this.id).text(this.nombre));
                             });
                         });
+                        refrescarTotalOrden();
                     });
                 });
 
@@ -380,7 +387,20 @@
                 contadorItems=1;
             }
             itemEditar = null;
+            refrescarTotalOrden();
         }
+    }
+
+    function refrescarTotalOrden(){
+        total = 0;
+        for (var i = 0; i < orden.items.length; i++){
+            total += orden.items[i].cantidad * orden.items[i].valorUnitario;
+        }
+        var trs = $('#tablaTotal tr');
+        if (trs){
+            trs[0].children[1].textContent = total;
+        }
+
     }
     /*(function(){
      $.getJSON("isLogged").done(function (data) {
