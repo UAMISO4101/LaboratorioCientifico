@@ -68,7 +68,7 @@
     </div>
 </form>
 <script>
-    $('form').submit(function (e) {
+    $('#formItemOrden').submit(function (e) {
         var formData = new FormData($("#formItemOrden")[0]);
         if (formData) {
             $.getJSON("../obtenerFechaActual").done(function (data) {

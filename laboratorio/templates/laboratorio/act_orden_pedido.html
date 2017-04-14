@@ -56,10 +56,10 @@
                             <div id="mensaje_ok" class="alert alert-info">
                                 <label id="mensaje1_ok">La orden de pedido se registró correctamente</label>
                             </div>
-                            <div id="mensaje" class="alert alert-danger">
+                            <div id="mensaje" class="alert alert-warning">
                                 <label id="mensaje1"></label>
                             </div>
-                            <form id="formDetalleOrden" action="..//" method="post" style="padding: 20px">
+                            <form id="formDetalleOrden" action="../guardarOrdenDetalle/" method="post" style="padding: 20px">
                                 <input id="id_op_guardada" name="id_op_guardada" type="hidden" />
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Fecha Petición</b></label></div>
@@ -95,6 +95,9 @@
                                                  style="padding: 0px 4px;"></textarea>
                                     </div>
                                 </div>
+                                <br />
+                                <input type="submit" value="Guardar Orden" class="btn btn-primary"/>
+                                <a href="../verordenespedido">Cancelar</a>
                             </form>
                         </div>
                     </div>
@@ -145,9 +148,6 @@
                                     </tr>
                                 </table>
                             </div>
-                            <br />
-                            <input type="submit" value="Guardar" class="btn btn-primary"/>
-                            <a href="../verordenespedido">Cancelar</a>
                         </div>
                     </div>
                 </div>
@@ -236,6 +236,52 @@
                         orden.idProveedor = op.fields["proveedor"];
                         orden.idUsuarioCreacion = op.fields["usuario_creacion"];
                         orden.observaciones = op.fields["observaciones"];
+
+                        //Cargar detalle orden
+                        $.getJSON("../obtenerDetalleOrden",{
+                            id_op: parametroOP
+                        }).done(function (datos) {
+                            if (datos){
+                                contadorItems = 1;
+                                detalle =  $.parseJSON(datos);
+                                for (indiceDetalle in detalle){
+                                    detalleOrden = new DetalleOrden();
+                                    detalleOrden.no = contadorItems;
+                                    detalleOrden.idProducto = detalle[indiceDetalle].idProducto;
+                                    detalleOrden.nombreProducto = detalle[indiceDetalle].nombreProducto;
+                                    detalleOrden.idBodega = detalle[indiceDetalle].idBodega;
+                                    detalleOrden.nombreBodega = detalle[indiceDetalle].nombreBodega;
+                                    detalleOrden.nivel = detalle[indiceDetalle].nivel;
+                                    detalleOrden.seccion = detalle[indiceDetalle].seccion;
+                                    detalleOrden.cantidad = detalle[indiceDetalle].cantidad;
+                                    detalleOrden.valorUnitario = detalle[indiceDetalle].valorUnitario;
+                                    detalleOrden.fechaMovimiento = detalle[indiceDetalle].fechaMovimiento;
+
+                                    strTd = "";
+                                    strInicio = "<tr class=\"bg-info\">";
+                                    strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreProducto+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreBodega+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nivel+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.seccion+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.valorUnitario+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.cantidad+"</td>";
+                                    var subTotal = detalleOrden.cantidad * detalleOrden.valorUnitario;
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                                    strFin =  "</tr>";
+
+                                    $('#tablaItems tr:last').after(strInicio + strCont + strTd + strFin);
+                                    orden.items.push(detalleOrden);
+                                    contadorItems++;
+                                }
+                                refrescarTotalOrden();
+                            }
+                        });
+
+
+
+
+
                     }
                     $.getJSON("../obtenerProductos",{
                         id_proveedor: $("#proveedor option:selected").val()
@@ -288,6 +334,14 @@
             $('#valor_unitario').val("")
             producto.empty();
             producto.append($("<option />").val("").text("Seleccione Producto..."));
+            itemEditar = null;
+            orden.items = new Array();
+            contadorItems=1;
+            var trs = $('#tablaItems tr');
+            for (var i = 1; i < trs.length; i++) {
+                $(trs[i]).remove();
+            }
+            refrescarTotalOrden();
             if (data){
                 data =  $.parseJSON(data);
                 $(data).each(function() {
@@ -297,27 +351,39 @@
         });
     });
 
-    $('form').submit(function (e) {
-        var formData = new FormData($("#formDetalleOrden")[0]);
-        if (formData) {
-            $.ajax({
-                url: $(this).attr('action'),
-                type: $(this).attr('method'),
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    if (data && data.mensaje && data.mensaje != "ok") {
-                        $("#mensaje1").text(data.mensaje);
-                        $("#mensaje").show();
-                    } else {
-                        window.location = "../verordenespedido";
+    $("#formDetalleOrden").submit(function (e) {
+        $("#mensaje").hide();
+        $("#mensaje1").text("");
+        if (orden.items.length == 0){
+            $("#mensaje").show();
+            $("#mensaje1").text("Debe adicionar items a la orden");
+        }else {
+            var formData = new FormData($("#formDetalleOrden")[0]);
+            if (formData) {
+                orden.observaciones = $("#observaciones").val();
+                orden.idUsuarioCreacion = $("#usuario_creacion").val();
+                orden.idProveedor = $("#proveedor").val();
+                orden.idEstado = $("#estado").val();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: JSON.stringify(orden),
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data && data.mensaje && data.mensaje != "ok") {
+                            $("#mensaje1").text(data.mensaje);
+                            $("#mensaje").show();
+                        } else {
+                            window.location = "../verordenespedido";
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         e.preventDefault();
     });
+
 
     $('#tablaItems').on('click', '.bg-info', function(event) {
         var numero = this.children[0].textContent;
@@ -332,6 +398,8 @@
     });
 
     function antesHora(){
+        $("#mensaje").hide();
+        $("#mensaje1").text("");
         $.getJSON("../obtenerFechaActual").done(function (data) {
             var fecha_movimiento = $("#fecha_movimiento");
             fecha_movimiento.val(data.fecha);

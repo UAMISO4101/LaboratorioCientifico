@@ -25,8 +25,9 @@ from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default, \
-    OrdenPedidoVista
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido
+    OrdenPedidoVista, DetalleOrdenVista
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido, \
+    DetalleOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
 
@@ -182,3 +183,72 @@ def obtenerProductos(request):
     qs = Producto.objects.filter(proveedor=prov)
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
+
+"""Metodo guardar orden de pedido y detalle de la orden.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para atualizar una orden de pedido en el sistema y
+para guardar el detalle de la orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def guardarOrdenDetalle(request):
+    mensaje = ""
+    if request.method == 'POST':
+        orden_cliente = json.loads(request.body)
+        ordenes_pedido = OrdenPedido.objects.filter(id=orden_cliente['id'])
+        if ordenes_pedido.exists():
+            orden_pedido = ordenes_pedido.first()
+            orden_pedido.observaciones = orden_cliente['observaciones']
+            orden_pedido.usuario_creacion=Usuario.objects.filter(id=orden_cliente['idUsuarioCreacion']).first()
+            orden_pedido.proveedor=Usuario.objects.filter(id=orden_cliente['idProveedor']).first()
+            orden_pedido.estado=Tipo.objects.filter(id=orden_cliente['idEstado']).first()
+            orden_pedido.save()
+
+            detallesOrden = DetalleOrden.objects.filter(orden=orden_pedido)
+            if detallesOrden.exists():
+                for det in detallesOrden:
+                    det.delete()
+
+            for item in orden_cliente["items"]:
+                detalle = DetalleOrden()
+                detalle.fecha_movimiento = datetime.strptime(item["fechaMovimiento"], '%c')
+                detalle.cantidad = item["cantidad"]
+                detalle.producto = Producto.objects.filter(id=item["idProducto"]).first()
+                detalle.bodega = Bodega.objects.filter(id=item["idBodega"]).first()
+                detalle.estado = Tipo.objects.filter(grupo="DETALLEPEDIDO",nombre="Recibido").first()
+                detalle.nivel_bodega_destino = item["nivel"]
+                detalle.seccion_bodega_destino = item["seccion"]
+                detalle.orden = orden_pedido
+                detalle.save()
+
+        mensaje = "ok"
+    return JsonResponse({"mensaje": mensaje})
+
+"""Metodo obtener detalle ordenes de una orden.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para obtener detalle ordenes de una orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtener_do(request):
+    qs = DetalleOrden.objects.filter(orden=request.GET['id_op'])
+    listaDO = []
+    if qs.exists():
+        for det_orden in qs:
+            detalleOrden = DetalleOrdenVista()
+            detalleOrden.idProducto = det_orden.producto.id
+            detalleOrden.nombreProducto = det_orden.producto.nombre
+            detalleOrden.valorUnitario = int(det_orden.producto.valorUnitario)
+            detalleOrden.idBodega = det_orden.bodega.id
+            detalleOrden.nombreBodega = det_orden.bodega.nombre
+            detalleOrden.cantidad = int(det_orden.cantidad)
+            detalleOrden.nivel = det_orden.nivel_bodega_destino
+            detalleOrden.seccion = det_orden.seccion_bodega_destino
+            dh = timedelta(hours=5)
+            detalleOrden.fechaMovimiento = (det_orden.fecha_movimiento - dh).strftime("%c")
+            listaDO.append(detalleOrden)
+
+    json_string = json.dumps(listaDO, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)
