@@ -182,3 +182,26 @@ def obtenerProductos(request):
     qs = Producto.objects.filter(proveedor=prov)
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
+
+"""Metodo guardar orden de pedido y detalle de la orden.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para atualizar una orden de pedido en el sistema y
+para guardar el detalle de la orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def guardarOrdenDetalle(request):
+    mensaje = ""
+    if request.method == 'POST':
+        orden_cliente = json.loads(request.body)
+        ordenes_pedido = OrdenPedido.objects.filter(id=orden_cliente['id'])
+        if ordenes_pedido.exists():
+            orden_pedido = ordenes_pedido.first()
+            orden_pedido.observaciones = orden_cliente['observaciones']
+            orden_pedido.usuario_creacion=Usuario.objects.filter(id=orden_cliente['idUsuarioCreacion']).first()
+            orden_pedido.proveedor=Usuario.objects.filter(id=orden_cliente['idProveedor']).first()
+            orden_pedido.estado=Tipo.objects.filter(id=orden_cliente['idEstado']).first()
+            orden_pedido.save()
+        mensaje = "ok"
+    return JsonResponse({"mensaje": mensaje})
