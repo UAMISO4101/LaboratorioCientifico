@@ -236,6 +236,52 @@
                         orden.idProveedor = op.fields["proveedor"];
                         orden.idUsuarioCreacion = op.fields["usuario_creacion"];
                         orden.observaciones = op.fields["observaciones"];
+
+                        //Cargar detalle orden
+                        $.getJSON("../obtenerDetalleOrden",{
+                            id_op: parametroOP
+                        }).done(function (datos) {
+                            if (datos){
+                                contadorItems = 1;
+                                detalle =  $.parseJSON(datos);
+                                for (indiceDetalle in detalle){
+                                    detalleOrden = new DetalleOrden();
+                                    detalleOrden.no = contadorItems;
+                                    detalleOrden.idProducto = detalle[indiceDetalle].idProducto;
+                                    detalleOrden.nombreProducto = detalle[indiceDetalle].nombreProducto;
+                                    detalleOrden.idBodega = detalle[indiceDetalle].idBodega;
+                                    detalleOrden.nombreBodega = detalle[indiceDetalle].nombreBodega;
+                                    detalleOrden.nivel = detalle[indiceDetalle].nivel;
+                                    detalleOrden.seccion = detalle[indiceDetalle].seccion;
+                                    detalleOrden.cantidad = detalle[indiceDetalle].cantidad;
+                                    detalleOrden.valorUnitario = detalle[indiceDetalle].valorUnitario;
+                                    detalleOrden.fechaMovimiento = detalle[indiceDetalle].fechaMovimiento;
+
+                                    strTd = "";
+                                    strInicio = "<tr class=\"bg-info\">";
+                                    strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreProducto+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreBodega+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nivel+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.seccion+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.valorUnitario+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.cantidad+"</td>";
+                                    var subTotal = detalleOrden.cantidad * detalleOrden.valorUnitario;
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                                    strFin =  "</tr>";
+
+                                    $('#tablaItems tr:last').after(strInicio + strCont + strTd + strFin);
+                                    orden.items.push(detalleOrden);
+                                    contadorItems++;
+                                }
+                                refrescarTotalOrden();
+                            }
+                        });
+
+
+
+
+
                     }
                     $.getJSON("../obtenerProductos",{
                         id_proveedor: $("#proveedor option:selected").val()

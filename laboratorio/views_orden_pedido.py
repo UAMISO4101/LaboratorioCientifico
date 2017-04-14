@@ -25,7 +25,7 @@ from django.views.decorators.csrf import csrf_exempt
 from psycopg2.extensions import JSON
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default, \
-    OrdenPedidoVista
+    OrdenPedidoVista, DetalleOrdenVista
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido, \
     DetalleOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
@@ -224,3 +224,31 @@ def guardarOrdenDetalle(request):
 
         mensaje = "ok"
     return JsonResponse({"mensaje": mensaje})
+
+"""Metodo obtener detalle ordenes de una orden.
+HU: EC-LCINV-17: Crear Orden de Pedido
+Sirve para obtener detalle ordenes de una orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtener_do(request):
+    qs = DetalleOrden.objects.filter(orden=request.GET['id_op'])
+    listaDO = []
+    if qs.exists():
+        for det_orden in qs:
+            detalleOrden = DetalleOrdenVista()
+            detalleOrden.idProducto = det_orden.producto.id
+            detalleOrden.nombreProducto = det_orden.producto.nombre
+            detalleOrden.valorUnitario = int(det_orden.producto.valorUnitario)
+            detalleOrden.idBodega = det_orden.bodega.id
+            detalleOrden.nombreBodega = det_orden.bodega.nombre
+            detalleOrden.cantidad = int(det_orden.cantidad)
+            detalleOrden.nivel = det_orden.nivel_bodega_destino
+            detalleOrden.seccion = det_orden.seccion_bodega_destino
+            dh = timedelta(hours=5)
+            detalleOrden.fechaMovimiento = (det_orden.fecha_movimiento - dh).strftime("%c")
+            listaDO.append(detalleOrden)
+
+    json_string = json.dumps(listaDO, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)

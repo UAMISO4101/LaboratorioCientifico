@@ -124,6 +124,20 @@ class OrdenPedidoVista():
     estado = ""
     fechaPeticion = ""
 
+"""Clase - Auxiliar  OrdenPedidoVista.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class DetalleOrdenVista():
+    idProducto = 0;
+    nombreProducto = "";
+    idBodega = 0;
+    nombreBodega = "";
+    nivel = 0;
+    seccion = 0;
+    valorUnitario = 0.0;
+    cantidad = 0.0;
+    fechaMovimiento = None;
+
 # HU-LCINV-13
 # GZ
 # Manejo de fechas en formato ISO para presentar en el UI
