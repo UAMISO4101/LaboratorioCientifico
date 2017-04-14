@@ -134,3 +134,17 @@ def json_default(value):
         return datetime.date.isoformat(value)
     else:
         return value.__dict__
+
+
+# LCINV-7
+# FB
+# Manejo para el vencimiento de productos
+class ProductoVencimientoVista():
+    id = 0
+    bodega = ""
+    producto = ""
+    nivel = 0
+    seccion = 0
+    fecha_vencimiento = ""
+    dias_anticipacion = ""
+    semaforo_vencimiento = ""
