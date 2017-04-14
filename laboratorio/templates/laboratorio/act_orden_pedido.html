@@ -110,7 +110,7 @@
                                 <h4 class="title">Detalle de la Orden de Pedido</h4>
                             </div>
                             <div style="text-align: center;width: 100%;">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" title="Adicionar Item Orden">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" title="Adicionar Item Orden" onclick="antesHora();">
                                     <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
                                 </button>
                                 <button type="button" onclick="irEditarItem();" class="btn btn-primary btn-sm" title="Editar Item Orden">
@@ -253,11 +253,6 @@
                                 bodega.append($("<option />").val(this.id).text(this.nombre));
                             });
                         });
-
-                        $.getJSON("../obtenerFechaActual").done(function (data) {
-                            var fecha_movimiento = $("#fecha_movimiento");
-                            fecha_movimiento.val(data.fecha);
-                        });
                     });
                 });
 
@@ -328,6 +323,13 @@
         }
         $(this).addClass('active').siblings().removeClass('active');
     });
+
+    function antesHora(){
+        $.getJSON("../obtenerFechaActual").done(function (data) {
+            var fecha_movimiento = $("#fecha_movimiento");
+            fecha_movimiento.val(data.fecha);
+        });
+    }
 
     function irEditarItem(){
         if (itemEditar){

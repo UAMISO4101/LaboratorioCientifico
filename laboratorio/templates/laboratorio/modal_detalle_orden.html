@@ -60,8 +60,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Adicionar Item" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Guardar Item" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cerrarItem()">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -71,71 +71,83 @@
     $('form').submit(function (e) {
         var formData = new FormData($("#formItemOrden")[0]);
         if (formData) {
-            detalleOrden = new DetalleOrden();
-            detalleOrden.no = contadorItems;
-            detalleOrden.idProducto = $("#producto option:selected").val();
-            detalleOrden.nombreProducto = $("#producto option:selected").text();
-            detalleOrden.idBodega = $("#bodega option:selected").val();
-            detalleOrden.nombreBodega = $("#bodega option:selected").text();
-            detalleOrden.nivel = $("#nivel").val();
-            detalleOrden.seccion = $("#seccion").val();
-            detalleOrden.cantidad = $("#cantidad").val();
-            detalleOrden.valorUnitario = $("#valor_unitario").val();
-            detalleOrden.fechaMovimiento = $("#fecha_movimiento").val();
-            strTd = "";
-            strInicio = "<tr class=\"bg-info\">";
-            strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
-            strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#producto option:selected").text()+"</td>";
-            strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#bodega option:selected").text()+"</td>";
-            strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#nivel").val()+"</td>";
-            strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#seccion").val()+"</td>";
-            strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#valor_unitario").val()+"</td>";
-            strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#cantidad").val()+"</td>";
-            var subTotal = $("#valor_unitario").val() * $("#cantidad").val();
-            strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
-            strFin =  "</tr>";
-
-            if (itemEditar == null){
-                $('#tablaItems tr:last').after(strInicio+strCont+strTd+strFin);
-                orden.items.push(detalleOrden);
-                contadorItems++;
-            }else{
-                var trs = $('#tablaItems tr');
-                for (var i=1;i<trs.length;i++){
-                    var tr = trs[i];
-                    var numero = tr.children[0].textContent;
-                    if (itemEditar.no == numero){
-                        $(tr).html("<td style=\"border: 1px solid #ddd;\">"+numero+"</td>"+strTd);
-                        break;
-                    }
-                }
-                for (var i = 0; i < orden.items.length; i++){
-                    if (itemEditar.no == orden.items[i].no){
-                        detalleOrden.no = itemEditar.no;
-                        orden.items[i] = detalleOrden;
-                        break;
-                    }
-                }
-                $("#tablaItems tr").removeClass('active');
-                itemEditar = null;
-            }
-
-            $("#fecha_movimiento").val("");
-            $('#producto').prop('selectedIndex',0);
-            $('#bodega').prop('selectedIndex',0);
-            $("#nivel").val("");
-            $("#seccion").val("");
-            $("#valor_unitario").val("");
-            $("#cantidad").val("");
-            $("#valor_unitario").val("");
             $.getJSON("../obtenerFechaActual").done(function (data) {
-                            var fecha_movimiento = $("#fecha_movimiento");
-                            fecha_movimiento.val(data.fecha);
-                        });
-            $('#myModal').modal('hide');
+                detalleOrden = new DetalleOrden();
+                detalleOrden.no = contadorItems;
+                detalleOrden.idProducto = $("#producto option:selected").val();
+                detalleOrden.nombreProducto = $("#producto option:selected").text();
+                detalleOrden.idBodega = $("#bodega option:selected").val();
+                detalleOrden.nombreBodega = $("#bodega option:selected").text();
+                detalleOrden.nivel = $("#nivel").val();
+                detalleOrden.seccion = $("#seccion").val();
+                detalleOrden.cantidad = $("#cantidad").val();
+                detalleOrden.valorUnitario = $("#valor_unitario").val();
+                detalleOrden.fechaMovimiento = data.fecha;
+                strTd = "";
+                strInicio = "<tr class=\"bg-info\">";
+                strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#producto option:selected").text()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#bodega option:selected").text()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#nivel").val()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#seccion").val()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#valor_unitario").val()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#cantidad").val()+"</td>";
+                var subTotal = $("#valor_unitario").val() * $("#cantidad").val();
+                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                strFin =  "</tr>";
+
+                if (itemEditar == null){
+                    $('#tablaItems tr:last').after(strInicio+strCont+strTd+strFin);
+                    orden.items.push(detalleOrden);
+                    contadorItems++;
+                }else{
+                    var trs = $('#tablaItems tr');
+                    for (var i=1;i<trs.length;i++){
+                        var tr = trs[i];
+                        var numero = tr.children[0].textContent;
+                        if (itemEditar.no == numero){
+                            $(tr).html("<td style=\"border: 1px solid #ddd;\">"+numero+"</td>"+strTd);
+                            break;
+                        }
+                    }
+                    for (var i = 0; i < orden.items.length; i++){
+                        if (itemEditar.no == orden.items[i].no){
+                            detalleOrden.no = itemEditar.no;
+                            orden.items[i] = detalleOrden;
+                            break;
+                        }
+                    }
+                    $("#tablaItems tr").removeClass('active');
+                    itemEditar = null;
+                }
+                $("#fecha_movimiento").val("");
+                $('#producto').prop('selectedIndex',0);
+                $('#bodega').prop('selectedIndex',0);
+                $("#nivel").val("");
+                $("#seccion").val("");
+                $("#valor_unitario").val("");
+                $("#cantidad").val("");
+                $("#valor_unitario").val("");
+                $('#myModal').modal('hide');
+            });
         }
+
         e.preventDefault();
     });
+
+    function cerrarItem(){
+        $("#tablaItems tr").removeClass('active');
+        itemEditar = null;
+        $("#fecha_movimiento").val("");
+        $('#producto').prop('selectedIndex',0);
+        $('#bodega').prop('selectedIndex',0);
+        $("#nivel").val("");
+        $("#seccion").val("");
+        $("#valor_unitario").val("");
+        $("#cantidad").val("");
+        $("#valor_unitario").val("");
+        $('#myModal').modal('hide');
+    }
 </script>
 </body>
 </html>
