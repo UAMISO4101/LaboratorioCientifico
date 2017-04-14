@@ -182,4 +182,3 @@ def obtenerProductos(request):
     qs = Producto.objects.filter(proveedor=prov)
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
-
