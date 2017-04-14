@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+<!-- Modal -->
+<form id="formItemOrden" method="post">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Detalle Orden</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                            <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" readonly/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
+                        <div class="col-6 col-sm-3">
+                            <select id="producto" name="producto" class="selectpicker form-control" required
+                                    style="padding: 0px 4px;height:30px;">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                            <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3">
+                            <select id="bodega" name="bodega" class="selectpicker form-control"
+                                    style="padding: 0px 4px;height:30px;" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="nivel" name="nivel" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="seccion" name="seccion" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="valor_unitario" name="valor_unitario" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" readonly/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Guardar Item" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cerrarItem()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formItemOrden")[0]);
+        if (formData) {
+            $.getJSON("../obtenerFechaActual").done(function (data) {
+                detalleOrden = new DetalleOrden();
+                detalleOrden.no = contadorItems;
+                detalleOrden.idProducto = $("#producto option:selected").val();
+                detalleOrden.nombreProducto = $("#producto option:selected").text();
+                detalleOrden.idBodega = $("#bodega option:selected").val();
+                detalleOrden.nombreBodega = $("#bodega option:selected").text();
+                detalleOrden.nivel = $("#nivel").val();
+                detalleOrden.seccion = $("#seccion").val();
+                detalleOrden.cantidad = $("#cantidad").val();
+                detalleOrden.valorUnitario = $("#valor_unitario").val();
+                detalleOrden.fechaMovimiento = data.fecha;
+                strTd = "";
+                strInicio = "<tr class=\"bg-info\">";
+                strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#producto option:selected").text()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#bodega option:selected").text()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#nivel").val()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#seccion").val()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#valor_unitario").val()+"</td>";
+                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#cantidad").val()+"</td>";
+                var subTotal = $("#valor_unitario").val() * $("#cantidad").val();
+                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                strFin =  "</tr>";
+
+                if (itemEditar == null){
+                    $('#tablaItems tr:last').after(strInicio+strCont+strTd+strFin);
+                    orden.items.push(detalleOrden);
+                    contadorItems++;
+                }else{
+                    var trs = $('#tablaItems tr');
+                    for (var i=1;i<trs.length;i++){
+                        var tr = trs[i];
+                        var numero = tr.children[0].textContent;
+                        if (itemEditar.no == numero){
+                            $(tr).html("<td style=\"border: 1px solid #ddd;\">"+numero+"</td>"+strTd);
+                            break;
+                        }
+                    }
+                    for (var i = 0; i < orden.items.length; i++){
+                        if (itemEditar.no == orden.items[i].no){
+                            detalleOrden.no = itemEditar.no;
+                            orden.items[i] = detalleOrden;
+                            break;
+                        }
+                    }
+                    $("#tablaItems tr").removeClass('active');
+                    itemEditar = null;
+                }
+                $("#fecha_movimiento").val("");
+                $('#producto').prop('selectedIndex',0);
+                $('#bodega').prop('selectedIndex',0);
+                $("#nivel").val("");
+                $("#seccion").val("");
+                $("#valor_unitario").val("");
+                $("#cantidad").val("");
+                $("#valor_unitario").val("");
+                $('#myModal').modal('hide');
+                refrescarTotalOrden();
+            });
+        }
+
+        e.preventDefault();
+    });
+
+    function cerrarItem(){
+        $("#tablaItems tr").removeClass('active');
+        itemEditar = null;
+        $("#fecha_movimiento").val("");
+        $('#producto').prop('selectedIndex',0);
+        $('#bodega').prop('selectedIndex',0);
+        $("#nivel").val("");
+        $("#seccion").val("");
+        $("#valor_unitario").val("");
+        $("#cantidad").val("");
+        $("#valor_unitario").val("");
+        $('#myModal').modal('hide');
+    }
+</script>
+</body>
+</html>
