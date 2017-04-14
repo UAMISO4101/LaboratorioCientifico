@@ -63,6 +63,8 @@ urlpatterns = [
     url(r'^obtener_op/$', views_orden_pedido.obtener_op, name='obtener_op'),
     url(r'^obtenerFP/$', views_orden_pedido.obtener_fecha_peticion_op, name='obtenerFP'),
     url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
+    url(r'^obtenerProductos/$', views_orden_pedido.obtenerProductos, name='obtenerProductos'),
+    url(r'^modal_do/$', views_orden_pedido.ir_modal_do, name=''),
 
     url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
 ]
