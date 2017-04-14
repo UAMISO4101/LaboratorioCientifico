@@ -1,5 +1,5 @@
+# coding=utf-8
 from __future__ import unicode_literals
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -40,7 +40,7 @@ class Bodega(models.Model):
     fecha_creacion = models.DateTimeField(null=True)
     fecha_actualizacion = models.DateTimeField(null=True)
     unidad_medida = models.ForeignKey(Tipo, null=True)
-    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  #Segun el excel se toma el nombre BODEGA
+    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  # Segun el excel se toma el nombre BODEGA
     usuario = models.ForeignKey(Usuario, null=True)
 
 """Clase - Modelo Producto.
@@ -82,7 +82,6 @@ class Producto(models.Model):
         ('Otros', 'Moleculas genericas'),
     )
     clasificacion = models.CharField(max_length=35,choices=clasificacion_choices)
-    #unidad_medida = models.ForeignKey(Tipo, null=True)
     unidad_medida = models.ForeignKey(Tipo, related_name="prod_tipo_unidadmedida", null=True)  # Segun TransaccionInventario.unidad_medida, seria tipo_unidadmedida
     unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
@@ -94,10 +93,14 @@ class ProductosEnBodega(models.Model):
     bodega = models.ForeignKey(Bodega, null=True)
     producto = models.ForeignKey(Producto, null=True)
     nivel = models.IntegerField(null=True)
-    #nivel_minimo = models.IntegerField(null=True)
     seccion = models.IntegerField(null=True)
     cantidad = models.IntegerField(null=True)
     unidad_medida = models.ForeignKey(Tipo, related_name="prodbod_tipo_unidadmedida", null=True)
+    # Sprint2 fecha_vencimiento. Por aplicación se validará que los Productos que deban tener fecha de vencimiento sean
+    # los que están en control del Jefe de Bodega, es decir los que en su historial de transacciones
+    # NO figure un TIPOTRX "Traslado a experimento", "Devolucion a proveedor", "Mover por perdida o desperdicio" o
+    # "Devolucion a proveedor"
+    fecha_vencimiento = models.DateField(null=True)
 
 """Clase - Modelo TransaccionInventario.
 """
