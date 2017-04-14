@@ -176,3 +176,4 @@ class DetalleOrden(models.Model):
     bodega = models.ForeignKey(Bodega, null=True)
     nivel_bodega_destino = models.IntegerField(null=True)
     seccion_bodega_destino = models.IntegerField(null=True)
+    orden = models.ForeignKey(OrdenPedido, null=True)

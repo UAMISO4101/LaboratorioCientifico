@@ -288,6 +288,14 @@
             $('#valor_unitario').val("")
             producto.empty();
             producto.append($("<option />").val("").text("Seleccione Producto..."));
+            itemEditar = null;
+            orden.items = new Array();
+            contadorItems=1;
+            var trs = $('#tablaItems tr');
+            for (var i = 1; i < trs.length; i++) {
+                $(trs[i]).remove();
+            }
+            refrescarTotalOrden();
             if (data){
                 data =  $.parseJSON(data);
                 $(data).each(function() {

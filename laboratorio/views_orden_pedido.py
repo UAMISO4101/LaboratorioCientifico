@@ -26,7 +26,8 @@ from psycopg2.extensions import JSON
 
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default, \
     OrdenPedidoVista
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido, \
+    DetalleOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
 
@@ -203,5 +204,23 @@ def guardarOrdenDetalle(request):
             orden_pedido.proveedor=Usuario.objects.filter(id=orden_cliente['idProveedor']).first()
             orden_pedido.estado=Tipo.objects.filter(id=orden_cliente['idEstado']).first()
             orden_pedido.save()
+
+            detallesOrden = DetalleOrden.objects.filter(orden=orden_pedido)
+            if detallesOrden.exists():
+                for det in detallesOrden:
+                    det.delete()
+
+            for item in orden_cliente["items"]:
+                detalle = DetalleOrden()
+                detalle.fecha_movimiento = datetime.strptime(item["fechaMovimiento"], '%c')
+                detalle.cantidad = item["cantidad"]
+                detalle.producto = Producto.objects.filter(id=item["idProducto"]).first()
+                detalle.bodega = Bodega.objects.filter(id=item["idBodega"]).first()
+                detalle.estado = Tipo.objects.filter(grupo="DETALLEPEDIDO",nombre="Recibido").first()
+                detalle.nivel_bodega_destino = item["nivel"]
+                detalle.seccion_bodega_destino = item["seccion"]
+                detalle.orden = orden_pedido
+                detalle.save()
+
         mensaje = "ok"
     return JsonResponse({"mensaje": mensaje})
