@@ -95,6 +95,34 @@
                     <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
                     <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
                     <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
+                    <label id="lab1"><b>Frecuencia media de Uso</b></label><select class="form-control" id="frecuencia_media" name="frecuencia_media" required>
+                        <option value="" selected="selected">Seleccione una frecuencia...</option>
+                    <optgroup label="Continua">
+                        <option value="Continua">Muchas veces al día</option>
+                    </optgroup>
+                    <optgroup label="Frecuente">
+                        <option value="Frecuente">Al menos 1 vez al día</option>
+                    </optgroup>
+                    <optgroup label="Ocasional">
+                        <option value="Ocasional">Al menos 1 vez a la semana</option>
+                    </optgroup>
+                    <optgroup label="Poco usual">
+                        <option value="PocoUsual">Al menos 1 vez al mes</option>
+                    </optgroup>
+                    <optgroup label="Rara">
+                        <option value="Rara">Unas pocas veces al año</option>
+                    </optgroup>
+                    <optgroup label="Muy rara">
+                        <option value="MuyRara">Al menos 1 vez al año</option>
+                    </optgroup>
+                    </select><br id="1">
+                    <label id="labEs" style="display: none">Numero de veces promedio de uso</label><input style="display: none" class="form-control input-md" id="numero_medio_promedio" name="numero_medio_promedio" type="number" required><br id="brEs" style="display: none">
+                    <label id="lab2"><b>Cantidad media por cada uso</b></label><input class="form-control input-md" id="cantidad_media" name="cantidad_media" type="number" required><br id="2">
+                     <label id="lab3"><b>Frecuencia mínima de Uso</b></label><select class="form-control" id="frecuencia_minima" name="frecuencia_minima" required>
+                        <option value="" selected="selected">Seleccione una frecuencia...</option>
+                    </select><br id="3">
+                    <label id="labEs1" style="display: none">Numero de veces promedio de uso</label><input style="display: none" class="form-control input-md" id="numero_minimo_promedio" name="numero_minimo_promedio" type="number" required><br id="brEs1" style="display: none">
+                    <label id="lab4"><b>Tiempo de reaprovisionamiento</b></label><input class="form-control input-md" id="tiempo" name="tiempo" type="number" required><br id="4">
                     <img id="imagen" src="" class="img-responsive" style="width: 50%"/>
                     <label style="font-size: smaller"><b>Imagen actual para este recurso.</b></label><br>
                     <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
@@ -123,10 +151,153 @@
         try {
             $("#encabezado").load("../../encabezado");
             $("#pie").load("../../pie");
+            $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
         }catch (exc){
             alert(exc.message);
         }
     })();
+
+    $(document).ready(function ()
+    {
+        $("#proveedor").change(function () {
+            if ($("#proveedor option:selected").text().includes("Interno"))
+            {
+                $("#lab1").hide();
+                $("#frecuencia_media").hide();
+                $("#1").hide();
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+                $("#lab2").hide();
+                $("#cantidad_media").hide();
+                $("#2").hide();
+                $("#lab3").hide();
+                $("#frecuencia_minima").hide();
+                $("#3").hide();
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+                $("#lab4").hide();
+                $("#tiempo").hide();
+                $("#4").hide();
+            }
+            else
+            {
+                if($("#lab1").is(":visible")== false)
+                {
+                    $("#lab1").show();
+                    $("#frecuencia_media").show();
+                    $("#1").show();
+                    $("#lab2").show();
+                    $("#cantidad_media").show();
+                    $("#2").show();
+                    $("#lab3").show();
+                    $("#frecuencia_minima").show();
+                    $("#3").show();
+                    $("#lab4").show();
+                    $("#tiempo").show();
+                    $("#4").show();
+                }
+            }
+        });
+
+        $("#frecuencia_media").change(function ()
+        {
+            var val = $(this).val();
+
+            if (val == "Continua")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+                $("#labEs").text('Numero de veces promedio de uso (por día)')
+                $("#labEs").css({ 'font-weight': 'bold' })
+                $("#labEs").show();
+                $("#numero_medio_promedio").show();
+                $("#brEs").show();
+            }
+            else if (val == "Frecuente")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+            else if (val == "Ocasional")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+            else if(val == "PocoUsual")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+            else if(val == "Rara")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+                $("#labEs").text('Numero de veces promedio de uso (por año)')
+                $("#labEs").css({ 'font-weight': 'bold' })
+                $("#labEs").show();
+                $("#numero_medio_promedio").show();
+                $("#brEs").show();
+            }
+            else if(val == "MuyRara")
+            {
+                $("#frecuencia_minima").html("<optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+        });
+
+        $("#frecuencia_minima").change(function () {
+            var val = $(this).val();
+
+            if (val == "Continua")
+            {
+                $("#labEs1").text('Numero de veces promedio de uso (por día)')
+                $("#labEs1").css({ 'font-weight': 'bold' })
+                $("#labEs1").show();
+                $("#numero_minimo_promedio").show();
+                $("#brEs1").show();
+            }
+            else if (val == "Frecuente")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+            else if (val == "Ocasional")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+            else if(val == "PocoUsual")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+            else if(val == "Rara")
+            {
+                $("#labEs1").text('Numero de veces promedio de uso (por año)')
+                $("#labEs1").css({ 'font-weight': 'bold' })
+                $("#labEs1").show();
+                $("#numero_minimo_promedio").show();
+                $("#brEs1").show();
+            }
+            else if(val == "MuyRara")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+        })
+    });
 
     (function() {
         $.getJSON("../../obtenerTiposMedida").done(function (data) {
@@ -161,6 +332,7 @@
             if (data)
             {
                 producto =  $.parseJSON(data.producto);
+                console.log(producto);
                 $("#codigo").val(producto.fields["codigo"]);
                 $("#nombre").val(producto.fields["nombre"]);
                 $("#descripcion").val(producto.fields["descripcion"]);
@@ -173,6 +345,38 @@
                 $("#imagen").attr('onerror', "this.onerror = null; this.src='../../../images/TestTube.png'")
                 $("#id_producto_guardado").val(param)
                 $("#proveedor").val(producto.fields["proveedor"])
+                frecuencia_media = producto.fields['frecuencia_media_uso']
+                $("#frecuencia_media").val(frecuencia_media)
+                cantidad_media = producto.fields['cantidad_media_uso']
+                tiempo = producto.fields['tiempo_reaprovisionamiento']
+                ss = parseFloat(producto.fields['stock_seguridad'])
+                can = parseFloat(cantidad_media)
+                tim = parseFloat(tiempo)
+                if (frecuencia_media.includes("Continua") || frecuencia_media.includes("Rara"))
+                {
+                    pp = parseFloat(producto.fields['punto_pedido'])
+                    numVeces =(pp-ss)/(can*tim)
+                    $("#labEs").text('Numero de veces promedio de uso')
+                    $("#labEs").css({ 'font-weight': 'bold' })
+                    $("#labEs").show();
+                    $("#numero_medio_promedio").show();
+                    $("#numero_medio_promedio").val(numVeces)
+                    $("#brEs").show();
+                }
+                frecuencia_minima = producto.fields['frecuencia_minima_uso']
+                if(frecuencia_minima.includes("Continua")|| frecuencia_minima.includes("Rara"))
+                {
+                    numVeces = ss/(can*tim)
+                    $("#labEs1").text('Numero de veces promedio de uso')
+                    $("#labEs1").css({ 'font-weight': 'bold' })
+                    $("#labEs1").show();
+                    $("#numero_minimo_promedio").show();
+                    $("#numero_minimo_promedio").val(numVeces)
+                    $("#brEs1").show();
+                }
+                $("#frecuencia_minima").val(frecuencia_minima)
+                $("#tiempo").val(tiempo)
+                $("#cantidad_media").val(cantidad_media)
             }
         });
     })();
