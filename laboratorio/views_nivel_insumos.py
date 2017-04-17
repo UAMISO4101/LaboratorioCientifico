@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from laboratorio.models import Producto, ProductosEnBodega
 
 def calcularStockSeguridad(frecuencia_minima, cantidad_uso, tiempo, numero_minimo_veces):
     if frecuencia_minima == "Continua":
@@ -29,3 +29,26 @@ def calcularStockSeguridad(frecuencia_minima, cantidad_uso, tiempo, numero_minim
 def calcularPuntoPedido(stock_seguridad, frecuencia_media, cantidad_media, tiempo, numero_medio_veces):
     val = calcularStockSeguridad(frecuencia_media, cantidad_media, tiempo,numero_medio_veces)
     return val + stock_seguridad
+
+def nivel_insumo(punto_pedido, nivel_actual):
+    valRojoMax = (punto_pedido*0.25)+punto_pedido
+    valNaranjaMax = (punto_pedido*0.5)+punto_pedido
+
+    if nivel_actual < punto_pedido:
+        return -1
+    elif nivel_actual >= punto_pedido and nivel_actual<valRojoMax:
+        return  0
+    elif nivel_actual>=valRojoMax and nivel_actual<valNaranjaMax:
+        return 1
+    elif nivel_actual>=valNaranjaMax:
+        return 2
+
+def recalcular_nivel_actual_(pk_producto):
+    producto = Producto.objects.get(id=pk_producto)
+    inventario_inicial = producto.unidadesExistentes*producto.unidad_unitaria
+    suma = 0
+    producto_bodega_list = ProductosEnBodega.objects.filter(producto_id=pk_producto)
+    for pro in producto_bodega_list:
+        suma += pro.cantidad
+    return inventario_inicial - suma
+
