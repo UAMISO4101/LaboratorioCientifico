@@ -1,5 +1,14 @@
 from decimal import Decimal
+
+import sys
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
 from laboratorio.models import Producto, ProductosEnBodega
+
+def ir_nivel_insumos(request, id=1):
+    return render(request, "laboratorio/nivelInsumos.html")
 
 def calcularStockSeguridad(frecuencia_minima, cantidad_uso, tiempo, numero_minimo_veces):
     if frecuencia_minima == "Continua":
@@ -43,12 +52,19 @@ def nivel_insumo(punto_pedido, nivel_actual):
     elif nivel_actual>=valNaranjaMax:
         return 2
 
-def recalcular_nivel_actual_(pk_producto):
-    producto = Producto.objects.get(id=pk_producto)
-    inventario_inicial = producto.unidadesExistentes*producto.unidad_unitaria
-    suma = 0
-    producto_bodega_list = ProductosEnBodega.objects.filter(producto_id=pk_producto)
-    for pro in producto_bodega_list:
-        suma += pro.cantidad
-    return inventario_inicial - suma
+@csrf_exempt
+def recalcular_nivel_actual_(request):
+    if request.method == 'GET':
+        pk_producto = request.GET['id']
+        producto = Producto.objects.get(id=pk_producto)
+        inventario_inicial = producto.unidadesExistentes*producto.unidad_unitaria
+        print >> sys.stdout, 'inventarioInicial '+str(inventario_inicial)
+        suma = 0
+        producto_bodega_list = ProductosEnBodega.objects.filter(producto_id=pk_producto)
+        for pro in producto_bodega_list:
+            print >> sys.stdout, 'cantidad en bogeda '+ pro.bodega.nombre + ' '+ str(pro.cantidad)
+            suma += pro.cantidad
+        disponible = ((inventario_inicial-suma)/inventario_inicial)*100
+        suma = (suma/inventario_inicial)*100
+        return JsonResponse({'disponible': disponible, 'enUso': suma})
 

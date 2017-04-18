@@ -3,6 +3,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 
 from laboratorio import views_orden_pedido
+from laboratorio import views_nivel_insumos
 from . import views
 
 urlpatterns = [
@@ -63,4 +64,7 @@ urlpatterns = [
     url(r'^obtener_op/$', views_orden_pedido.obtener_op, name='obtener_op'),
     url(r'^obtenerFP/$', views_orden_pedido.obtener_fecha_peticion_op, name='obtenerFP'),
     url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
+
+    url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
+    url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
 ]
