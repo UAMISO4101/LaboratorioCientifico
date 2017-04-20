@@ -1,11 +1,11 @@
-<!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-    <meta name="viewport" content="width=device-width">
-    <title>.:Laboratorio Científico:.</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="viewport" content="width=device-width">
+  <title>.:Laboratorio Científico:.</title>
   <!-- Bootstrap core CSS     -->
   <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
   <!-- Animation library for notifications   -->
@@ -18,11 +18,12 @@
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
   <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
+
 <body>
-    <div id="wrapper">
+  <div id="wrapper">
     <div class="sidebar" data-color="blue" data-image="../../../images/assets/img/sidebar-4.jpg" style="position: fixed">
       <div class="sidebar-wrapper" style="position: fixed">
         <div id="encabezado"></div>
@@ -40,62 +41,50 @@
             </ul>
           </div>
         </div>
-      </nav>
-        <br>
-    <div id="content">
+      </nav> <br>
+      <div id="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-4">
               <div class="card">
                 <div class="header">
                   <h4 class="title">Recursos</h4>
-                    <p class="category">Porcentaje de Nivel Actual</p>
+                  <p class="category">Porcentaje de Nivel Actual</p>
                 </div>
-                    <div class="content">
-                        <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
-                            <div class="footer">
-                                <div class="legend">
-                                    <i class="fa fa-circle text-info"></i>Disponible
-                                    <i class="fa fa-circle text-danger"></i>En Uso
-                                </div>
-                                <hr>
-                                <div class="stats">
-                                    <i class="fa fa-clock-o"></i> Campaign sent 2 days ago
-                                </div>
-                            </div>
-                    </div>
-                </div>
-            </div>
-              <div class="col-md-8">
-                  <div class="card">
-                      <div class="header">
-                          <h4 class="title">Users Behavior</h4>
-                          <p class="category">24 Hours performance</p>
-                      </div>
-                      <div class="content">
-                          <div id="chartHours" class="ct-chart"></div>
-                          <div class="footer">
-                              <div class="legend">
-                                  <i class="fa fa-circle text-info"></i> Open
-                                  <i class="fa fa-circle text-danger"></i> Click
-                                  <i class="fa fa-circle text-warning"></i> Click Second Time
-                              </div>
-                              <hr>
-                              <div class="stats">
-                                  <i class="fa fa-history"></i> Updated 3 minutes ago
-                              </div>
-                          </div>
-                      </div>
+                <div class="content">
+                  <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
+                    <br style="clear:both;"/>
+                  <div class="footer">
+                    <div class="legend text-gray-dark" id="leyenda"> </div>
+                    <hr>
+                    <div class="stats"> <i class="fa fa-clock-o"></i> Campaign sent 2 days ago </div>
                   </div>
+                </div>
               </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Users Behavior</h4>
+                  <p class="category">24 Hours performance</p>
+                </div>
+                <div class="content">
+                  <div id="chartHours" class="ct-chart"></div>
+                  <div class="footer">
+                    <div class="legend"> <i class="fa fa-circle text-info"></i> Open <i class="fa fa-circle text-danger"></i> Click <i class="fa fa-circle text-warning"></i> Click Second Time </div>
+                    <hr>
+                    <div class="stats"> <i class="fa fa-history"></i> Updated 3 minutes ago </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+      <div id="pie"></div>
     </div>
-        <div id="pie"></div>
-    </div>
-</div>
-</body>
-<!--  Checkbox, Radio & Switch Plugins -->
+  </div>
+  <!--  Checkbox, Radio & Switch Plugins -->
   <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
   <!--  Charts Plugin -->
   <script src="../../../images/assets/js/chartist.min.js"></script>
@@ -104,7 +93,7 @@
   <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
   <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
   <script src="../../../images/assets/js/demo.js"></script>
-<script>
+  <script>
     (function(){
         try {
             $("#encabezado").load("../encabezado");
@@ -116,18 +105,35 @@
                 if(data)
                 {
 
-                    disponible = $.parseJSON(data.disponible)
-                    enUso = $.parseJSON(data.enUso)
-                    console.log(disponible)
-                    console.log(enUso)
-                    demo.disponible = disponible
-                    demo.enUso = enUso
+                    proveedor = $.parseJSON(data.proveedor);
+                    perdida = $.parseJSON(data.perdida);
+                    experimento = $.parseJSON(data.experimento);
+                    devolucion = $.parseJSON(data.devolucion);
+                    paso = $.parseJSON(data.paso);
+                    demo.proveedor = Math.round(proveedor * 100) / 100
+                    demo.perdida = Math.round(perdida * 100) / 100
+                    demo.experimento = Math.round(experimento * 100) / 100
+                    demo.devolucion = Math.round(devolucion * 100) / 100;
+                    demo.paso = Math.round(paso * 100) / 100;
                     demo.initChartDonut();
+                    $("#leyenda").html("<i class='fa fa-circle text-info'></i>Disponible <b>"+demo.proveedor+"%</b><br><i class='fa fa-circle text-danger'></i>Desperdicio <b>"+demo.perdida+"%</b><br><i class='fa fa-circle text-warning'></i>Uso en Experimentos <b>"+demo.experimento+"%</b><br><i class='fa fa-circle text-success'></i>Devolución a Proveedor <b>"+demo.devolucion+"%</b><br><i class='fa fa-circle text-muted'></i>Transferido <b>"+demo.paso+"%</b>")
+                }
+            })
+            $.getJSON("../historialNivel", {'id':param}).done(function (data) {
+                if(data)
+                {
+                    //console.log(data[0])
+                    //console.log(data[1])
+                    //console.log(data[2])
+                    //console.log(data[3])
+                    //console.log(data[4])
                 }
             })
         }catch (exc){
             alert(exc.message);
         }
     })();
-</script>
+  </script>
+</body>
+
 </html>

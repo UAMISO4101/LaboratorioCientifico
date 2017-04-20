@@ -2,8 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
-from laboratorio import views_orden_pedido
-from laboratorio import views_nivel_insumos
+from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos
 from . import views
 
 urlpatterns = [
@@ -46,12 +45,12 @@ urlpatterns = [
     url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
     url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
 
-    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
-    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
-    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
-    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
-    url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
-    url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
+    url(r'^busquedaproducto/$', views_busqueda_producto.busqueda_producto, name='busquedaproducto'),
+    url(r'^busquedaproductodetalle/$', views_busqueda_producto.busqueda_producto_detalle, name='busquedaproductodetalle'),
+    url(r'^verproductobusquedadetalle/$', views_busqueda_producto.ver_producto_busqueda_detalle, name='verproductobusquedadetalle'),
+    url(r'^verproductobusqueda/$', views_busqueda_producto.ver_producto_busqueda, name='verproductobusqueda'),
+    url(r'^obtenerlistaproductos/$', views_busqueda_producto.llenar_listado_productos_busqueda, name='obtenerlistaproductos'),
+    url(r'^obtenerlistabodegas/$', views_busqueda_producto.llenar_listado_bodegas_busqueda, name='obtenerlistabodegas'),
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 
     url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_pedido, name='verordenespedido'),
@@ -64,7 +63,15 @@ urlpatterns = [
     url(r'^obtener_op/$', views_orden_pedido.obtener_op, name='obtener_op'),
     url(r'^obtenerFP/$', views_orden_pedido.obtener_fecha_peticion_op, name='obtenerFP'),
     url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
+    url(r'^obtenerProductos/$', views_orden_pedido.obtenerProductos, name='obtenerProductos'),
+    url(r'^modal_do/$', views_orden_pedido.ir_modal_do, name=''),
+    url(r'^guardarOrdenDetalle/$', views_orden_pedido.guardarOrdenDetalle, name='guardarOrdenDetalle'),
+    url(r'^obtenerDetalleOrden/$', views_orden_pedido.obtener_do, name='obtenerDetalleOrden'),
 
     url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
     url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
+    url(r'^historialNivel/$', views_nivel_insumos.historial_nivel, name='historialNivel'),
+
+    url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
+    url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),
 ]

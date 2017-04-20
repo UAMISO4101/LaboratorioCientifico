@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        (function(){
+             $.getJSON("../vencidoslista").done(function (data) {
+                 var resultados = $("#resultados");
+
+                 if (data){
+                    data = $.parseJSON(data);
+
+                    var tablaresult="<table class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\" width=\"85%%\">";
+                    tablaresult=tablaresult+"<thead>";
+                    tablaresult=tablaresult+"<tr>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Producto</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Bodega Actual</th>";
+                    tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidades</th>";
+                    //tablaresult=tablaresult+"<th style=\"text-align: center;\">Medida</th>";
+                    //tablaresult=tablaresult+"<th style=\"text-align: center;\">Unidades Preferencia Bodega</th>";
+
+                    //tablaresult=tablaresult+"<th style=\"text-align: center;\">Fecha Ejecución</th>";
+
+                    tablaresult=tablaresult+"</tr>";
+                    tablaresult=tablaresult+"</thead>"
+
+                    var result ="";
+
+                    $(data).each(function() {
+                        result=result+"<tr>";
+                        result=result+"<td>"+this.id+"</td>";
+                        result=result+"<td>"+this.fecha_vencimiento+"</td>";
+                        result=result+"<td style=\"text-align: right\">"+this.semaforo_vencimiento+"</td>";
+                        //result=result+"<td style=\"text-align: right\">"+this.unidad_medida+"</td>";
+                        //result=result+"<td style=\"text-align: right\">"+this.cantidad_convertida+"</td>";
+                        //result=result+"<td style=\"text-align: right\"><a href=\"../verproductobusquedadetalle/?id="+this.id+"\">"+this.fechaTransaccion+"</a></td>";
+                        result=result+"</tr>";
+                        //hd1.val(this.hidden1);
+                    });
+
+                    tablaresult=tablaresult+result+"</table>";
+
+                    $(resultados).append(tablaresult);
+                }
+                else {
+                    $(resultados).text("No hay productos para mostrar");
+                }
+            });
+        })();
+
+    </script>
+</head>
+<body>
+
+<div>Vencimiento de productos</div>
+
+<div id="resultados">Resultados</div>
+
+</body>
+</html>
