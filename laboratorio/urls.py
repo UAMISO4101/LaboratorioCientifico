@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
-from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos
+from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos
 from . import views
 
 urlpatterns = [
@@ -67,6 +67,10 @@ urlpatterns = [
     url(r'^modal_do/$', views_orden_pedido.ir_modal_do, name=''),
     url(r'^guardarOrdenDetalle/$', views_orden_pedido.guardarOrdenDetalle, name='guardarOrdenDetalle'),
     url(r'^obtenerDetalleOrden/$', views_orden_pedido.obtener_do, name='obtenerDetalleOrden'),
+
+    url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
+    url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
+    url(r'^historialNivel/$', views_nivel_insumos.historial_nivel, name='historialNivel'),
 
     url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
     url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),

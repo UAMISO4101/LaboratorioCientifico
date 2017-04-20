@@ -59,6 +59,7 @@
                     <div style="text-align: center;">
                         <a href="../registrarInsumo" class="btn btn-primary" role="button">Registrar Recurso</a>
                         <a id="btnEditarBodega" href="../editarRecurso" class="btn btn-primary" role="button">Editar Recurso</a>
+                        <a id="btnNivelInsumo" href="../nivelInsumo" class="btn btn-primary" role="button">Ver Nivel Inventariado</a>
                         <a href="../">Cancelar</a>
                     </div>
                         <table id="tabla" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%"></table>
@@ -88,6 +89,7 @@
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie")
             $("#btnEditarBodega").attr('disabled','disabled');
+            $("#btnNivelInsumo").attr('disabled', 'disabled');
         }catch (exc){
             alert(exc.message);
         }
@@ -139,6 +141,7 @@
                 {
                     $('#btnEditarBodega').attr('disabled', true);
                     $('#btnEditarBodega').bind('click', false);
+
                 }
                 else
                 {
@@ -148,6 +151,9 @@
                     $('#btnEditarBodega').attr('href', "../editarRecurso/"+id);
                     $('#btnEditarBodega').unbind('click', false);
                     $('#btnEditarBodega').attr('disabled', false);
+                    $("#btnNivelInsumo").attr('href',"../nivelInsumo/"+id);
+                    $("#btnNivelInsumo").unbind('click', false);
+                    $("#btnNivelInsumo").attr('disabled', false);
                 }
             })
         })
