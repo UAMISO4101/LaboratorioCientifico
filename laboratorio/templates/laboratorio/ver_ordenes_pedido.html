@@ -61,6 +61,7 @@
                     <div style="text-align: center;">
                         <a href="../ordenpedido" class="btn btn-primary" role="button">Crear Orden de Pedido</a>
                         <a id="btnEditarOP" href="../actordenpedido" class="btn btn-primary" role="button">Editar Orden de Pedido</a>
+                        <a id="btnRecibirOP" href="../recibirordenpedido" class="btn btn-primary" role="button">Recepción de Orden</a>
                         <a href="../">Cancelar</a>
                     </div>
                         <table id="tabla" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%"></table>
@@ -90,6 +91,8 @@
             $("#pie").load("../pie");
             $('#btnEditarOP').attr('disabled', true);
             $('#btnEditarOP').bind('click', false);
+            $('#btnRecibirOP').attr('disabled', true);
+            $('#btnRecibirOP').bind('click', false);
         }catch (exc){
             alert(exc.message);
         }
@@ -118,18 +121,30 @@
                     $(this).removeClass('selected');
                     $('#btnEditarOP').attr('disabled', true);
                     $('#btnEditarOP').bind('click', false);
+                    $('#btnRecibirOP').attr('disabled', true);
+                    $('#btnRecibirOP').bind('click', false);
                 }
                 else {
                     tabla.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                     valor = $("#btnEditarOP").attr('href');
+                    valorTrx = $("#btnRecibirOP").attr('href');
                     if (valor.indexOf("id_op")!=-1){
                         valor = valor.split("?")[0];
                     }
                     valor += "?id_op="+$(this).children()[0].innerText;
-                    $("#btnEditarOP").attr("href", valor);
-                    $('#btnEditarOP').unbind('click', false);
-                    $('#btnEditarOP').attr('disabled', false);
+                    valorTrx += "?id_op="+$(this).children()[0].innerText;
+                    if ($(this).children()[2].innerText == "Ingresada") {
+                        $("#btnEditarOP").attr("href", valor);
+                        $('#btnEditarOP').unbind('click', false);
+                        $('#btnEditarOP').attr('disabled', false);
+                    }
+                    if ($(this).children()[2].innerText == "En proveedor") {
+                        $("#btnRecibirOP").attr("href", valorTrx);
+                        $('#btnRecibirOP').unbind('click', false);
+                        $('#btnRecibirOP').attr('disabled', false);
+                    }
+
                 }
             });
         });
