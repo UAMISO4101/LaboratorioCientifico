@@ -30,6 +30,7 @@ from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProto
     DetalleOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
+from .views import ejecutar_transaccion
 
 """Metodo a navegar ordenes de pedido.
 """
@@ -87,6 +88,13 @@ HU: EC-LCINV-17: Crear Orden de Pedido
 """
 def ir_act_orden_pedido(request):
     return render(request, "laboratorio/act_orden_pedido.html")
+
+"""Metodo a navegar para la recepcion de orden de pedido hechas previamente al proveedor.
+HU: EC-LCINV-19: Recibir Orden de Pedido del proveedor
+"""
+def ir_recibir_orden_pedido(request):
+    return render(request, "laboratorio/recibir_orden_pedido.html")
+
 
 """Metodo crear orden de pedido.
 HU: EC-LCINV-17: Crear Orden de Pedido
@@ -252,3 +260,51 @@ def obtener_do(request):
 
     json_string = json.dumps(listaDO, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
+
+
+
+#HU-LCINV-19
+#GZ
+#Crea transacciones de inventario por cada item en un pedido recibido del proveedor:
+#La bodega origen siempre es proveedor
+#Bodega destino con localizacion (Nivel, Seccion)
+#Producto y cantidad a mover
+
+@csrf_exempt
+def ejecutar_transacciones_orden(request):
+    mensaje = ""
+    if request.method == 'POST':
+        orden_cliente = json.loads(request.body)
+        qs_val = DetalleOrden.objects.filter(orden=orden_cliente['id'], bodega__bodegaDestino=None)
+        if qs_val.count() > 0:
+            mensaje = "Items sin bodega"
+            return JsonResponse({"mensaje": mensaje})
+        qs = DetalleOrden.objects.filter(orden=orden_cliente['id'], transaccion_inventario_id=None)
+        for det_orden in qs:
+            transaccion = TransaccionInventario(
+                tipo=Tipo.objects.get(nombre='Recepcion de Proveedor', grupo='TIPOTRX'),
+                bodega_origen=Bodega.objects.get(nombre='Proveedor'),
+                nivel_origen=1,
+                seccion_origen=1,
+                bodega_destino=Bodega.objects.get(pk=det_orden.bodega_id),
+                nivel_destino=det_orden.nivel_bodega_destino,
+                seccion_destino=det_orden.seccion_bodega_destino,
+                producto=det_orden.producto,
+                cantidad=det_orden.cantidad,
+                unidad_medida=Tipo.objects.get(pk=det_orden.producto.unidad_medida_id),
+                estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSTRX').first().id),
+                fecha_creacion=datetime.now(),
+                fecha_ejecucion=datetime.now(),
+                usuario=Usuario.objects.get(pk=1),
+                comentarios='Transacción Automática Orden No' + str(orden_cliente['id'])
+            )
+            ejecutar_transaccion(transaccion)
+            transaccion.save()
+            det_orden.estado_id = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Movida', grupo='DETALLEPEDIDO').first().id)
+            det_orden.transaccion_inventario_id = transaccion.pk
+            det_orden.save()
+        orden = OrdenPedido.objects.get(pk=orden_cliente['id'])
+        orden.estado_id = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Recibida', grupo='ORDENPEDIDO').first().id)
+        orden.save()
+    mensaje = "ok"
+    return JsonResponse({"mensaje": mensaje})

@@ -67,6 +67,8 @@ urlpatterns = [
     url(r'^modal_do/$', views_orden_pedido.ir_modal_do, name=''),
     url(r'^guardarOrdenDetalle/$', views_orden_pedido.guardarOrdenDetalle, name='guardarOrdenDetalle'),
     url(r'^obtenerDetalleOrden/$', views_orden_pedido.obtener_do, name='obtenerDetalleOrden'),
+    url(r'^recibirordenpedido/$', views_orden_pedido.ir_recibir_orden_pedido, name='recibirordenpedido'),
+    url(r'^recibirOrdenDetalle/$', views_orden_pedido.ejecutar_transacciones_orden, name='recibirOrdenDetalle'),
 
     url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
     url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
