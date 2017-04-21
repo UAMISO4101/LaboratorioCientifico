@@ -1,7 +1,6 @@
 # LaboratorioCientifico
 LaboratorioCientifico
 
-
 Rama identificada en Git Flow como Develop
 
 ## Estado de la Integración
