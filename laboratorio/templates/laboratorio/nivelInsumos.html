@@ -48,16 +48,13 @@
             <div class="col-md-4">
               <div class="card">
                 <div class="header">
-                  <h4 class="title">Recursos</h4>
-                  <p class="category">Porcentaje de Nivel Actual</p>
+                  <h4 class="title" id="title"></h4>
+                  <p class="category">Porcentajes de Uso</p>
                 </div>
                 <div class="content">
                   <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
-                    <br style="clear:both;"/>
                   <div class="footer">
                     <div class="legend text-gray-dark" id="leyenda"> </div>
-                    <hr>
-                    <div class="stats"> <i class="fa fa-clock-o"></i> Campaign sent 2 days ago </div>
                   </div>
                 </div>
               </div>
@@ -65,15 +62,15 @@
             <div class="col-md-8">
               <div class="card">
                 <div class="header">
-                  <h4 class="title">Users Behavior</h4>
-                  <p class="category">24 Hours performance</p>
+                  <h4 class="title">Historial de Nivel</h4>
+                  <p class="category">Cantidad de Recurso en el tiempo</p>
                 </div>
                 <div class="content">
-                  <div id="chartHours" class="ct-chart"></div>
+                  <div id="chartHours" class="ct-chart"></div><br>
                   <div class="footer">
-                    <div class="legend"> <i class="fa fa-circle text-info"></i> Open <i class="fa fa-circle text-danger"></i> Click <i class="fa fa-circle text-warning"></i> Click Second Time </div>
+                    <div class="legend"> <i class="fa fa-circle text-info"></i> Nivel historico de Insumo</div>
                     <hr>
-                    <div class="stats"> <i class="fa fa-history"></i> Updated 3 minutes ago </div>
+                    <div class="stats" id="stats">
                   </div>
                 </div>
               </div>
@@ -93,6 +90,7 @@
   <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
   <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
   <script src="../../../images/assets/js/demo.js"></script>
+      <script src="../../../images/assets/js/chartist-plugin-axistitle.js"></script>
   <script>
     (function(){
         try {
@@ -116,17 +114,20 @@
                     demo.devolucion = Math.round(devolucion * 100) / 100;
                     demo.paso = Math.round(paso * 100) / 100;
                     demo.initChartDonut();
-                    $("#leyenda").html("<i class='fa fa-circle text-info'></i>Disponible <b>"+demo.proveedor+"%</b><br><i class='fa fa-circle text-danger'></i>Desperdicio <b>"+demo.perdida+"%</b><br><i class='fa fa-circle text-warning'></i>Uso en Experimentos <b>"+demo.experimento+"%</b><br><i class='fa fa-circle text-success'></i>Devolución a Proveedor <b>"+demo.devolucion+"%</b><br><i class='fa fa-circle text-muted'></i>Transferido <b>"+demo.paso+"%</b>")
+                    console.log(data.nombre)
+                    $("#title").text(data.nombre)
+                    $("#leyenda").html("<i class='fa fa-circle text-info'></i>Disponible <b>"+demo.proveedor+"%</b><br><i class='fa fa-circle text-danger'></i>Desperdicio <b>"+demo.perdida+"%</b><br><i class='fa fa-circle text-warning'></i>Uso en Experimentos <b>"+demo.experimento+"%</b><br><i class='fa fa-circle' style='color: #9368E9'></i>Devolución a Proveedor <b>"+demo.devolucion+"%</b><br><i class='fa fa-circle text-muted'></i>Transferido <b>"+demo.paso+"%</b>")
                 }
             })
             $.getJSON("../historialNivel", {'id':param}).done(function (data) {
                 if(data)
                 {
-                    //console.log(data[0])
-                    //console.log(data[1])
-                    //console.log(data[2])
-                    //console.log(data[3])
-                    //console.log(data[4])
+                    demo.labels = data[0]
+                    demo.series = data[1]
+                    demo.high = data[2]
+                    demo.unidad = data[3]
+                    demo.initChartLine();
+                    $("#stats").html("<i class='fa fa-history'></i>"+data[4])
                 }
             })
         }catch (exc){

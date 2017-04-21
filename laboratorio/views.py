@@ -293,8 +293,8 @@ def crear_transaccion(request):
             cantidad=json_tran['cantidad'],
             unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida'], grupo='MEDIDAPRODUCTO'),
             estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSTRX').first().id),
-            fecha_creacion=datetime.now(),
-            fecha_ejecucion=datetime.now(),
+            fecha_creacion=datetime.now().replace(tzinfo=None),
+            fecha_ejecucion=datetime.now().replace(tzinfo=None),
             usuario=Usuario.objects.get(pk=1),
             comentarios=json_tran['comentarios']
         )
@@ -569,6 +569,9 @@ def obtenerRecursos(request):
         prod.unidad_unitaria = str(producto.unidad_unitaria)
         prod.imageFile = str(producto.imageFile)
         prod.proveedor = producto.proveedor.first_name
+        codigo_color = views_nivel_insumos.nivel_insumo_tabla(producto.id, producto.punto_pedido)
+        prod.codigo_color = str(codigo_color)
+        prod.punto_pedido = str(producto.punto_pedido)
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
@@ -689,12 +692,8 @@ def guardarEdicionInsumo(request):
                             punto_pedido = 0.0
 
                         else:
-                            stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima,
-                                                                                         cantidad_media, tiempo,
-                                                                                         numero_minimo_veces)
-                            punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media,
-                                                                                   cantidad_media, tiempo,
-                                                                                   numero_medio_veces)
+                            stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima,cantidad_media, tiempo,numero_minimo_veces)
+                            punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media,cantidad_media, tiempo,numero_medio_veces)
 
                         producto.codigo = codigo
                         producto.nombre = nombre

@@ -90,10 +90,9 @@ class ProductoVista():
     unidad_unitaria = ""
     imageFile = ""
     proveedor = ""
-    frecuencia_media = ""
-    frecuencia_minima = ""
-    cantidad_media = ""
-    tiempo_reaprovisionamiento = ""
+    codigo_color = 0
+    punto_pedido = 0
+    nivel_actual = 0
 
 """Clase - Auxiliar  TransaccionVista.
 Clase que sirve de vista para objetos a mostrar al usuario
