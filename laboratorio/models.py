@@ -180,6 +180,14 @@ class OrdenPedido(models.Model):
     notas_aprobacion = models.CharField(max_length=500)
     estado = models.ForeignKey(Tipo, related_name="op_estado", null=True)
 
+
+"""Clase - Comentario Orden de Pedido.
+"""
+class ComentarioOrden(models.Model):
+    comentario = models.CharField(max_length=500)
+    timestamp = models.DateTimeField(null=True)
+    orden = models.ForeignKey(OrdenPedido, related_name="op_comentarios", null=True)
+
 """Clase - Detalle Orden Pedido.
 """
 class DetalleOrden(models.Model):
