@@ -34,7 +34,6 @@ from .views import ejecutar_transaccion
 
 """Metodo para navegar proceso de aprobacion.
 """
-
 def proceso_aprobacion_orden(request):
     return render(request, "laboratorio/proceso_aprobacion_orden.html")
 
@@ -365,3 +364,16 @@ def obtener_comentarios_orden(request):
     else:
         json_op = []
     return JsonResponse(qs_json, safe=False)
+
+"""Metodo para cambiar de estado orden aprobada a en proveedor.
+HU: DA-LCINV-18: Cientifico lider aprueba orden de pedido
+Sirve para obtener cambiar estado de 'Aprobada' a 'En proveedor'
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def cambiar_aprobada_en_proveedor(request):
+    orden = OrdenPedido.objects.get(id=request.POST['id_op'])
+    orden.estado = Tipo.objects.get(nombre='En proveedor')
+    orden.save()
+    return JsonResponse({'mensaje': 'ok'})

@@ -74,6 +74,7 @@ urlpatterns = [
     url(r'^aprobarOrden/$', views_orden_pedido.aprobar_orden, name='aprobarOrden'),
     url(r'^rechazarOrden/$', views_orden_pedido.rechazar_orden, name='rechazarOrden'),
     url(r'^obtenerComentariosOrden/$', views_orden_pedido.obtener_comentarios_orden, name='obtenerComentariosOrden'),
+    url(r'^enProveedor/$', views_orden_pedido.cambiar_aprobada_en_proveedor, name='enProveedor'),
 
     url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
     url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
