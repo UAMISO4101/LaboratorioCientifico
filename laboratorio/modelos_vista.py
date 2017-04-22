@@ -140,6 +140,8 @@ class DetalleOrdenVista():
     valorUnitario = 0.0;
     cantidad = 0.0;
     fechaMovimiento = None;
+    transaccion_inventario=0;
+    estado="";
 
 # HU-LCINV-13
 # GZ
