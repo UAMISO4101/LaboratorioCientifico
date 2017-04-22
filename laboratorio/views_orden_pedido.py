@@ -358,11 +358,6 @@ def obtener_comentarios_orden(request):
     time.sleep(0.3)
     qs = ComentarioOrden.objects.filter(orden=request.GET['id_op'])
     qs_json = serializers.serialize('json', qs)
-    struct = json.loads(qs_json)
-    if len(struct) > 0:
-        json_op = json.dumps(struct[0])
-    else:
-        json_op = []
     return JsonResponse(qs_json, safe=False)
 
 """Metodo para cambiar de estado orden aprobada a en proveedor.
