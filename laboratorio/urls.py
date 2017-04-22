@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
+    url(r'^obtenerBodegas/(?P<tipo_bodega>\D+)$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
     url(r'^obtenerTipo/$', views.obtenerTipo, name='obtenerTipo'),
     url(r'^obtenerUnidadesMedida/$', views.obtenerUnidadesMedida, name='obtenerUnidadesMedida'),

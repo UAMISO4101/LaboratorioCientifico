@@ -297,12 +297,13 @@
                             $('#valor_unitario').val(valorUnitario);
                         });
 
-                        $.getJSON("../obtenerBodegas/").done(function (data) {
+                        $.getJSON("../obtenerBodegas/Nevera").done(function (data) {
                             data =  $.parseJSON(data);
                             var bodega = $("#bodega");
                             bodega.append($("<option />").val("").text("Seleccione Bodega..."));
                             $(data).each(function() {
                                 bodega.append($("<option />").val(this.id).text(this.nombre));
+                                bodega.prepend('<div><label id="nivellineades' + this.id + '">' + this.niveles + '</label><label id="seccionlineades' + this.id + '">' + this.secciones + '</label>');
                             });
                         });
                         refrescarTotalOrden();
