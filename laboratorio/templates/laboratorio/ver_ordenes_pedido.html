@@ -61,6 +61,7 @@
                     <div style="text-align: center;">
                         <a href="../ordenpedido" class="btn btn-primary" role="button">Crear Orden de Pedido</a>
                         <a id="btnEditarOP" href="../actordenpedido" class="btn btn-primary" role="button">Editar Orden de Pedido</a>
+                        <a id="btnAprobarOP" href="../procesoAprobacionOrden" class="btn btn-primary" role="button">Aprobar Orden de Pedido</a>
                         <a id="btnRecibirOP" href="../recibirordenpedido" class="btn btn-primary" role="button">Recepción de Orden</a>
                         <a href="../">Cancelar</a>
                     </div>
@@ -91,6 +92,8 @@
             $("#pie").load("../pie");
             $('#btnEditarOP').attr('disabled', true);
             $('#btnEditarOP').bind('click', false);
+            $('#btnAprobarOP').attr('disabled', true);
+            $('#btnAprobarOP').bind('click', false);
             $('#btnRecibirOP').attr('disabled', true);
             $('#btnRecibirOP').bind('click', false);
         }catch (exc){
@@ -121,6 +124,8 @@
                     $(this).removeClass('selected');
                     $('#btnEditarOP').attr('disabled', true);
                     $('#btnEditarOP').bind('click', false);
+                    $('#btnAprobarOP').attr('disabled', true);
+                    $('#btnAprobarOP').bind('click', false);
                     $('#btnRecibirOP').attr('disabled', true);
                     $('#btnRecibirOP').bind('click', false);
                 }
@@ -129,12 +134,14 @@
                     $(this).addClass('selected');
                     valor = $("#btnEditarOP").attr('href');
                     valorTrx = $("#btnRecibirOP").attr('href');
+                    valorAprobacion = $("#btnAprobarOP").attr('href');
                     if (valor.indexOf("id_op")!=-1){
                         valor = valor.split("?")[0];
                     }
                     valor += "?id_op="+$(this).children()[0].innerText;
                     valorTrx += "?id_op="+$(this).children()[0].innerText;
-                    if ($(this).children()[2].innerText == "Ingresada") {
+                    valorAprobacion += "?id_op="+$(this).children()[0].innerText;
+                    if ($(this).children()[2].innerText == "Ingresada" || $(this).children()[2].innerText == "Rechazada") {
                         $("#btnEditarOP").attr("href", valor);
                         $('#btnEditarOP').unbind('click', false);
                         $('#btnEditarOP').attr('disabled', false);
@@ -143,6 +150,19 @@
                         $("#btnRecibirOP").attr("href", valorTrx);
                         $('#btnRecibirOP').unbind('click', false);
                         $('#btnRecibirOP').attr('disabled', false);
+                    }
+                    if ($(this).children()[2].innerText == "En aprobacion") {
+                        $("#btnAprobarOP").attr("href", valorAprobacion);
+                        $('#btnAprobarOP').unbind('click', false);
+                        $('#btnAprobarOP').attr('disabled', false);
+                    }
+                    else{
+                        if (valorAprobacion.indexOf("id_op")!=-1){
+                        valorAprobacion = valorAprobacion.split("?")[0];
+                        $("#btnAprobarOP").attr("href", valorAprobacion);
+                        $('#btnAprobarOP').unbind('click', true);
+                        $('#btnAprobarOP').attr('disabled', true);
+                    }
                     }
 
                 }
