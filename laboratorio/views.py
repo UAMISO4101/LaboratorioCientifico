@@ -174,8 +174,11 @@ def crearBodega(request):
 
 
 @csrf_exempt
-def obtenerBodegas(request):
-    qs = Bodega.objects.all()
+def obtenerBodegas(request, tipo_bodega = None):
+    if tipo_bodega == None:
+        qs = Bodega.objects.all()
+    else:
+        qs = Bodega.objects.filter(tipo_bodega=Tipo.objects.get(nombre=tipo_bodega))
     listaBodegas = []
     for bodega in qs:
         bod = BodegaVista()

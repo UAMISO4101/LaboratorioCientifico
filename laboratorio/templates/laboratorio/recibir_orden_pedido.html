@@ -127,9 +127,11 @@
                                         <th style="color:white;text-align: center;">Bodega</th>
                                         <th style="color:white;text-align: center;">Nivel</th>
                                         <th style="color:white;text-align: center;">Sección</th>
-                                        <th style="color:white;text-align: center;">Valor Unitario</th>
+                                        <!--th style="color:white;text-align: center;">Valor Unitario</th-->
                                         <th style="color:white;text-align: center;">Cantidad</th>
-                                        <th style="color:white;text-align: center;">Total</th>
+                                        <th style="color:white;text-align: center;">Estado</th>
+                                        <th style="color:white;text-align: center;">trx Inv</th>
+                                        <!--th style="color:white;text-align: center;">Total</th>-->
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -259,6 +261,14 @@
                                     detalleOrden.cantidad = detalle[indiceDetalle].cantidad;
                                     detalleOrden.valorUnitario = detalle[indiceDetalle].valorUnitario;
                                     detalleOrden.fechaMovimiento = detalle[indiceDetalle].fechaMovimiento;
+                                    detalleOrden.estado = detalle[indiceDetalle].estado;
+                                    if (detalle[indiceDetalle].transaccion_inventario == null) {
+                                        detalleOrden.transaccion_inventario = "";
+                                    }
+                                    else {
+                                        detalleOrden.transaccion_inventario = detalle[indiceDetalle].transaccion_inventario;
+                                    }
+
 
                                     strTd = "";
                                     strInicio = "<tr class=\"bg-info\">";
@@ -267,10 +277,12 @@
                                     strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreBodega+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nivel+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.seccion+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.valorUnitario+"</td>";
+                                    //strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.valorUnitario+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.cantidad+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.estado+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.transaccion_inventario+"</td>";
                                     var subTotal = detalleOrden.cantidad * detalleOrden.valorUnitario;
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                                    //strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
                                     strFin =  "</tr>";
 
                                     $('#tablaItems tr:last').after(strInicio + strCont + strTd + strFin);
@@ -300,12 +312,13 @@
                             $('#valor_unitario').val(valorUnitario);
                         });
 
-                        $.getJSON("../obtenerBodegas/").done(function (data) {
+                        $.getJSON("../obtenerBodegas/Nevera").done(function (data) {
                             data =  $.parseJSON(data);
                             var bodega = $("#bodega");
                             bodega.append($("<option />").val("").text("Seleccione Bodega..."));
                             $(data).each(function() {
                                 bodega.append($("<option />").val(this.id).text(this.nombre));
+                                bodega.prepend('<div><label id="nivellineades' + this.id + '">' + this.niveles + '</label><label id="seccionlineades' + this.id + '">' + this.secciones + '</label>');
                             });
                         });
                         refrescarTotalOrden();
@@ -378,7 +391,7 @@
                             $("#mensaje1").text(data.mensaje);
                             $("#mensaje").show();
                         } else {
-                            window.location = "../verordenespedido";
+                            window.location.reload();
                         }
                     }
                 });

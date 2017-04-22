@@ -254,6 +254,8 @@ def obtener_do(request):
             detalleOrden.cantidad = int(det_orden.cantidad)
             detalleOrden.nivel = det_orden.nivel_bodega_destino
             detalleOrden.seccion = det_orden.seccion_bodega_destino
+            detalleOrden.estado=Tipo.objects.get(pk=det_orden.estado.pk).nombre
+            detalleOrden.transaccion_inventario=det_orden.transaccion_inventario_id
             dh = timedelta(hours=5)
             detalleOrden.fechaMovimiento = (det_orden.fecha_movimiento - dh).strftime("%c")
             listaDO.append(detalleOrden)
@@ -276,9 +278,7 @@ def ejecutar_transacciones_orden(request):
     if request.method == 'POST':
         orden_cliente = json.loads(request.body)
         qs_val = DetalleOrden.objects.filter(orden=orden_cliente['id'], bodega__bodegaDestino=None)
-        if qs_val.count() > 0:
-            mensaje = "Items sin bodega"
-            return JsonResponse({"mensaje": mensaje})
+
         qs = DetalleOrden.objects.filter(orden=orden_cliente['id'], transaccion_inventario_id=None)
         for det_orden in qs:
             transaccion = TransaccionInventario(
@@ -298,8 +298,9 @@ def ejecutar_transacciones_orden(request):
                 usuario=Usuario.objects.get(pk=1),
                 comentarios='Transacción Automática Orden No' + str(orden_cliente['id'])
             )
-            ejecutar_transaccion(transaccion)
             transaccion.save()
+            ejecutar_transaccion(transaccion)
+
             det_orden.estado_id = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Movida', grupo='DETALLEPEDIDO').first().id)
             det_orden.transaccion_inventario_id = transaccion.pk
             det_orden.save()
