@@ -104,16 +104,6 @@ def recalcular_nivel_actual_(request):
         return JsonResponse({'proveedor': n1, 'perdida': n2, 'experimento': n3,
                              'devolucion': n4, 'paso': n5, 'nombre': nombre})
 
-
-def strfdelta(tdelta, fmt):
-    if tdelta.days <0:
-        d = {"dias": 0}
-    else:
-        d = {"dias": tdelta.days}
-    d["horas"], rem = divmod(tdelta.seconds, 3600)
-    d["minutos"], d["segundos"] = divmod(rem, 60)
-    return fmt.format(**d)
-
 def calculo_niveles(pk_producto):
     listres = []
     nivelProveedor = 0
@@ -141,7 +131,10 @@ def calculo_niveles(pk_producto):
     tranRecepcion = TransaccionInventario.objects.filter(producto=pk_producto).filter(tipo=tipo3.id)
     if len(tranRecepcion) >= 1:
         for tran in tranRecepcion:
-            nivelExperimento += tran.cantidad
+            if tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Experimento":
+                nivelExperimento = nivelExperimento
+            else:
+                nivelExperimento += tran.cantidad
     else:
         nivelExperimento = 0
     tranRecepcion = TransaccionInventario.objects.filter(producto=pk_producto).filter(tipo=tipo4.id)
@@ -185,20 +178,23 @@ def historial_nivel(request):
             if tran.tipo.nombre == tipo1.nombre:
                 nivelActual+=tran.cantidad
                 listTipo1.append(nivelActual)
-            elif tran.tipo.nombre != tipo1.nombre and tran.tipo.nombre != tipo5.nombre:
+            elif tran.tipo.nombre == tipo3.nombre:
+                if tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Experimento":
+                    nivelActual=nivelActual
+                else:
+                    nivelActual-=tran.cantidad
+                listTipo1.append(nivelActual)
+            elif tran.tipo.nombre ==  tipo2.nombre or tran.tipo.nombre == tipo4.nombre:
                 nivelActual-=tran.cantidad
+                listTipo1.append(nivelActual)
+            elif tran.tipo.nombre == tipo5.nombre:
+                nivelActual=nivelActual
                 listTipo1.append(nivelActual)
             if i == len(tranLabel) - 1:
                 ultimaTransicion = tran
             else:
                 i += 1
         nombre = str(Producto.objects.get(id=pk_producto).unidad_medida.nombre)
-        now = datetime.now()
-        no = now.replace(tzinfo=None)
-        then = ultimaTransicion.fecha_ejecucion
-        the = then.replace(tzinfo=None)
-        dif = no-the
-        res = strfdelta(dif, "{dias} dias {horas}:{minutos}:{segundos}")
-        resDate = "Ultima transaccion ejecutada hace "+ str(res)
-        print >> sys.stdout, 'fecha dif '+ str(dif)
+
+        resDate = "Ultima transaccion ejecutada "+ str(ultimaTransicion.fecha_ejecucion.strftime('%Y-%m-%d %H:%m'))
         return JsonResponse([listLabel, listTipo1, max(listTipo1), nombre, resDate], safe=False)

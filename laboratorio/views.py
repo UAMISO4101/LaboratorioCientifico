@@ -293,8 +293,8 @@ def crear_transaccion(request):
             cantidad=json_tran['cantidad'],
             unidad_medida=Tipo.objects.get(nombre=json_tran['unidad_medida'], grupo='MEDIDAPRODUCTO'),
             estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSTRX').first().id),
-            fecha_creacion=datetime.now().replace(tzinfo=None),
-            fecha_ejecucion=datetime.now().replace(tzinfo=None),
+            fecha_creacion=datetime.now(),
+            fecha_ejecucion=datetime.now(),
             usuario=Usuario.objects.get(pk=1),
             comentarios=json_tran['comentarios']
         )
@@ -318,7 +318,6 @@ def ejecutar_transaccion(transaccion):
             producto = producto_bodega_origen.producto
         else:
             producto = transaccion.producto
-
 
         producto_bodega_destino_list = ProductosEnBodega.objects.filter(bodega=transaccion.bodega_destino)
         producto_bodega_destino_list = producto_bodega_destino_list.filter(producto=transaccion.producto)
