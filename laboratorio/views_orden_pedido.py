@@ -27,10 +27,15 @@ from psycopg2.extensions import JSON
 from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default, \
     OrdenPedidoVista, DetalleOrdenVista
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo, OrdenPedido, \
-    DetalleOrden
+    DetalleOrden, ComentarioOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
 from .views import ejecutar_transaccion
+
+"""Metodo para navegar proceso de aprobacion.
+"""
+def proceso_aprobacion_orden(request):
+    return render(request, "laboratorio/proceso_aprobacion_orden.html")
 
 """Metodo a navegar ordenes de pedido.
 """
@@ -309,3 +314,61 @@ def ejecutar_transacciones_orden(request):
         orden.save()
     mensaje = "ok"
     return JsonResponse({"mensaje": mensaje})
+
+"""Metodo obtener aprobar una orden.
+HU: DA-LCINV-18: Cientifico lider aprueba orden de pedido
+Sirve para aprobar una orden dada por su id
+request, es la peticion dada por el usuario
+return, formato json con mensaje de confirmación
+"""
+@csrf_exempt
+def aprobar_orden(request):
+    aprobacion = json.loads(request.body)
+    orden = OrdenPedido.objects.get(id=aprobacion['id_op'])
+    comentario = ComentarioOrden(timestamp=datetime.now(), comentario=aprobacion['comentario'], orden=orden)
+    comentario.save()
+    orden.estado = Tipo.objects.get(nombre='Aprobada')
+    orden.save()
+    return JsonResponse({"mensaje": 'ok'})
+
+"""Metodo rechazar una orden.
+HU: DA-LCINV-18: Cientifico lider aprueba orden de pedido
+Sirve para rechazar una orden dada por su id
+request, es la peticion dada por el usuario
+return, formato json con mensaje de confirmación
+"""
+@csrf_exempt
+def rechazar_orden(request):
+    rechazo = json.loads(request.body)
+    orden = OrdenPedido.objects.get(id=rechazo['id_op'])
+    comentario = ComentarioOrden(timestamp=datetime.now(), comentario=rechazo['comentario'], orden=orden)
+    comentario.save()
+    orden.estado = Tipo.objects.get(nombre='Rechazada')
+    orden.save()
+    return JsonResponse({"mensaje": 'ok'})
+
+"""Metodo obtener comentarios de una orden.
+HU: DA-LCINV-18: Cientifico lider aprueba orden de pedido
+Sirve para obtener comentarios de una orden
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtener_comentarios_orden(request):
+    time.sleep(0.3)
+    qs = ComentarioOrden.objects.filter(orden=request.GET['id_op'])
+    qs_json = serializers.serialize('json', qs)
+    return JsonResponse(qs_json, safe=False)
+
+"""Metodo para cambiar de estado orden aprobada a en proveedor.
+HU: DA-LCINV-18: Cientifico lider aprueba orden de pedido
+Sirve para obtener cambiar estado de 'Aprobada' a 'En proveedor'
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def cambiar_aprobada_en_proveedor(request):
+    orden = OrdenPedido.objects.get(id=request.POST['id_op'])
+    orden.estado = Tipo.objects.get(nombre='En proveedor')
+    orden.save()
+    return JsonResponse({'mensaje': 'ok'})

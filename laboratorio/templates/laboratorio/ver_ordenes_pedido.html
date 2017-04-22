@@ -57,10 +57,19 @@
                   <h4 class="title">Ordenes de Pedido</h4>
                     <p class="category">Lista de Ordenes de Pedido</p>
                 </div>
-                    <form id="formOP" style="padding: 20px">
+                   <div id="mensaje_ok" class="alert alert-info">
+                                <label id="mensaje1_ok">La orden de pedido actualizo su estado a En Proveedor correctamente</label>
+                            </div>
+                            <div id="mensaje" class="alert alert-warning">
+                                <label id="mensaje1"></label>
+                            </div>
+                    <form id="formOP" action = "../enProveedor/" method = "post" style="padding: 20px">
                     <div style="text-align: center;">
                         <a href="../ordenpedido" class="btn btn-primary" role="button">Crear Orden de Pedido</a>
                         <a id="btnEditarOP" href="../actordenpedido" class="btn btn-primary" role="button">Editar Orden de Pedido</a>
+                        <a id="btnAprobarOP" href="../procesoAprobacionOrden" class="btn btn-primary" role="button">Aprobar Orden de Pedido</a>
+                        <input id="id_op_select" name="id_op" type="hidden" />
+                        <input id="enProveedores" type="submit" name="enProveedores" value="Orden en Proveedores" class="btn btn-primary"/>
                         <a id="btnRecibirOP" href="../recibirordenpedido" class="btn btn-primary" role="button">Recepción de Orden</a>
                         <a href="../">Cancelar</a>
                     </div>
@@ -91,8 +100,13 @@
             $("#pie").load("../pie");
             $('#btnEditarOP').attr('disabled', true);
             $('#btnEditarOP').bind('click', false);
+            $('#btnAprobarOP').attr('disabled', true);
+            $('#btnAprobarOP').bind('click', false);
+            $('#enProveedores').hide();
             $('#btnRecibirOP').attr('disabled', true);
             $('#btnRecibirOP').bind('click', false);
+            $("#mensaje_ok").hide();
+            $("#mensaje").hide();
         }catch (exc){
             alert(exc.message);
         }
@@ -121,33 +135,95 @@
                     $(this).removeClass('selected');
                     $('#btnEditarOP').attr('disabled', true);
                     $('#btnEditarOP').bind('click', false);
+                    $('#btnAprobarOP').attr('disabled', true);
+                    $('#btnAprobarOP').bind('click', false);
+                    $('#enProveedores').hide();
                     $('#btnRecibirOP').attr('disabled', true);
                     $('#btnRecibirOP').bind('click', false);
                 }
                 else {
+                    $("#mensaje_ok").hide();
+                    $("#mensaje").hide();
                     tabla.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                     valor = $("#btnEditarOP").attr('href');
                     valorTrx = $("#btnRecibirOP").attr('href');
+                    valorAprobacion = $("#btnAprobarOP").attr('href');
                     if (valor.indexOf("id_op")!=-1){
                         valor = valor.split("?")[0];
                     }
                     valor += "?id_op="+$(this).children()[0].innerText;
                     valorTrx += "?id_op="+$(this).children()[0].innerText;
-                    if ($(this).children()[2].innerText == "Ingresada") {
+                    valorAprobacion += "?id_op="+$(this).children()[0].innerText;
+                    valorEnProveedor = $(this).children()[0].innerText;
+                    if ($(this).children()[2].innerText == "Ingresada" || $(this).children()[2].innerText == "Rechazada") {
                         $("#btnEditarOP").attr("href", valor);
                         $('#btnEditarOP').unbind('click', false);
                         $('#btnEditarOP').attr('disabled', false);
-                    }
+                    }else{
+                        if (valor.indexOf("id_op")!=-1){
+                        valor = valor.split("?")[0];
+                        $("#btnEditarOP").attr("href", valor);
+                        $('#btnEditarOP').unbind('click', true);
+                        $('#btnEditarOP').attr('disabled', true);
+                    }}
+
                     if ($(this).children()[2].innerText == "En proveedor") {
                         $("#btnRecibirOP").attr("href", valorTrx);
                         $('#btnRecibirOP').unbind('click', false);
                         $('#btnRecibirOP').attr('disabled', false);
+                    }else{
+                        if (valorTrx.indexOf("id_op")!=-1){
+                        valorTrx = valorTrx.split("?")[0];
+                        $("#btnRecibirOP").attr("href", valorTrx);
+                        $('#btnRecibirOP').unbind('click', true);
+                        $('#btnRecibirOP').attr('disabled', true);
+                    }}
+
+                    if ($(this).children()[2].innerText == "En aprobacion") {
+                        $("#btnAprobarOP").attr("href", valorAprobacion);
+                        $('#btnAprobarOP').unbind('click', false);
+                        $('#btnAprobarOP').attr('disabled', false);
+                    }
+                    else{
+                        if (valorAprobacion.indexOf("id_op")!=-1){
+                        valorAprobacion = valorAprobacion.split("?")[0];
+                        $("#btnAprobarOP").attr("href", valorAprobacion);
+                        $('#btnAprobarOP').unbind('click', true);
+                        $('#btnAprobarOP').attr('disabled', true);
+                    }
+                    }
+                    if($(this).children()[2].innerText == "Aprobada"){
+                       $('#id_op_select').attr('value', valorEnProveedor);
+                       $('#enProveedores').show();
                     }
 
                 }
             });
         });
+    });
+
+     $('#formOP').submit(function (e) {
+        var formData = new FormData($("#formOP")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    $("#mensaje_ok").show();
+                }
+                setTimeout(function(){
+                    location.reload();
+                },1000);
+            }
+        });
+        e.preventDefault();
     });
     /*
     $('form').submit(function (e) {
