@@ -570,8 +570,10 @@ def obtenerRecursos(request):
         prod.imageFile = str(producto.imageFile)
         prod.proveedor = producto.proveedor.first_name
         codigo_color = views_nivel_insumos.nivel_insumo_tabla(producto.id, producto.punto_pedido)
-        prod.codigo_color = str(codigo_color)
+        prod.codigo_color = str(codigo_color[0])
         prod.punto_pedido = str(producto.punto_pedido)
+        prod.nivel_actual = str(codigo_color[1])
+        print>> sys.stdout, 'punto_pedido '+ producto.nombre + ' '+ str(producto.punto_pedido)+ ' nivel actual '+ str(codigo_color[1])
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)

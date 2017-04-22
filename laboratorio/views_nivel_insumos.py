@@ -45,6 +45,7 @@ def calcularPuntoPedido(stock_seguridad, frecuencia_media, cantidad_media, tiemp
     return val + stock_seguridad
 
 def nivel_insumo_tabla(pk_producto, punto_pedido):
+    listress = []
     valRojoMax = (Decimal(punto_pedido)*Decimal(0.25))+Decimal(punto_pedido)
     valNaranjaMax = (Decimal(punto_pedido)*Decimal(0.5))+Decimal(punto_pedido)
     listres = calculo_niveles(pk_producto)
@@ -56,13 +57,18 @@ def nivel_insumo_tabla(pk_producto, punto_pedido):
     nivel_actual =(nivelProveedor-nivelPerdidaDesperdicio-nivelDevolucion-nivelExperimento)
     print >> sys.stdout, 'nivel actual '+ str(nivel_actual)
     if nivel_actual == 0 or nivel_actual < Decimal(punto_pedido):
-        return -1
+        listress.append(-1)
+        listress.append(nivel_actual)
     elif nivel_actual >= Decimal(punto_pedido) and nivel_actual<valRojoMax:
-        return  0
+        listress.append(0)
+        listress.append(nivel_actual)
     elif nivel_actual>=valRojoMax and nivel_actual<valNaranjaMax:
-        return 1
+        listress.append(1)
+        listress.append(nivel_actual)
     elif nivel_actual>=valNaranjaMax:
-        return 2
+        listress.append(2)
+        listress.append(nivel_actual)
+    return listress
 
 @csrf_exempt
 def recalcular_nivel_actual_(request):
