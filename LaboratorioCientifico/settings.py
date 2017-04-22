@@ -83,9 +83,12 @@ DATABASES = {
         'PASSWORD': '686dc94e8b4415928e9475a3e40577d522077c9f7bc12015ebfb4e2d0af8d473',
         'HOST': 'ec2-54-225-182-108.compute-1.amazonaws.com',
         'PORT': '5432',
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+        }
     }
 }
-
+SOUTH_TESTS_MIGRATE = False
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
