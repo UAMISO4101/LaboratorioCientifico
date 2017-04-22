@@ -153,6 +153,33 @@
                 </div>
             </div>
         </div>
+        <div id="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-10 col-sm-offset-1">
+                        <div id="tablaComentarios" class="card" style="margin-bottom: 10px;">
+                            <div class="header">
+                                <h4 class="title">Comentarios Orden de Pedido</h4>
+                            </div>
+                            <br>
+                            <div class="table-responsive">
+                                <table  class="table">
+                                    <thead>
+                                    <tr class="bg-primary">
+                                        <th style="color:white;text-align: center;">No.</th>
+                                        <th style="color:white;text-align: center;">Comentario</th>
+                                        <th style="color:white;text-align: center;">Fecha</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="pie"></div>
     </div>
     <div id="modal1" class="card"></div>
@@ -278,7 +305,40 @@
                             }
                         });
 
+                        //Cargar comentarios orden
+                        $.getJSON("../obtenerComentariosOrden",{
+                            id_op: parametroOP
+                        }).done(function (datos) {
+                            if (datos){
+                                var contadorComentarios = 1;
+                                console.log(datos)
+                                comentarios =  $.parseJSON(datos);
+                                if (comentarios.length > 0) {
+                                    $('#tablaComentarios').show();
+                                    $('#com_previos_label').show();
+                                    for (indiceComentario in comentarios){
+                                        var timestamp = new Date(comentarios[indiceComentario].fields.timestamp).toISOString();
+                                            timestamp = timestamp.match(/([^T]+)/)[0].split("-").reverse().join("-");
+                                        var comentario = comentarios[indiceComentario].fields.comentario;
+                                        var strTd = "";
+                                        var strInicio = "<tr class=\"bg-info\">";
+                                        var strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorComentarios+"</td>";
+                                        strTd +=  "<td style=\"border: 1px solid #ddd;\">"+comentario+"</td>";
+                                        strTd +=  "<td style=\"border: 1px solid #ddd;\">"+timestamp+"</td>";
+                                        var strFin =  "</tr>";
 
+                                        $('#tablaComentarios tr:last').after(strInicio + strCont + strTd + strFin);
+
+                                        contadorComentarios++;
+                                    }
+                                }
+                                else
+                                {
+                                    $('#tablaComentarios').hide();
+                                    $('#com_previos_label').hide();
+                                }
+                            }
+                        });
 
 
 
