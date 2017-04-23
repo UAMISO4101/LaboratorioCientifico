@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -78,14 +79,24 @@ WSGI_APPLICATION = 'LaboratorioCientifico.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'laboratorio',
-        'USER': 'postgres',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
+        'NAME': 'dbutn8p8d0b062',
+        'USER': 'ptubljodkeushb',
+        'PASSWORD': '00cfa0fc25425e5436097b9f4ed251180b3bc9fbf8aaaedbcae346ed41123a9e',
+        'HOST': 'ec2-54-235-153-124.compute-1.amazonaws.com',
         'PORT': '5432',
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+        }
     }
 }
 
+SOUTH_TESTS_MIGRATE = False
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'test_dbutn8p8d0b062'
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -124,7 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/images/'
-STATIC_ROOT = '/staticfiles/'
+STATIC_ROOT = 'staticfiles/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'images')
 ]
