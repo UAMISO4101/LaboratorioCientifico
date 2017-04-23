@@ -42,12 +42,12 @@
                     <div class="row">
                         <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
                         <div class="col-6 col-sm-3" style="font-weight: bold;">
-                            <input id="nivel" name="nivel" type="number" class="form-control input-md"
+                            <input id="nivel" name="nivel" type="number" min="1" class="form-control input-md"
                                    style="padding: 0px 4px;height:30px;" required/>
                         </div>
                         <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
                         <div class="col-6 col-sm-3" style="font-weight: bold;">
-                            <input id="seccion" name="seccion" type="number" class="form-control input-md"
+                            <input id="seccion" name="seccion" type="number" min="1" class="form-control input-md"
                                    style="padding: 0px 4px;height:30px;" required/>
                         </div>
                     </div>
@@ -68,7 +68,18 @@
     </div>
 </form>
 <script>
-    $('form').submit(function (e) {
+    $('#bodega').change(function() {
+        $('#nivel').attr({
+            "max": $('#nivellineades' + $("#bodega").val()).text()
+        });
+        //$('#nivelMax').text('Máximo: ' + $('#nivellineades' + $("#bodega_destino").val()).text());
+        $('#seccion').attr({
+            "max": $('#seccionlineades' + $("#bodega").val()).text()
+        });
+        //$('#seccionMax').text('Máximo: ' + $('#seccionlineades' + $("#bodega").val()).text());
+    });
+
+    $('#formItemOrden').submit(function (e) {
         var formData = new FormData($("#formItemOrden")[0]);
         if (formData) {
             $.getJSON("../obtenerFechaActual").done(function (data) {

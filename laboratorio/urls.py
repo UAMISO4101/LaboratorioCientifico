@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
-from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos
+from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos
 from . import views
 
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
+    url(r'^obtenerBodegas/(?P<tipo_bodega>\D+)$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
     url(r'^obtenerTipo/$', views.obtenerTipo, name='obtenerTipo'),
     url(r'^obtenerUnidadesMedida/$', views.obtenerUnidadesMedida, name='obtenerUnidadesMedida'),
@@ -65,6 +66,19 @@ urlpatterns = [
     url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
     url(r'^obtenerProductos/$', views_orden_pedido.obtenerProductos, name='obtenerProductos'),
     url(r'^modal_do/$', views_orden_pedido.ir_modal_do, name=''),
+    url(r'^guardarOrdenDetalle/$', views_orden_pedido.guardarOrdenDetalle, name='guardarOrdenDetalle'),
+    url(r'^obtenerDetalleOrden/$', views_orden_pedido.obtener_do, name='obtenerDetalleOrden'),
+    url(r'^recibirordenpedido/$', views_orden_pedido.ir_recibir_orden_pedido, name='recibirordenpedido'),
+    url(r'^recibirOrdenDetalle/$', views_orden_pedido.ejecutar_transacciones_orden, name='recibirOrdenDetalle'),
+    url(r'^procesoAprobacionOrden/$', views_orden_pedido.proceso_aprobacion_orden, name='procesoAprobacionOrden'),
+    url(r'^aprobarOrden/$', views_orden_pedido.aprobar_orden, name='aprobarOrden'),
+    url(r'^rechazarOrden/$', views_orden_pedido.rechazar_orden, name='rechazarOrden'),
+    url(r'^obtenerComentariosOrden/$', views_orden_pedido.obtener_comentarios_orden, name='obtenerComentariosOrden'),
+    url(r'^enProveedor/$', views_orden_pedido.cambiar_aprobada_en_proveedor, name='enProveedor'),
+
+    url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
+    url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
+    url(r'^historialNivel/$', views_nivel_insumos.historial_nivel, name='historialNivel'),
 
     url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
     url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),

@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from laboratorio.models import (Bodega, Tipo, Producto, Rol, Usuario, ProductosEnBodega,
                                 Experimento, Protocolo, ProductoProtocolo, TransaccionInventario, OrdenPedido,
-                                DetalleOrden)
+                                DetalleOrden, ComentarioOrden)
 
 admin.site.register(Bodega)
 admin.site.register(Tipo)
@@ -18,3 +18,4 @@ admin.site.register(Protocolo)
 admin.site.register(ProductoProtocolo)
 admin.site.register(OrdenPedido)
 admin.site.register(DetalleOrden)
+admin.site.register(ComentarioOrden)

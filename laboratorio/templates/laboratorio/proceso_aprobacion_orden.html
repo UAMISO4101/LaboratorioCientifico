@@ -53,13 +53,7 @@
                             <div class="header">
                                 <h4 class="title">Orden de Pedido</h4>
                             </div>
-                            <div id="mensaje_ok" class="alert alert-info">
-                                <label id="mensaje1_ok">La orden de pedido se registró correctamente</label>
-                            </div>
-                            <div id="mensaje" class="alert alert-warning">
-                                <label id="mensaje1"></label>
-                            </div>
-                            <form id="formDetalleOrden" action="../guardarOrdenDetalle/" method="post" style="padding: 20px">
+                            <form id="formDetalleOrden" action="" method="post" style="padding: 20px">
                                 <input id="id_op_guardada" name="id_op_guardada" type="hidden" />
                                 <div class="row">
                                     <div class="col-6 col-sm-3"><label><b>Fecha Petición</b></label></div>
@@ -70,7 +64,7 @@
                                     <div class="col-6 col-sm-3"><label><b>Estado</b></label></div>
                                     <div class="col-6 col-sm-3">
                                         <select id="estado" name="estado" class="selectpicker form-control" required
-                                                style="padding: 0px 4px;height:30px;">
+                                                style="padding: 0px 4px;height:30px;" disabled>
                                         </select>
                                     </div>
                                 </div>
@@ -78,13 +72,13 @@
                                     <div class="col-6 col-sm-3"><label><b>Proveedor</b></label></div>
                                     <div class="col-6 col-sm-3">
                                         <select id="proveedor" name="proveedor" class="selectpicker form-control" required
-                                                style="padding: 0px 4px;height:30px;">
+                                                style="padding: 0px 4px;height:30px;" disabled>
                                         </select>
                                     </div>
                                     <div class="col-6 col-sm-3"><label><b>Usuario Creación</b></label></div>
                                     <div class="col-6 col-sm-3">
                                         <select id="usuario_creacion" name="usuario_creacion" class="selectpicker form-control" required
-                                                style="padding: 0px 4px;height:30px;">
+                                                style="padding: 0px 4px;height:30px;" disabled>
                                         </select>
                                     </div>
                                 </div>
@@ -92,12 +86,10 @@
                                     <div class="col-6 col-sm-3"><label><b>Observaciones</b></label></div>
                                     <div class="col-6 col-sm-3">
                                        <textarea class="form-control" rows="3" id="observaciones" name="observaciones"
-                                                 style="padding: 0px 4px;"></textarea>
+                                                 style="padding: 0px 4px;" readonly></textarea>
                                     </div>
                                 </div>
                                 <br />
-                                <input type="submit" value="Guardar Orden" class="btn btn-primary"/>
-                                <a href="../verordenespedido">Cancelar</a>
                             </form>
                         </div>
                     </div>
@@ -113,14 +105,8 @@
                                 <h4 class="title">Detalle de la Orden de Pedido </h4>
                             </div>
                             <div style="text-align: center;width: 100%; ">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" title="Adicionar Item Orden" onclick="antesHora();">
-                                    <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
-                                </button>
-                                <button type="button" onclick="irEditarItem();" class="btn btn-primary btn-sm" title="Editar Item Orden">
+                                <button type="button" onclick="irEditarItem();" class="btn btn-primary btn-sm" title="Mostrar Item Orden">
                                     <i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i>
-                                </button>
-                                <button type="button" onclick="eliminarItem();" class="btn btn-primary btn-sm" title="Quitar Item Orden">
-                                    <i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i>
                                 </button>
                             </div>
                             <br />
@@ -157,12 +143,20 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-10 col-sm-offset-1">
-                        <div id="tablaComentarios" class="card" style="margin-bottom: 10px;">
+                        <div class="card" style="margin-bottom: 10px;">
                             <div class="header">
-                                <h4 class="title">Comentarios Orden de Pedido</h4>
+                                <h4 class="title">Aprobación de Orden de Pedido</h4>
+                            </div>
+                            <div id="mensaje_ok" class="alert alert-info">
+                                <label id="mensaje1_ok">La orden de pedido se proceso correctamente</label>
+                            </div>
+                            <div id="mensaje" class="alert alert-warning">
+                                <label id="mensaje1"></label>
                             </div>
                             <br>
-                            <div class="table-responsive">
+                            <div id="com_previos_label" class="col-6 col-sm-8"><label><b>Comentarios Previos</b></label></div>
+
+                            <div id="tablaComentarios" class="table-responsive">
                                 <table  class="table">
                                     <thead>
                                     <tr class="bg-primary">
@@ -175,6 +169,23 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <form id="formDetalleAprobacion"  method="post" style="padding: 20px">
+                                <input id="id_op_guardada" name="id_op_guardada" type="hidden" />
+                                <div class="row">
+                                    <div id="com_previos" class="col-6 col-sm-8 col-lg-offset-2">
+                                    </div>
+                                    <div class="col-6 col-sm-8"><label><b>Comentario</b></label></div>
+
+                                    <div class="col-6 col-sm-8 col-lg-offset-2">
+                                       <textarea class="form-control" rows="4" id="comentarios" name="comentarios"
+                                                 style="padding: 0px 4px;" ></textarea>
+                                    </div>
+                                </div>
+                                <br />
+                                <input type="submit" onClick="form.action='../aprobarOrden/';" value="Aprobar Orden" class="btn btn-primary"/>
+                                <input type="submit" onClick="form.action='../rechazarOrden/';" value="Rechazar Orden" class="btn btn-danger"/>
+                                <a href="../verordenespedido">Cancelar</a>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -220,6 +231,7 @@
                 $("#mensaje_ok").hide();
             }
 
+            // Obtiene los valores iniciales de los select
             $.getJSON("../obtenerEstadosOP").done(function (data) {
                 data =  $.parseJSON(data);
                 var estado = $("#estado");
@@ -251,6 +263,7 @@
                 $.getJSON("../obtener_op",{
                     id_op: parametroOP
                 }).done(function (data) {
+                    console.log(data);
                     if (data){
                         op =  $.parseJSON(data.op);
                         $("#observaciones").val(op.fields["observaciones"]);
@@ -339,9 +352,6 @@
                                 }
                             }
                         });
-
-
-
                     }
                     $.getJSON("../obtenerProductos",{
                         id_proveedor: $("#proveedor option:selected").val()
@@ -357,13 +367,12 @@
                             $('#valor_unitario').val(valorUnitario);
                         });
 
-                        $.getJSON("../obtenerBodegas/Nevera").done(function (data) {
+                        $.getJSON("../obtenerBodegas/").done(function (data) {
                             data =  $.parseJSON(data);
                             var bodega = $("#bodega");
                             bodega.append($("<option />").val("").text("Seleccione Bodega..."));
                             $(data).each(function() {
                                 bodega.append($("<option />").val(this.id).text(this.nombre));
-                                bodega.prepend('<div><label id="nivellineades' + this.id + '">' + this.niveles + '</label><label id="seccionlineades' + this.id + '">' + this.secciones + '</label>');
                             });
                         });
                         refrescarTotalOrden();
@@ -389,135 +398,63 @@
 
     $("#mensaje").hide();
 
-    $('#proveedor').on('change', function() {
-        $.getJSON("../obtenerProductos?id_proveedor="+this.value).done(function (data) {
-            var producto = $("#producto");
-            $('#valor_unitario').val("")
-            producto.empty();
-            producto.append($("<option />").val("").text("Seleccione Producto..."));
-            itemEditar = null;
-            orden.items = new Array();
-            contadorItems=1;
-            var trs = $('#tablaItems tr');
-            for (var i = 1; i < trs.length; i++) {
-                $(trs[i]).remove();
-            }
-            refrescarTotalOrden();
-            if (data){
-                data =  $.parseJSON(data);
-                $(data).each(function() {
-                    producto.append($("<option data-vu='"+this.fields.valorUnitario+"'/>").val(this.pk).text(this.fields.nombre));
-                });
-            }
-        });
-    });
+     $("#formDetalleAprobacion").submit(function (e){
 
-    $("#formDetalleOrden").submit(function (e) {
-        $("#mensaje").hide();
-        $("#mensaje1").text("");
-        if (orden.items.length == 0){
-            $("#mensaje").show();
-            $("#mensaje1").text("Debe adicionar items a la orden");
-        }else {
-            var formData = new FormData($("#formDetalleOrden")[0]);
-            if (formData) {
-                orden.observaciones = $("#observaciones").val();
-                orden.idUsuarioCreacion = $("#usuario_creacion").val();
-                orden.idProveedor = $("#proveedor").val();
-                orden.idEstado = $("#estado").val();
-                $.ajax({
-                    url: $(this).attr('action'),
+             $("#mensaje").hide();
+             $("#mensaje1").text("");
+             var aprobacion = {};
+
+             if ($("#comentarios").val() == '') {
+                 $("#mensaje").show();
+                 $("#mensaje1").text("Debe adicionar un comentario al proceso de aprobación/rechazo de la orden");
+
+             } else {
+
+                 aprobacion.comentario = $("#comentarios").val();
+                 aprobacion.id_op = $("#id_op_guardada").val();
+
+                 console.log($(this).attr('action'));
+                 console.log($(this).attr('method'));
+                 $.ajax({
+                     url: $(this).attr('action'),
                     type: $(this).attr('method'),
-                    data: JSON.stringify(orden),
-                    contentType: false,
-                    processData: false,
-                    success: function (data) {
-                        if (data && data.mensaje && data.mensaje != "ok") {
-                            $("#mensaje1").text(data.mensaje);
-                            $("#mensaje").show();
-                        } else {
-                            window.location = "../verordenespedido";
-                        }
-                    }
-                });
-            }
-        }
-        e.preventDefault();
-    });
+                     data: JSON.stringify(aprobacion),
+                     contentType: false,
+                     processData: false,
+                     success: function (data) {
+                         if (data && data.mensaje && data.mensaje != "ok") {
+                             $("#mensaje1").text(data.mensaje);
+                             $("#mensaje").show();
+                         } else {
+                             window.location = "../verordenespedido";
+                         }
+                     }
+                 });
+
+             }
+              e.preventDefault();
+         }
+
+     );
 
 
-    $('#tablaItems').on('click', '.bg-info', function(event) {
-        var numero = this.children[0].textContent;
-        for (var i=0;i<orden.items.length;i++){
-            var item = orden.items[i];
-            if (item.no == numero){
-                itemEditar = item;
-                break;
-            }
-        }
-        $(this).addClass('active').siblings().removeClass('active');
-    });
-
-    function antesHora(){
-        $("#mensaje").hide();
-        $("#mensaje1").text("");
+    function obtenerFechaActual(){
         $.getJSON("../obtenerFechaActual").done(function (data) {
-            var fecha_movimiento = $("#fecha_movimiento");
-            fecha_movimiento.val(data.fecha);
+            return data.fecha;
         });
     }
 
-    function irEditarItem(){
-        if (itemEditar){
-            $('#producto').val(itemEditar.idProducto);
-            $('#bodega').val(itemEditar.idBodega);
-            $("#nivel").val(itemEditar.nivel);
-            $("#seccion").val(itemEditar.seccion);
-            $("#valor_unitario").val(itemEditar.valorUnitario);
-            $("#cantidad").val(itemEditar.cantidad);
-            $("#fecha_movimiento").val(itemEditar.fechaMovimiento);
+    function aprobarOrden(e){
 
-            $('#myModal').modal('show');
-        }
+        var fecha_actual = obtenerFechaActual();
+        peticionAprobacion('../aprobarOrden',e);
+        e.stopPropagation();
     }
 
-    function eliminarItem(){
-        if (itemEditar) {
-            var trs = $('#tablaItems tr');
-            for (var i = 1; i < trs.length; i++) {
-                var tr = trs[i];
-                var numero = tr.children[0].textContent;
-                if (itemEditar.no == numero) {
-                    $(tr).remove();
-                    break;
-                }
-            }
-            for (var i = 0; i < orden.items.length; i++){
-                var item = orden.items[i];
-                if (itemEditar.no == item.no) {
-                    orden.items.splice(i, 1);
-                    break;
-                }
-            }
-
-            trs = $('#tablaItems tr');
-            for (var i = 1; i < trs.length; i++) {
-                var tr = trs[i];
-                tr.children[0].textContent = i;
-            }
-
-            for (var i = 0; i < orden.items.length; i++){
-                orden.items[i].no = i+1;
-            }
-            if (orden.items.length > 0) {
-                contadorItems = orden.items[orden.items.length - 1].no;
-                contadorItems++;
-            }else{
-                contadorItems=1;
-            }
-            itemEditar = null;
-            refrescarTotalOrden();
-        }
+    function rechazarOrden(e){
+        var fecha_actual = obtenerFechaActual();
+        peticionAprobacion('../rechazarOrden', e);
+        e.preventDefault();
     }
 
     function refrescarTotalOrden(){

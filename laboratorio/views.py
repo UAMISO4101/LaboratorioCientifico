@@ -17,6 +17,7 @@ from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, P
 from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
+from laboratorio import views_nivel_insumos
 
 # Navegacion de paginas
 
@@ -174,8 +175,11 @@ def crearBodega(request):
 
 
 @csrf_exempt
-def obtenerBodegas(request):
-    qs = Bodega.objects.all()
+def obtenerBodegas(request, tipo_bodega = None):
+    if tipo_bodega == None:
+        qs = Bodega.objects.all()
+    else:
+        qs = Bodega.objects.filter(tipo_bodega=Tipo.objects.get(nombre=tipo_bodega))
     listaBodegas = []
     for bodega in qs:
         bod = BodegaVista()
@@ -449,6 +453,7 @@ def experimentos(request):
 def registrarInsumoReactivo(request):
     mensaje = ""
     dosLugares = Decimal('00.01')
+    errNum = False
     if request.method == 'POST':
         codigo = request.POST['codigo']
         nombre = request.POST['nombre']
@@ -467,11 +472,46 @@ def registrarInsumoReactivo(request):
         else:
             unitaria = Decimal(request.POST['cantidad'])
         imageFile = request.FILES.get('imageFile', None)
-
-        if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
+        frecuencia_media = request.POST['frecuencia_media']
+        if frecuencia_media == "Continua" or frecuencia_media == "Rara":
+            numero_medio_veces = int(request.POST['numero_medio_promedio'])
+            if int(numero_medio_veces) <= 0:
+                errNum = True
+        else:
+            numero_medio_veces = 0
+        if request.POST['cantidad_media'] == "":
+            cantidad_media = 0.0
+        else:
+            cantidad_media = Decimal(request.POST['cantidad_media'])
+        frecuencia_minima =  request.POST['frecuencia_minima']
+        if frecuencia_minima == "Continua" or frecuencia_minima == "Rara":
+            numero_minimo_veces = int(request.POST['numero_minimo_promedio'])
+            if int(numero_minimo_veces) <= 0:
+                errNum = True
+        else:
+            numero_minimo_veces = 0
+        if request.POST['tiempo'] == "":
+            tiempo = 0
+        else:
+            tiempo = int(request.POST['tiempo'])
+        if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "" and cantidad_media != 0.0 and tiempo != 0 and errNum == False:
             if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=nombre).first() !=None:
                 mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
             else:
+
+                if proveedor.first_name == "Interno (recurso propio)":
+                    frecuencia_media = "NA"
+                    frecuencia_minima = "NA"
+                    cantidad_media = 0.0
+                    tiempo = 0
+                    stock_seguridad = 0.0
+                    punto_pedido = 0.0
+
+                else:
+                    stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima, cantidad_media, tiempo, numero_minimo_veces)
+                    punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media, cantidad_media, tiempo, numero_medio_veces)
+
                 #Es un producto con un codigo y un nombre nuevos
                 producto = Producto(codigo=codigo,
                                     nombre=nombre,
@@ -482,9 +522,18 @@ def registrarInsumoReactivo(request):
                                     unidad_medida=Tipo.objects.filter(id=request.POST['medida']).first(),
                                     unidad_unitaria=unitaria,
                                     imageFile=imageFile,
-                                    proveedor=Usuario.objects.filter(id=request.POST['proveedor']).first())
+                                    proveedor=proveedor,
+                                    frecuencia_media_uso=frecuencia_media,
+                                    cantidad_media_uso=cantidad_media,
+                                    frecuencia_minima_uso=frecuencia_minima,
+                                    tiempo_reaprovisionamiento=tiempo,
+                                    stock_seguridad=stock_seguridad,
+                                    punto_pedido=punto_pedido)
 
                 producto.unidad_unitaria.quantize(dosLugares, 'ROUND_DOWN')
+                producto.cantidad_media_uso.quantize(dosLugares, 'ROUND_DOWN')
+                producto.stock_seguridad.quantize(dosLugares, 'ROUND_DOWN')
+                producto.punto_pedido.quantize(dosLugares, 'ROUND_DOWN')
                 producto.save()
                 mensaje = "ok"
         else:
@@ -550,6 +599,7 @@ def obtenerRecurso(request):
 def guardarEdicionInsumo(request):
 
     mensaje = ""
+    errNum = False
     if request.method == 'POST':
         codigo = request.POST['codigo']
         nombre = request.POST['nombre']
@@ -569,14 +619,36 @@ def guardarEdicionInsumo(request):
             unitaria = Decimal(request.POST['cantidad'])
         clasificacion = request.POST['clasificacion']
         imageFile = request.FILES.get('imageFile',None)
-        proveedor = request.POST['proveedor']
+        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
+        frecuencia_media = request.POST['frecuencia_media']
+        if frecuencia_media == "Continua" or frecuencia_media == "Rara":
+            numero_medio_veces = int(request.POST['numero_medio_promedio'])
+            if int(numero_medio_veces) <= 0:
+                errNum = True
+        else:
+            numero_medio_veces = 0
+        if request.POST['cantidad_media'] == "":
+            cantidad_media = 0.0
+        else:
+            cantidad_media = Decimal(request.POST['cantidad_media'])
+        frecuencia_minima = request.POST['frecuencia_minima']
+        if frecuencia_minima == "Continua" or frecuencia_minima == "Rara":
+            numero_minimo_veces = int(request.POST['numero_minimo_promedio'])
+            if int(numero_minimo_veces) <= 0:
+                errNum = True
+        else:
+            numero_minimo_veces = 0
+        if request.POST['tiempo'] == "":
+            tiempo = 0
+        else:
+            tiempo = int(request.POST['tiempo'])
         producto = Producto.objects.filter(id=int(request.POST['id_producto_guardado'])).first()
 
 
         modificacion = False
         error = False
         if producto != None:
-            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "" and cantidad_media != 0.0 and tiempo != 0 and errNum == False:
                 if producto.codigo != codigo or producto.nombre != nombre:
                     try:
                         Producto.objects.get(codigo=codigo)
@@ -610,6 +682,23 @@ def guardarEdicionInsumo(request):
                     mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
                 else:
                     if modificacion == True:
+
+                        if proveedor.first_name == "Interno (recurso propio)":
+                            frecuencia_media = "NA"
+                            frecuencia_minima = "NA"
+                            cantidad_media = 0.0
+                            tiempo = 0
+                            stock_seguridad = 0.0
+                            punto_pedido = 0.0
+
+                        else:
+                            stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima,
+                                                                                         cantidad_media, tiempo,
+                                                                                         numero_minimo_veces)
+                            punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media,
+                                                                                   cantidad_media, tiempo,
+                                                                                   numero_medio_veces)
+
                         producto.codigo = codigo
                         producto.nombre = nombre
                         producto.descripcion = descripcion
@@ -620,7 +709,13 @@ def guardarEdicionInsumo(request):
                         producto.unidad_unitaria = unitaria
                         if (imageFile != None):
                             producto.imageFile = imageFile
-                        producto.proveedor = Usuario.objects.filter(id=proveedor).first()
+                        producto.proveedor = proveedor
+                        producto.frecuencia_media_uso = frecuencia_media
+                        producto.frecuencia_minima_uso = frecuencia_minima
+                        producto.cantidad_media_uso = cantidad_media
+                        producto.tiempo_reaprovisionamiento = tiempo
+                        producto.stock_seguridad = stock_seguridad
+                        producto.punto_pedido = punto_pedido
                         producto.save()
                         mensaje = "ok"
 

@@ -3,6 +3,7 @@ import unittest
 
 from django.http.request import HttpRequest
 
+from laboratorio.models import Tipo
 from laboratorio.views import crearBodega, obtenerBodega
 
 """Clase BodegaTestCase.
@@ -11,6 +12,17 @@ Clase encargada de generar las pruebas unitarias para creacion de bodegas
 
 """
 class BodegaTestCase(unittest.TestCase):
+
+    """Metodo setUp
+    Configuracion inicial de datos
+
+    """
+    def setUp(self):
+        tipo = Tipo(grupo="CONVERSIONPESO",
+                    nombre="Gramos	Kilogramos",
+                    valor=0.00100000
+                    )
+        tipo.save()
 
     """Metodo test existe bodega.
 
@@ -31,6 +43,7 @@ class BodegaTestCase(unittest.TestCase):
         request.POST["ubicacion"] = "prueba1"
         request.POST["tipo_bodega"] = "1"
         request.POST["responsable"] = "1"
+        request.POST["unidad_medida"] = "1"
         jsonResponse = crearBodega(request)
         self.assertIn("ok", jsonResponse.content)
         request = HttpRequest()
@@ -44,6 +57,7 @@ class BodegaTestCase(unittest.TestCase):
         request.POST["ubicacion"] = "prueba2"
         request.POST["tipo_bodega"] = "1"
         request.POST["responsable"] = "1"
+        request.POST["unidad_medida"] = "1"
         jsonResponse = crearBodega(request)
         self.assertIn("ok", jsonResponse.content)
 
@@ -55,6 +69,7 @@ class BodegaTestCase(unittest.TestCase):
 
     """
     def test_2_existe_bodega(self):
+
         request = HttpRequest()
         request.method = 'POST'
         request.POST["serial"] = "prueba1"
@@ -66,6 +81,7 @@ class BodegaTestCase(unittest.TestCase):
         request.POST["ubicacion"] = "prueba1"
         request.POST["tipo_bodega"] = "1"
         request.POST["responsable"] = "1"
+        request.POST["unidad_medida"] = "1"
         jsonResponse = crearBodega(request)
         self.assertIn("ya existe", jsonResponse.content)
 
@@ -90,6 +106,7 @@ class BodegaTestCase(unittest.TestCase):
         request.POST["ubicacion"] = "prueba1"
         request.POST["tipo_bodega"] = "1"
         request.POST["responsable"] = "1"
+        request.POST["unidad_medida"] = "1"
         jsonResponse = crearBodega(request)
         self.assertIn("ya existe", jsonResponse.content)
 
@@ -114,6 +131,7 @@ class BodegaTestCase(unittest.TestCase):
         request.POST["ubicacion"] = "prueba1"
         request.POST["tipo_bodega"] = "2"
         request.POST["responsable"] = "2"
+        request.POST["unidad_medida"] = "1"
         jsonResponse = crearBodega(request)
         self.assertIn("ok", jsonResponse.content)
         request = HttpRequest()
