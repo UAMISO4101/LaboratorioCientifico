@@ -102,7 +102,8 @@
             $('#btnEditarOP').bind('click', false);
             $('#btnAprobarOP').attr('disabled', true);
             $('#btnAprobarOP').bind('click', false);
-            $('#enProveedores').hide();
+            $('#enProveedores').attr('disabled', true);
+            $('#enProveedores').attr('click', false);
             $('#btnRecibirOP').attr('disabled', true);
             $('#btnRecibirOP').bind('click', false);
             $("#mensaje_ok").hide();
@@ -137,7 +138,8 @@
                     $('#btnEditarOP').bind('click', false);
                     $('#btnAprobarOP').attr('disabled', true);
                     $('#btnAprobarOP').bind('click', false);
-                    $('#enProveedores').hide();
+                    $('#enProveedores').attr('disabled', true);
+                    $('#enProveedores').attr('click', false);
                     $('#btnRecibirOP').attr('disabled', true);
                     $('#btnRecibirOP').bind('click', false);
                 }
@@ -195,7 +197,12 @@
                     }
                     if($(this).children()[2].innerText == "Aprobada"){
                        $('#id_op_select').attr('value', valorEnProveedor);
-                       $('#enProveedores').show();
+                       $('#enProveedores').unbind('click', false);
+                       $('#enProveedores').attr('disabled', false);
+                    }
+                    else{
+                       $('#enProveedores').unbind('click', true);
+                       $('#enProveedores').attr('disabled', true);
                     }
 
                 }
