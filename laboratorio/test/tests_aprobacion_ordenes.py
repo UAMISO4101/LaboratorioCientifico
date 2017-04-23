@@ -7,7 +7,7 @@ from laboratorio.models import Tipo, OrdenPedido, ComentarioOrden
 
 """Clase AprobacionOrdenesTestCase.
 
-Clase encargada de generar las pruebas unitarias para aprobacion de ordenes de pedido y comentarios.
+Clase encargada de generar las pruebas unitarias para aprobacion de ordenes de pedido y comentarios
 
 """
 class AprobacionOrdenesTestCase(TestCase):
