@@ -103,5 +103,4 @@ class AprobacionOrdenesTestCase(TestCase):
 
 
 if __name__ == '__main__':
-    """Metodo principal de test."""
     unittest.main()
