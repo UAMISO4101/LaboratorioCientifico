@@ -127,6 +127,7 @@ class OrdenPedidoVista():
 # HU-LCINV-13
 # GZ
 # Manejo de fechas en formato ISO para presentar en el UI
+# Tambien se maneja en LCINV-9
 """Metodo que formatea a json
 """
 def json_default(value):
@@ -148,3 +149,4 @@ class ProductoVencimientoVista():
     fecha_vencimiento = ""
     dias_anticipacion = ""
     semaforo_vencimiento = ""
+    semaforo_estado = ""
