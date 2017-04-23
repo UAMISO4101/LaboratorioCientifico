@@ -2,100 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
     <title>.:Laboratorio Científico:.</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- Bootstrap core CSS     -->
+  <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Animation library for notifications   -->
+  <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+  <!--  Light Bootstrap Table core CSS    -->
+  <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+  <!--  CSS for Demo Purpose, don't include it in your project     -->
+  <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+  <!--     Fonts and icons     -->
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+  <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
 </head>
 <body>
 <div id="wrapper">
-    <div id="encabezado"></div>
-    <div id="content">
-x<br />
-<h2 id="hCrear" align="center">Transacción de Inventario</h2>
-<h2 id="hEditar" align="center" style="display: none;">Transacción de Inventario</h2>
-<h2 align="center"></h2>
-<form id="transaccion" action="../crearTransaccion/" method="post">
-    <input id="id_bodega_guardada" name="id_bodega_guardada" type="hidden" />
-    <div class="row">
-        <div class="col-md-6 col-sm-offset-3">
-            <div id="mensaje" class="alert alert-danger">
-                <label id="mensaje1"></label>
-            </div>
-            <div id="mensajeSuc" class="alert alert-success">
-                <label id="mensaje1Suc"></label>
-            </div>
-            <label >Tipo</label>
-            <select id="tipo" name="tipo" class="selectpicker form-control" required>
-            </select>
-            <br>
-            <label >Bodega Origen</label>
-            <select id="bodega_origen" name="bodega_origen" class="selectpicker form-control" required>
-            </select>
-            <br>
-            <input id="bodega_externa_entrada" hidden/>
-            <input id="bodega_salida" hidden/>
-            <input id="bodega_desperdicios" hidden/>
-
-            <label>Producto a mover</label>
-            <select id="producto_bodega_origen" name="producto_bodega_origen" class="selectpicker form-control" required>
-            </select>
-            <br>
-
-            <label >Bodega Destino</label>
-            <select id="bodega_destino" name="bodega_destino" class="selectpicker form-control" required>
-            </select>
-            <br>
-
-            <label>Ubicación en bodegas: </label>
-            <div class="container">
-                <div id="ubicacion" class="col-lg-3 well">
-                    <label id="nivel_origenlb">Nivel origen:</label>
-                    <label id="nivel_origen" type="text"></label>
-                    <br>
-                    <label id="seccion_origenlb">Sección origen:</label>
-                    <label id="seccion_origen"></label>
-                    <br>
-                    <label id="cantlabel">Cantidad a mover: </label>
-                    <input id="cantidad" type="number" min="0" max="5"/>  <label id="unidad_medida"></label>
-                    <input id="prod_id" hidden/>
-                    <label id="cantlabel">Unidad Preferencia Bodega: </label>
-                    <br>
-                    <input id="conversion" type="text" readonly/><label id="unidad_preferencia_bodega" type="text"></label>
-                    <br>
-                    <br>
-
-                </div>
-                <div id="ubicacion"  style="position: relative" align="rigth" class="col-lg-4 well">
-                    <label>Nivel destino:</label>
-                    <input id="nivel_destino" type="number" maxlength="1" min="0" max="10"></input><label id="nivelMax"></label>
-                    <br>
-                    <label>Sección destino:</label>
-                    <input id="seccion_destino" type="number" maxlength="1" min="0" max="10"></input><label id="seccionMax"></label>
-                    <br>
-                    <br>
-                </div>
-
-            </div>
-
-            <label>Comentarios</label>
-            <input id="comentarios" name="comentarios" type="text" class="form-control input-md"/>
-            <br/>
-            <input id="btnsubmit" type="submit" value="Ejecutar" class="btn btn-primary"/>
-            <a id="btNuevaTrx" href="../transaccion" class="btn btn-primary" role="button">Nueva</a>
-            <a href="../transacciones">Cancelar</a>
-        </div>
+    <div class="sidebar" data-color="blue" data-image="../../../images/assets/img/sidebar-4.jpg" style="position: fixed">
+      <div class="sidebar-wrapper" style="position: fixed">
+        <div id="encabezado"></div>
+      </div>
     </div>
-</form>
-<br>
-</div>
-    <div id="pie"></div>
+    <div class="main-panel">
+      <nav class="navbar navbar-default navbar-fixed">
+        <div class="container-fluid">
+          <div class="navbar-header"> <a class="navbar-brand" href="#">Profile</a> </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li> <a href="#">
+                                Log out
+                            </a> </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+        <br>
+    <div id="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6 col-sm-offset-3">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Transacción de Inventario</h4>
+                </div>
+                  <div id="mensaje" class="alert alert-warning">
+                      <label id="mensaje1"></label>
+                </div>
+                <div id="mensajeSuc" class="alert alert-success">
+                    <label id="mensaje1Suc"></label>
+                </div>
+                  <form id="transaccion" action="../crearTransaccion/" method="post" style="padding: 30px">
+                      <input id="id_bodega_guardada" name="id_bodega_guardada" type="hidden" />
+                      <label ><b>Tipo</b></label>
+                      <select id="tipo" name="tipo" class="selectpicker form-control" required></select><br>
+                      <label ><b>Bodega Origen</b></label>
+                      <select id="bodega_origen" name="bodega_origen" class="selectpicker form-control" required></select><br>
+                      <input id="bodega_externa_entrada" hidden/>
+                      <input id="bodega_salida" hidden/>
+                      <input id="bodega_desperdicios" hidden/>
+                      <label><b>Producto a mover</b></label>
+                      <select id="producto_bodega_origen" name="producto_bodega_origen" class="selectpicker form-control" required></select><br>
+                      <label ><b>Bodega Destino</b></label>
+                      <select id="bodega_destino" name="bodega_destino" class="selectpicker form-control" required></select><br>
+                      <label><b>Ubicación en bodegas:</b></label>
+                      <div class="container-fluid">
+                          <div id="ubicacion" class="col-lg-6 well">
+                              <label id="nivel_origenlb">Nivel origen:</label>
+                            <label id="nivel_origen" type="text"></label>
+                            <br>
+                            <label id="seccion_origenlb">Sección origen:</label>
+                            <label id="seccion_origen"></label>
+                            <br>
+                            <label id="cantlabel">Cantidad a mover: </label>
+                            <input id="cantidad" type="number" min="0" max="5"/>  <label id="unidad_medida"></label>
+                            <input id="prod_id" hidden/>
+                            <label id="cantlabel">Unidad Preferencia Bodega: </label>
+                            <br>
+                            <input id="conversion" type="text" readonly/><label id="unidad_preferencia_bodega" type="text"></label>
+                            <br>
+                            <br>
+                          </div>
+                          <div id="ubicacion"  style="position: relative" align="rigth" class="col-lg-6 well">
+                            <label>Nivel destino:</label>
+                            <input id="nivel_destino" type="number" maxlength="1" min="0" max="10"></input><label id="nivelMax"></label>
+                            <br>
+                            <label>Sección destino:</label>
+                            <input id="seccion_destino" type="number" maxlength="1" min="0" max="10"></input><label id="seccionMax"></label>
+                            <br>
+                            <br>
+                          </div>
+                      </div>
+                      <label>Comentarios</label>
+                      <input id="comentarios" name="comentarios" type="text" class="form-control input-md"/>
+                      <br/>
+                      <input id="btnsubmit" type="submit" value="Ejecutar" class="btn btn-primary"/>
+                      <a id="btNuevaTrx" href="../transaccion" class="btn btn-primary" role="button">Nueva</a>
+                      <a href="../transacciones">Cancelar</a>
+                  </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div id="pie"></div>
+    </div>
+    </div>
 </div>
 </body>
-
+<!--  Checkbox, Radio & Switch Plugins -->
+  <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+  <!--  Charts Plugin -->
+  <script src="../../../images/assets/js/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../../../images/assets/js/bootstrap-notify.js"></script>
+  <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+  <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
 <script>
     //Llena la lista de valores de tipos de transaccion
     (function(){
