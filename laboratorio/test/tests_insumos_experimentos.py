@@ -54,7 +54,7 @@ class ExperimentosInsumosTestCase(TestCase):
     def test_obtenerPPPorProtocolo(self):
         request = HttpRequest()
         request.method = 'GET'
-        request.GET['id'] = 3
+        request.GET['id'] = 1
         jsonResponse = obtenerPPPorProtocolo(request)
         respuesta = jsonResponse.content
         respuesta = json.loads(respuesta)
