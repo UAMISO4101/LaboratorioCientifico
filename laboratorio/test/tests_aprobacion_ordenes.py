@@ -1,13 +1,9 @@
-import json
 import unittest
 
-from django.http.request import HttpRequest
 from django.utils import timezone
 from django.test import TestCase, Client
 
-from laboratorio.views_orden_pedido import (aprobar_orden, rechazar_orden, obtener_comentarios_orden)
-
-from laboratorio.models import Tipo, Usuario, OrdenPedido, ComentarioOrden
+from laboratorio.models import Tipo, OrdenPedido, ComentarioOrden
 
 """Clase AprobacionOrdenesTestCase.
 
@@ -18,7 +14,7 @@ class AprobacionOrdenesTestCase(TestCase):
 
     """Metodo setUp que crea los datos asociados a las entidades que se van a probar
         Se crean dos usuarios, cuatro tipos, una orden
-       """
+    """
     def setUp(self):
         # Every test needs a client.
         self.client = Client()
@@ -99,9 +95,9 @@ class AprobacionOrdenesTestCase(TestCase):
     La respuesta debe contener un comentario
 
     """
-    def cambiar_aprobada_en_proveedor(self):
-        response = self.client.get('/laboratorio/enProveedor/',
-                                   {"id_op": 3})
+    def test_cambiar_aprobada_en_proveedor(self):
+        response = self.client.post('/laboratorio/enProveedor/',
+                                       {"id_op": 3}, format="multipart")
         self.assertIn("ok", response.json()["mensaje"])
         self.assertEquals("En proveedor", OrdenPedido.objects.get(id=3).estado.nombre)
 
