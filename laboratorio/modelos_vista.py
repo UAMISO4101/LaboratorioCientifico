@@ -113,6 +113,31 @@ class TransaccionVista():
     comentarios = ""
     usuario = ""
 
+"""Clase - Auxiliar  OrdenPedidoVista.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class OrdenPedidoVista():
+    id = 0
+    nombreUsuarioCreacion = ""
+    nombreUsuarioAprobacion = ""
+    nombreProveedor = ""
+    estado = ""
+    fechaPeticion = ""
+
+"""Clase - Auxiliar  OrdenPedidoVista.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class DetalleOrdenVista():
+    idProducto = 0;
+    nombreProducto = "";
+    idBodega = 0;
+    nombreBodega = "";
+    nivel = 0;
+    seccion = 0;
+    valorUnitario = 0.0;
+    cantidad = 0.0;
+    fechaMovimiento = None;
+
 # HU-LCINV-13
 # GZ
 # Manejo de fechas en formato ISO para presentar en el UI
@@ -123,3 +148,17 @@ def json_default(value):
         return datetime.date.isoformat(value)
     else:
         return value.__dict__
+
+
+# LCINV-7
+# FB
+# Manejo para el vencimiento de productos
+class ProductoVencimientoVista():
+    id = 0
+    bodega = ""
+    producto = ""
+    nivel = 0
+    seccion = 0
+    fecha_vencimiento = ""
+    dias_anticipacion = ""
+    semaforo_vencimiento = ""

@@ -1,88 +1,123 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
+    <title>.:Laboratorio Científico:.</title>
+  <!-- Bootstrap core CSS     -->
+  <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Animation library for notifications   -->
+  <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+  <!--  Light Bootstrap Table core CSS    -->
+  <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+  <!--  CSS for Demo Purpose, don't include it in your project     -->
+  <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+  <!--     Fonts and icons     -->
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+  <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
 </head>
 
 <body>
 <div id="wrapper">
-    <div id="encabezado"></div>
-    <div id="content">
-        <br>
-<br>
-<br>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 col-sm-offset-3">
-            <div id="mensaje" class="alert alert-danger">
-                <label id="mensaje1"></label>
-            </div>
-            <div class="page-header text-center">
-                <h2 id="hRegistro">Edición de Insumos y Reactivos</h2>
-            </div>
-          <form id="formEdicionInsumo" action="../../guardarEdicionInsumo/" method="post" enctype="multipart/form-data" novalidate>
-              <input id="id_producto_guardado" name="id_producto_guardado" type="hidden" />
-              <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
-           <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
-              <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
-              <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
-              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
-           <label class="required" for="id_clasificacion">Clasificacion:</label>
-            <br>
-              <select id="clasificacion" name="clasificacion" required class="form-control">
-                  <option value="" selected="selected">---------</option>
-                  <optgroup label="Materiales Vivos">
-                      <option value="Bac">Bacterias</option>
-                      <option value="Hon">Hongos</option>
-                    </optgroup>
-                    <optgroup label="Medios de Cultivo">
-                    <option value="Glu">Glucosa</option>
-                    <option value="Fru">Fructuosa</option>
-                    <option value="Tri">Triptona</option>
-                    <option value="Pep">Peptona</option>
-                    </optgroup>
-                    <optgroup label="Micronutrientes">
-                    <option value="Fe">Hierro</option>
-                    <option value="Mg">Magnesio</option>
-                    <option value="P">Fosforo</option>
-                    </optgroup>
-                    <optgroup label="Manipulacion ADN y Proteinas">
-                    <option value="Pri">Primers</option>
-                    <option value="Kem">Kits de extraccion metagenomica</option>
-                    <option value="KeADN">Kits de extraccion ADN aislado</option>
-                    <option value="Pup">Purificador de proteinas</option>
-                    <option value="Enr">Enzimas de restriccion</option>
-                    <option value="Pro">Proteasas</option>
-                    </optgroup>
-                  <optgroup label="Otros">
-                      <option value="Otros">Moleculas genericas</option>
-                  </optgroup>
-                    </select>
-              <br>
-              <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
-               <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
-              <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
-              <img id="imagen" src="" class="img-responsive" style="width: 50%"/>
-              <label style="font-size: smaller"><b>Imagen actual para este recurso.</b></label><br>
-              <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
-                <br>
-              <input type="submit" value="Guardar" class="btn btn-primary"/>
-          <a href="../../verRecursos">Cancelar</a></form>
-        </div>
-
+    <div class="sidebar" data-color="blue" data-image="../../../images/assets/img/sidebar-4.jpg" style="position: fixed">
+      <div class="sidebar-wrapper" style="position: fixed">
+        <div id="encabezado"></div>
       </div>
     </div>
+    <div class="main-panel">
+      <nav class="navbar navbar-default navbar-fixed">
+        <div class="container-fluid">
+          <div class="navbar-header"> <a class="navbar-brand" href="#">Profile</a> </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li> <a href="#">
+                                Log out
+                            </a> </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+        <br>
+    <div id="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6 col-sm-offset-3">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Recursos</h4>
+                    <p class="category">Edición de Recursos</p>
+                </div>
+                <form id="formEdicionInsumo" action="../../guardarEdicionInsumo/" method="post" enctype="multipart/form-data" novalidate style="padding: 30px">
+                    <input id="id_producto_guardado" name="id_producto_guardado" type="hidden" />
+                    <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
+                    <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
+                    <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
+                    <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
+                    <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
+                    <label class="required" for="id_clasificacion">Clasificacion:</label>
+                    <br>
+                    <select id="clasificacion" name="clasificacion" required class="form-control">
+                        <option value="" selected="selected">Seleccione una clasificación...</option>
+                        <optgroup label="Materiales Vivos">
+                            <option value="Bac">Bacterias</option>
+                            <option value="Hon">Hongos</option>
+                        </optgroup>
+                        <optgroup label="Medios de Cultivo">
+                            <option value="Glu">Glucosa</option>
+                            <option value="Fru">Fructuosa</option>
+                            <option value="Tri">Triptona</option>
+                            <option value="Pep">Peptona</option>
+                        </optgroup>
+                        <optgroup label="Micronutrientes">
+                            <option value="Fe">Hierro</option>
+                            <option value="Mg">Magnesio</option>
+                            <option value="P">Fosforo</option>
+                        </optgroup>
+                        <optgroup label="Manipulacion ADN y Proteinas">
+                            <option value="Pri">Primers</option>
+                            <option value="Kem">Kits de extraccion metagenomica</option>
+                            <option value="KeADN">Kits de extraccion ADN aislado</option>
+                            <option value="Pup">Purificador de proteinas</option>
+                            <option value="Enr">Enzimas de restriccion</option>
+                            <option value="Pro">Proteasas</option>
+                        </optgroup>
+                        <optgroup label="Otros">
+                            <option value="Otros">Moleculas genericas</option>
+                        </optgroup>
+                    </select>
+                        <br>
+                    <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
+                    <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
+                    <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
+                    <img id="imagen" src="" class="img-responsive" style="width: 50%"/>
+                    <label style="font-size: smaller"><b>Imagen actual para este recurso.</b></label><br>
+                    <label for="imageFile">Imagen</label><input id="imageFile" name="imageFile" type="file"/>
+                    <br>
+                    <input type="submit" value="Guardar" class="btn btn-primary"/>
+                    <a href="../../verRecursos">Cancelar</a></form>
+                </div>
+            </div>
+          </div>
+        </div>
     </div>
-    <div id="pie"></div>
-</div>
+        <div id="pie"></div>
+    </div>
+      </div>
 </body>
+    <!--  Checkbox, Radio & Switch Plugins -->
+  <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+  <!--  Charts Plugin -->
+  <script src="../../../images/assets/js/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../../../images/assets/js/bootstrap-notify.js"></script>
+  <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+  <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
 <script>
     (function(){
         try {
