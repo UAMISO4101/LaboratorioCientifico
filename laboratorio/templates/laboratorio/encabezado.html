@@ -48,6 +48,12 @@
                         <p>Ordenar Pedido</p>
                     </a>
                 </li>
+                <li id="ven">
+                    <a href="/laboratorio/vencidos">
+                        <i class="pe-7s-note"></i>
+                        <p>Vencidos</p>
+                    </a>
+                </li>
             </ul>
 </body>
 
@@ -77,6 +83,10 @@
         else if(url.includes("ordenpedido"))
         {
             $("#op").attr('class', 'active');
+        }
+        else if(url.includes("vencidos"))
+        {
+            $("#ven").attr('class', 'active');
         }
     })();
 

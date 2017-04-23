@@ -95,6 +95,7 @@ class ProductoVista():
     cantidad_media = ""
     tiempo_reaprovisionamiento = ""
 
+
 """Clase - Auxiliar  TransaccionVista.
 Clase que sirve de vista para objetos a mostrar al usuario
 """
@@ -146,6 +147,7 @@ class DetalleOrdenVista():
 # HU-LCINV-13
 # GZ
 # Manejo de fechas en formato ISO para presentar en el UI
+
 """Metodo que formatea a json
 """
 def json_default(value):
@@ -167,3 +169,4 @@ class ProductoVencimientoVista():
     fecha_vencimiento = ""
     dias_anticipacion = ""
     semaforo_vencimiento = ""
+    semaforo_estado = ""
