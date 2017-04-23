@@ -5,11 +5,9 @@ from django.test import TestCase, Client
 
 from laboratorio.models import Tipo, OrdenPedido, ComentarioOrden
 
-"""
-Clase AprobacionOrdenesTestCase
+"""Clase AprobacionOrdenesTestCase
 
-Clase encargada de generar las pruebas unitarias para aprobacion de ordenes de pedido y comentarios.
-"""
+Clase encargada de generar las pruebas unitarias para aprobacion de ordenes de pedido y comentarios."""
 class AprobacionOrdenesTestCase(TestCase):
 
     """Metodo setUp que crea los datos asociados a las entidades que se van a probar
