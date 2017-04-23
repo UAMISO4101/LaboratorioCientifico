@@ -20,6 +20,7 @@ class BodegaTestCase(unittest.TestCase):
 
     """
     def test_1_crear_bodega(self):
+
         request = HttpRequest()
         request.method = 'POST'
         request.POST["serial"] = "prueba1"
@@ -55,6 +56,7 @@ class BodegaTestCase(unittest.TestCase):
 
     """
     def test_2_existe_bodega(self):
+
         request = HttpRequest()
         request.method = 'POST'
         request.POST["serial"] = "prueba1"

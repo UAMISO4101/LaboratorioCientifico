@@ -19,7 +19,6 @@ class RecursosTestCase(unittest.TestCase):
 
     #Test para probar el registro en condiciones normales de un recurso
     def test_crearRecurso(self):
-
         image = Image.new('RGB', (100, 100))
         tmp_file = tempfile.NamedTemporaryFile(suffix='.jpg')
         image.save(tmp_file)
