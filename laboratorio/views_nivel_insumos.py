@@ -146,7 +146,14 @@ def calculo_niveles(pk_producto):
     tranRecepcion = TransaccionInventario.objects.filter(producto=pk_producto).filter(tipo=tipo5.id)
     if len(tranRecepcion) >= 1:
         for tran in tranRecepcion:
-            nivelPaso += tran.cantidad
+            if tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Desperdicio":
+                nivelPaso+=tran.cantidad
+                nivelProveedor+=tran.cantidad
+            elif tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Experimento":
+                nivelPaso+=tran.cantidad
+                nivelProveedor+=tran.cantidad
+            elif tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Nevera":
+                nivelPaso+=tran.cantidad
     else:
         nivelPaso = 0
     listres.append(nivelProveedor)
@@ -188,7 +195,12 @@ def historial_nivel(request):
                 nivelActual-=tran.cantidad
                 listTipo1.append(nivelActual)
             elif tran.tipo.nombre == tipo5.nombre:
-                nivelActual=nivelActual
+                if tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Desperdicio":
+                    nivelActual += tran.cantidad
+                elif tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Experimento":
+                    nivelActual += tran.cantidad
+                elif tran.producto_bodega_origen.bodega.tipo_bodega.nombre == "Nevera":
+                    nivelActual = nivelActual
                 listTipo1.append(nivelActual)
             if i == len(tranLabel) - 1:
                 ultimaTransicion = tran

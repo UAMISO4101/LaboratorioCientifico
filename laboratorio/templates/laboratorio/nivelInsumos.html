@@ -117,7 +117,7 @@
                     demo.initChartDonut();
                     console.log(data.nombre)
                     $("#title").text(data.nombre)
-                    $("#leyenda").html("<i class='fa fa-circle text-info'></i>Disponible <b>"+demo.proveedor+"%</b><br><i class='fa fa-circle text-danger'></i>Desperdicio <b>"+demo.perdida+"%</b><br><i class='fa fa-circle text-warning'></i>Uso en Experimentos <b>"+demo.experimento+"%</b><br><i class='fa fa-circle' style='color: #9368E9'></i>Devolución a Proveedor <b>"+demo.devolucion+"%</b><br><i class='fa fa-circle text-muted'></i>Transferido <b>"+demo.paso+"%</b>")
+                    $("#leyenda").html("<i class='fa fa-circle text-info'></i>Disponible <b>"+demo.proveedor+"%</b><br><i class='fa fa-circle text-danger'></i>Desperdicio <b>"+demo.perdida+"%</b><br><i class='fa fa-circle text-warning'></i>Uso en Experimentos <b>"+demo.experimento+"%</b><br><i class='fa fa-circle' style='color: #9368E9'></i>Devolución a Proveedor <b>"+demo.devolucion+"%</b><br><i class='fa fa-circle text-info'></i>Transferido (Disponible) <b>"+demo.paso+"%</b>")
                 }
             })
             $.getJSON("../historialNivel", {'id':param}).done(function (data) {
