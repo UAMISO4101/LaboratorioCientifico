@@ -322,7 +322,6 @@ def ejecutar_transaccion(transaccion):
         else:
             producto = transaccion.producto
 
-
         producto_bodega_destino_list = ProductosEnBodega.objects.filter(bodega=transaccion.bodega_destino)
         producto_bodega_destino_list = producto_bodega_destino_list.filter(producto=transaccion.producto)
         producto_bodega_destino_list = producto_bodega_destino_list.filter(nivel=transaccion.nivel_destino)
@@ -472,7 +471,6 @@ def registrarInsumoReactivo(request):
         else:
             unitaria = Decimal(request.POST['cantidad'])
         imageFile = request.FILES.get('imageFile', None)
-        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
         frecuencia_media = request.POST['frecuencia_media']
         if frecuencia_media == "Continua" or frecuencia_media == "Rara":
             numero_medio_veces = int(request.POST['numero_medio_promedio'])
@@ -499,7 +497,7 @@ def registrarInsumoReactivo(request):
             if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=nombre).first() !=None:
                 mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
             else:
-
+                proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
                 if proveedor.first_name == "Interno (recurso propio)":
                     frecuencia_media = "NA"
                     frecuencia_minima = "NA"
@@ -572,6 +570,11 @@ def obtenerRecursos(request):
         prod.unidad_unitaria = str(producto.unidad_unitaria)
         prod.imageFile = str(producto.imageFile)
         prod.proveedor = producto.proveedor.first_name
+        codigo_color = views_nivel_insumos.nivel_insumo_tabla(producto.id, producto.punto_pedido)
+        prod.codigo_color = str(codigo_color[0])
+        prod.punto_pedido = str(producto.punto_pedido)
+        prod.nivel_actual = str(codigo_color[1])
+        print>> sys.stdout, 'punto_pedido '+ producto.nombre + ' '+ str(producto.punto_pedido)+ ' nivel actual '+ str(codigo_color[1])
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
@@ -619,7 +622,6 @@ def guardarEdicionInsumo(request):
             unitaria = Decimal(request.POST['cantidad'])
         clasificacion = request.POST['clasificacion']
         imageFile = request.FILES.get('imageFile',None)
-        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
         frecuencia_media = request.POST['frecuencia_media']
         if frecuencia_media == "Continua" or frecuencia_media == "Rara":
             numero_medio_veces = int(request.POST['numero_medio_promedio'])
@@ -682,7 +684,7 @@ def guardarEdicionInsumo(request):
                     mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
                 else:
                     if modificacion == True:
-
+                        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
                         if proveedor.first_name == "Interno (recurso propio)":
                             frecuencia_media = "NA"
                             frecuencia_minima = "NA"
@@ -692,12 +694,8 @@ def guardarEdicionInsumo(request):
                             punto_pedido = 0.0
 
                         else:
-                            stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima,
-                                                                                         cantidad_media, tiempo,
-                                                                                         numero_minimo_veces)
-                            punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media,
-                                                                                   cantidad_media, tiempo,
-                                                                                   numero_medio_veces)
+                            stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima,cantidad_media, tiempo,numero_minimo_veces)
+                            punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media,cantidad_media, tiempo,numero_medio_veces)
 
                         producto.codigo = codigo
                         producto.nombre = nombre

@@ -73,7 +73,7 @@ return, formato json con los usuarios
 """
 @csrf_exempt
 def obtenerEstadosOP(request):
-    qs = Tipo.objects.filter(grupo='ORDENPEDIDO')
+    qs = Tipo.objects.filter(grupo='ORDENPEDIDO').exclude(nombre="Aprobada").exclude(nombre="Rechazada").exclude(nombre="En proveedor")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 

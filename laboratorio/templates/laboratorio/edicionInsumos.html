@@ -53,6 +53,9 @@
                   <h4 class="title">Recursos</h4>
                     <p class="category">Edición de Recursos</p>
                 </div>
+                   <div id="mensaje" class="alert alert-warning">
+                      <label id="mensaje1"></label>
+                </div>
                 <form id="formEdicionInsumo" action="../../guardarEdicionInsumo/" method="post" enctype="multipart/form-data" novalidate style="padding: 30px">
                     <input id="id_producto_guardado" name="id_producto_guardado" type="hidden" />
                     <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
@@ -156,7 +159,6 @@
             alert(exc.message);
         }
     })();
-
     $(document).ready(function ()
     {
         $("#proveedor").change(function () {
@@ -200,11 +202,9 @@
                 }
             }
         });
-
         $("#frecuencia_media").change(function ()
         {
             var val = $(this).val();
-
             if (val == "Continua")
             {
                 $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
@@ -252,10 +252,8 @@
                 $("#brEs").hide();
             }
         });
-
         $("#frecuencia_minima").change(function () {
             var val = $(this).val();
-
             if (val == "Continua")
             {
                 $("#labEs1").text('Numero de veces promedio de uso (por día)')
@@ -298,7 +296,6 @@
             }
         })
     });
-
     (function() {
         $.getJSON("../../obtenerTiposMedida").done(function (data) {
             data = $.parseJSON(data);
@@ -309,7 +306,6 @@
             });
         })
     })();
-
     (function() {
         $.getJSON("../../obtenerProveedores").done(function (data) {
             data = $.parseJSON(data);
@@ -320,9 +316,7 @@
             });
         })
     })();
-
     $("#mensaje").hide();
-
     (function(){
         url = $(location).attr('href');
         segments = url.split("/");
@@ -380,7 +374,6 @@
             }
         });
     })();
-
     $("#formEdicionInsumo").validate({
         //specify the validation rules
         rules: {
@@ -403,7 +396,6 @@
             medida: "required",
             cantidad: "required",
         },
-
         //specify validation error messages
         messages: {
             codigo:
@@ -427,13 +419,10 @@
             medida: "Es necesario elegir una unidad de medida para la creación del recurso",
             cantidad: "Es necesario elegir una cantidad unitaria para la creación del recurso"
         },
-
         //submitHandler: function(form){
         //    form.submit();
         //}
-
     });
-
     $('form').submit(function (e) {
         var formData = new FormData($("#formEdicionInsumo")[0]);
         $.ajax({

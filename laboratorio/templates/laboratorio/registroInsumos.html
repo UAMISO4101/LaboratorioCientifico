@@ -156,7 +156,6 @@
             alert(exc.message);
         }
     })();
-
     $(document).ready(function ()
     {
         $("#proveedor").change(function () {
@@ -200,11 +199,9 @@
                 }
             }
         });
-
         $("#frecuencia_media").change(function ()
         {
             var val = $(this).val();
-
             if (val == "Continua")
             {
                 $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
@@ -252,10 +249,8 @@
                 $("#brEs").hide();
             }
         });
-
         $("#frecuencia_minima").change(function () {
             var val = $(this).val();
-
             if (val == "Continua")
             {
                 $("#labEs1").text('Numero de veces promedio de uso (por día)')
@@ -298,7 +293,6 @@
             }
         })
     });
-
     (function() {
         $.getJSON("../obtenerTiposMedida").done(function (data) {
             data = $.parseJSON(data);
@@ -309,7 +303,6 @@
             });
         })
     })();
-
     (function() {
         $.getJSON("../obtenerProveedores").done(function (data) {
             data = $.parseJSON(data);
@@ -320,10 +313,7 @@
             });
         })
     })();
-
     $("#mensaje").hide();
-
-
     $("#formRegistrarInsumo").validate({
         //specify the validation rules
         rules: {
@@ -348,7 +338,6 @@
             imageFile: "required",
             proveedor: "required",
         },
-
         //specify validation error messages
         messages: {
             codigo:
@@ -374,13 +363,10 @@
             imageFile: "Es necesario subir una imagen para la creación del recurso",
             proveedor: "Es necesario elegir un proveedor para la creación del recurso"
         },
-
         //submitHandler: function(form){
         //    form.submit();
         //}
-
     });
-
     $('form').submit(function (e) {
         var formData = new FormData($("#formRegistrarInsumo")[0]);
         $.ajax({
