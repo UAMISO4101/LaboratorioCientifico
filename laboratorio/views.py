@@ -471,7 +471,6 @@ def registrarInsumoReactivo(request):
         else:
             unitaria = Decimal(request.POST['cantidad'])
         imageFile = request.FILES.get('imageFile', None)
-        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
         frecuencia_media = request.POST['frecuencia_media']
         if frecuencia_media == "Continua" or frecuencia_media == "Rara":
             numero_medio_veces = int(request.POST['numero_medio_promedio'])
@@ -498,7 +497,7 @@ def registrarInsumoReactivo(request):
             if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=nombre).first() !=None:
                 mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
             else:
-
+                proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
                 if proveedor.first_name == "Interno (recurso propio)":
                     frecuencia_media = "NA"
                     frecuencia_minima = "NA"
@@ -623,7 +622,6 @@ def guardarEdicionInsumo(request):
             unitaria = Decimal(request.POST['cantidad'])
         clasificacion = request.POST['clasificacion']
         imageFile = request.FILES.get('imageFile',None)
-        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
         frecuencia_media = request.POST['frecuencia_media']
         if frecuencia_media == "Continua" or frecuencia_media == "Rara":
             numero_medio_veces = int(request.POST['numero_medio_promedio'])
@@ -686,7 +684,7 @@ def guardarEdicionInsumo(request):
                     mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
                 else:
                     if modificacion == True:
-
+                        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
                         if proveedor.first_name == "Interno (recurso propio)":
                             frecuencia_media = "NA"
                             frecuencia_minima = "NA"
