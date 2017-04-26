@@ -281,11 +281,13 @@ def obtener_do(request):
 def ejecutar_transacciones_orden(request):
     mensaje = ""
     if request.method == 'POST':
+        guardarOrdenDetalle(request) #Guarda la orden antes de procesar los items
         orden_cliente = json.loads(request.body)
         qs_val = DetalleOrden.objects.filter(orden=orden_cliente['id'], bodega__bodegaDestino=None)
 
         qs = DetalleOrden.objects.filter(orden=orden_cliente['id'], transaccion_inventario_id=None)
         for det_orden in qs:
+            #Genera una transaccion de inventario por cada item de la orden
             transaccion = TransaccionInventario(
                 tipo=Tipo.objects.get(nombre='Recepcion de Proveedor', grupo='TIPOTRX'),
                 bodega_origen=Bodega.objects.get(nombre='Proveedor'),
@@ -304,6 +306,7 @@ def ejecutar_transacciones_orden(request):
                 comentarios='Transacción Automática Orden No' + str(orden_cliente['id'])
             )
             transaccion.save()
+            #Ejecuta la transaccion quien hace el movimiento entre bodegas
             ejecutar_transaccion(transaccion)
 
             det_orden.estado_id = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Movida', grupo='DETALLEPEDIDO').first().id)
