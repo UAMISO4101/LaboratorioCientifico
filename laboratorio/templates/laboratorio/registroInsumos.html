@@ -1,95 +1,298 @@
+<!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="utf-8">
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
+    <title>.:Laboratorio Científico:.</title>
+  <!-- Bootstrap core CSS     -->
+  <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Animation library for notifications   -->
+  <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+  <!--  Light Bootstrap Table core CSS    -->
+  <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+  <!--  CSS for Demo Purpose, don't include it in your project     -->
+  <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+  <!--     Fonts and icons     -->
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+  <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../../images/struc.css" media="screen" />
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js"></script>
 </head>
 
 <body>
 <div id="wrapper">
-    <div id="encabezado"></div>
-    <div id="content">
-        <br>
-<br>
-<br>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 col-sm-offset-3">
-            <div id="mensaje" class="alert alert-danger">
-                <label id="mensaje1"></label>
-            </div>
-            <div class="page-header text-center">
-                <h2 id="hRegistro">Registro de Insumos y Reactivos</h2>
-            </div>
-          <form id="formRegistrarInsumo" action="../guardarInsumo/" method="post" enctype="multipart/form-data" novalidate>
-               <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
-           <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
-              <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
-              <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
-              <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2" minlength="1"><br>
-           <label class="required" for="id_clasificacion">Clasificacion:</label>
-            <br>
-              <select id="clasificacion" name="clasificacion" required class="form-control">
-                  <option value="" selected="selected">---------</option>
-                  <optgroup label="Materiales Vivos">
-                      <option value="Bac">Bacterias</option>
-                      <option value="Hon">Hongos</option>
-                    </optgroup>
-                    <optgroup label="Medios de Cultivo">
-                    <option value="Glu">Glucosa</option>
-                    <option value="Fru">Fructuosa</option>
-                    <option value="Tri">Triptona</option>
-                    <option value="Pep">Peptona</option>
-                    </optgroup>
-                    <optgroup label="Micronutrientes">
-                    <option value="Fe">Hierro</option>
-                    <option value="Mg">Magnesio</option>
-                    <option value="P">Fosforo</option>
-                    </optgroup>
-                    <optgroup label="Manipulacion ADN y Proteinas">
-                    <option value="Pri">Primers</option>
-                    <option value="Kem">Kits de extraccion metagenomica</option>
-                    <option value="KeADN">Kits de extraccion ADN aislado</option>
-                    <option value="Pup">Purificador de proteinas</option>
-                    <option value="Enr">Enzimas de restriccion</option>
-                    <option value="Pro">Proteasas</option>
-                    </optgroup>
-                  <optgroup label="Otros">
-                      <option value="Otros">Moleculas genericas</option>
-                  </optgroup>
-                    </select>
-              <br>
-              <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
-               <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4" minlength="1"><br>
-              <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
-              <label for="id_imageFile">Imagen:</label><input id="imageFile" name="imageFile" type="file" required/>
-                <br>
-              <input type="submit" value="Guardar" class="btn btn-primary"/>
-          <a href="../verRecursos">Cancelar</a></form>
-        </div>
-
+    <div class="sidebar" data-color="blue" data-image="../../../images/assets/img/sidebar-4.jpg" style="position: fixed">
+      <div class="sidebar-wrapper" style="position: fixed">
+        <div id="encabezado"></div>
       </div>
     </div>
+    <div class="main-panel">
+      <nav class="navbar navbar-default navbar-fixed">
+        <div class="container-fluid">
+          <div class="navbar-header"> <a class="navbar-brand" href="#">Profile</a> </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li> <a href="#">
+                                Log out
+                            </a> </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+        <br>
+    <div id="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6 col-sm-offset-3">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Recursos</h4>
+                    <p class="category">Registro de Recursos</p>
+                </div>
+                <form id="formRegistrarInsumo" action="../guardarInsumo/" method="post" enctype="multipart/form-data" novalidate style="padding: 30px">
+                    <input id="id_producto_guardado" name="id_producto_guardado" type="hidden" />
+                    <label><b>Código</b></label><input class="form-control input-md" id="codigo" name="codigo" placeholder="Ingrese un código de referencia" type="text" required><br>
+                    <label><b>Nombre</b></label><input class="form-control input-md" id="nombre" name="nombre" placeholder="Ingrese el nombre" type="text"><br>
+                    <label><b>Descripción</b></label><textarea rows="4"class="form-control input-md" id="descripcion" name="descripcion" placeholder="Descripción del insumo o reactivo" type="text" required></textarea><br>
+                    <label><b>Valor Unitario</b></label><div class="input-group"><span class="input-group-addon">COP</span><input class="form-control input-md" id="valor" name="valor" type="text" placeholder="Ingrese el valor unitario" required></div><br>
+                    <label><b>Unidades Existentes</b></label><input id="unidades" name="unidades" type="number" class="form-control input-md" min="1" max="50" required maxlength="2"><br>
+                    <label class="required" for="id_clasificacion"><b>Clasificación</b></label>
+                    <br>
+                    <select id="clasificacion" name="clasificacion" required class="form-control">
+                        <option value="" selected="selected">Seleccione una clasificación...</option>
+                        <optgroup label="Materiales Vivos">
+                            <option value="Bac">Bacterias</option>
+                            <option value="Hon">Hongos</option>
+                        </optgroup>
+                        <optgroup label="Medios de Cultivo">
+                            <option value="Glu">Glucosa</option>
+                            <option value="Fru">Fructuosa</option>
+                            <option value="Tri">Triptona</option>
+                            <option value="Pep">Peptona</option>
+                        </optgroup>
+                        <optgroup label="Micronutrientes">
+                            <option value="Fe">Hierro</option>
+                            <option value="Mg">Magnesio</option>
+                            <option value="P">Fosforo</option>
+                        </optgroup>
+                        <optgroup label="Manipulacion ADN y Proteinas">
+                            <option value="Pri">Primers</option>
+                            <option value="Kem">Kits de extraccion metagenomica</option>
+                            <option value="KeADN">Kits de extraccion ADN aislado</option>
+                            <option value="Pup">Purificador de proteinas</option>
+                            <option value="Enr">Enzimas de restriccion</option>
+                            <option value="Pro">Proteasas</option>
+                        </optgroup>
+                        <optgroup label="Otros">
+                            <option value="Otros">Moleculas genericas</option>
+                        </optgroup>
+                    </select>
+                        <br>
+                    <label><b>Unidad Medida</b></label><select class="form-control" id="medida" name="medida" required></select><br>
+                    <label><b>Cantidad Unitaria</b></label><input id="cantidad" name="cantidad" type="number" class="form-control input-md" min="1" max="9999.9999" required maxlength="4"><br>
+                    <label><b>Proveedor</b></label><select class="form-control" id="proveedor" name="proveedor" required></select><br>
+                    <label id="lab1"><b>Frecuencia media de Uso</b></label><select class="form-control" id="frecuencia_media" name="frecuencia_media" required>
+                        <option value="" selected="selected">Seleccione una frecuencia...</option>
+                    <optgroup label="Continua">
+                        <option value="Continua">Muchas veces al día</option>
+                    </optgroup>
+                    <optgroup label="Frecuente">
+                        <option value="Frecuente">Al menos 1 vez al día</option>
+                    </optgroup>
+                    <optgroup label="Ocasional">
+                        <option value="Ocasional">Al menos 1 vez a la semana</option>
+                    </optgroup>
+                    <optgroup label="Poco usual">
+                        <option value="PocoUsual">Al menos 1 vez al mes</option>
+                    </optgroup>
+                    <optgroup label="Rara">
+                        <option value="Rara">Unas pocas veces al año</option>
+                    </optgroup>
+                    <optgroup label="Muy rara">
+                        <option value="MuyRara">Al menos 1 vez al año</option>
+                    </optgroup>
+                    </select><br id="1">
+                    <label id="labEs" style="display: none">Numero de veces promedio de uso</label><input style="display: none" class="form-control input-md" id="numero_medio_promedio" name="numero_medio_promedio" type="number" required><br id="brEs" style="display: none">
+                    <label id="lab2"><b>Cantidad media por cada uso</b></label><input class="form-control input-md" id="cantidad_media" name="cantidad_media" type="number" required><br id="2">
+                     <label id="lab3"><b>Frecuencia mínima de Uso</b></label><select class="form-control" id="frecuencia_minima" name="frecuencia_minima" required>
+                        <option value="" selected="selected">Seleccione una frecuencia...</option>
+                    </select><br id="3">
+                    <label id="labEs1" style="display: none">Numero de veces promedio de uso</label><input style="display: none" class="form-control input-md" id="numero_minimo_promedio" name="numero_minimo_promedio" type="number" required><br id="brEs1" style="display: none">
+                    <label id="lab4"><b>Tiempo de reaprovisionamiento</b></label><input class="form-control input-md" id="tiempo" name="tiempo" type="number" required><br id="4">
+                    <label for="imageFile"><b>Imagen</b></label><input id="imageFile" name="imageFile" type="file"/>
+                    <br>
+                    <input type="submit" value="Guardar" class="btn btn-primary"/>
+                    <a href="../verRecursos">Cancelar</a></form>
+                </div>
+            </div>
+          </div>
+        </div>
     </div>
-    <div id="pie"></div>
-</div>
+        <div id="pie"></div>
+    </div>
+      </div>
 </body>
+<!--  Checkbox, Radio & Switch Plugins -->
+  <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+  <!--  Charts Plugin -->
+  <script src="../../../images/assets/js/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../../../images/assets/js/bootstrap-notify.js"></script>
+  <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+  <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
 <script>
     (function(){
-        try {
+        try
+        {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
-        }catch (exc){
+            $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+        }
+        catch (exc){
             alert(exc.message);
         }
     })();
-
+    $(document).ready(function ()
+    {
+        $("#proveedor").change(function () {
+            if ($("#proveedor option:selected").text().includes("Interno"))
+            {
+                $("#lab1").hide();
+                $("#frecuencia_media").hide();
+                $("#1").hide();
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+                $("#lab2").hide();
+                $("#cantidad_media").hide();
+                $("#2").hide();
+                $("#lab3").hide();
+                $("#frecuencia_minima").hide();
+                $("#3").hide();
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+                $("#lab4").hide();
+                $("#tiempo").hide();
+                $("#4").hide();
+            }
+            else
+            {
+                if($("#lab1").is(":visible")== false)
+                {
+                    $("#lab1").show();
+                    $("#frecuencia_media").show();
+                    $("#1").show();
+                    $("#lab2").show();
+                    $("#cantidad_media").show();
+                    $("#2").show();
+                    $("#lab3").show();
+                    $("#frecuencia_minima").show();
+                    $("#3").show();
+                    $("#lab4").show();
+                    $("#tiempo").show();
+                    $("#4").show();
+                }
+            }
+        });
+        $("#frecuencia_media").change(function ()
+        {
+            var val = $(this).val();
+            if (val == "Continua")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Continua'><option value='Continua'>Muchas veces al día</option></optgroup><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+                $("#labEs").text('Numero de veces promedio de uso (por día)')
+                $("#labEs").css({ 'font-weight': 'bold' })
+                $("#labEs").show();
+                $("#numero_medio_promedio").show();
+                $("#brEs").show();
+            }
+            else if (val == "Frecuente")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Frecuente'><option value='Frecuente'>Al menos 1 vez al día</option></optgroup><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+            else if (val == "Ocasional")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Ocasional'><option value='Ocasional'>Al menos 1 vez a la semana</option></optgroup><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>");
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+            else if(val == "PocoUsual")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Poco usual'><option value='PocoUsual'>Al menos 1 vez al mes</option></optgroup><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+            else if(val == "Rara")
+            {
+                $("#frecuencia_minima").html("<option value='' selected='selected'>Seleccione una frecuencia...</option><optgroup label='Rara'><option value='Rara'>Unas pocas veces al año</option></optgroup><optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+                $("#labEs").text('Numero de veces promedio de uso (por año)')
+                $("#labEs").css({ 'font-weight': 'bold' })
+                $("#labEs").show();
+                $("#numero_medio_promedio").show();
+                $("#brEs").show();
+            }
+            else if(val == "MuyRara")
+            {
+                $("#frecuencia_minima").html("<optgroup label='Muy rara'><option value='MuyRara'>Al menos 1 vez al año</option></optgroup>")
+                $("#labEs").hide();
+                $("#numero_medio_promedio").hide();
+                $("#brEs").hide();
+            }
+        });
+        $("#frecuencia_minima").change(function () {
+            var val = $(this).val();
+            if (val == "Continua")
+            {
+                $("#labEs1").text('Numero de veces promedio de uso (por día)')
+                $("#labEs1").css({ 'font-weight': 'bold' })
+                $("#labEs1").show();
+                $("#numero_minimo_promedio").show();
+                $("#brEs1").show();
+            }
+            else if (val == "Frecuente")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+            else if (val == "Ocasional")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+            else if(val == "PocoUsual")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+            else if(val == "Rara")
+            {
+                $("#labEs1").text('Numero de veces promedio de uso (por año)')
+                $("#labEs1").css({ 'font-weight': 'bold' })
+                $("#labEs1").show();
+                $("#numero_minimo_promedio").show();
+                $("#brEs1").show();
+            }
+            else if(val == "MuyRara")
+            {
+                $("#labEs1").hide();
+                $("#numero_minimo_promedio").hide();
+                $("#brEs1").hide();
+            }
+        })
+    });
     (function() {
         $.getJSON("../obtenerTiposMedida").done(function (data) {
             data = $.parseJSON(data);
@@ -100,7 +303,6 @@
             });
         })
     })();
-
     (function() {
         $.getJSON("../obtenerProveedores").done(function (data) {
             data = $.parseJSON(data);
@@ -111,10 +313,7 @@
             });
         })
     })();
-
     $("#mensaje").hide();
-
-
     $("#formRegistrarInsumo").validate({
         //specify the validation rules
         rules: {
@@ -139,7 +338,6 @@
             imageFile: "required",
             proveedor: "required",
         },
-
         //specify validation error messages
         messages: {
             codigo:
@@ -165,13 +363,10 @@
             imageFile: "Es necesario subir una imagen para la creación del recurso",
             proveedor: "Es necesario elegir un proveedor para la creación del recurso"
         },
-
         //submitHandler: function(form){
         //    form.submit();
         //}
-
     });
-
     $('form').submit(function (e) {
         var formData = new FormData($("#formRegistrarInsumo")[0]);
         $.ajax({

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
+from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos
 from . import views
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     url(r'^crearBodega/$', views.crearBodega, name='crearBodega'),
     url(r'^bodegas/$', views.ir_bodegas, name='bodegas'),
     url(r'^obtenerBodegas/$', views.obtenerBodegas, name='obtenerBodegas'),
+    url(r'^obtenerBodegas/(?P<tipo_bodega>\D+)$', views.obtenerBodegas, name='obtenerBodegas'),
     url(r'^obtenerBodega/$', views.obtenerBodega, name='obtenerBodega'),
     url(r'^obtenerTipo/$', views.obtenerTipo, name='obtenerTipo'),
     url(r'^obtenerUnidadesMedida/$', views.obtenerUnidadesMedida, name='obtenerUnidadesMedida'),
@@ -23,7 +25,7 @@ urlpatterns = [
     url(r'^crearTransaccion/$', views.crear_transaccion, name='crearTransaccion'),
     url(r'^obtenerTipos/$', views.obtenerTipos, name='obtenerTipos'),
     url(r'^obtenerProductosBodega/$', views.obtenerProductosBodega, name='obtenerProductosBodega'),
-  
+
     url(r'^obtenerExperimentos/$', views.obtenerExperimentos, name='obtenerExperimentos'),
     url(r'^obtenerExperimentosPorUsuario/$', views.obtenerExperimentosPorUsuario, name='obtenerExperimentosPorUsuario'),
     url(r'^obtenerProtocolosPorExperimento/$', views.obtenerProtocolosPorExperimento, name='obtenerProtocolosPorExperimento'),
@@ -44,12 +46,40 @@ urlpatterns = [
     url(r'^obtenerTransacciones/$', views.obtenerTransacciones, name='obtenerTransacciones'),
     url(r'^transacciones/$', views.ir_transacciones, name='transacciones'),
 
-    url(r'^busquedaproducto/$', views.busquedaProducto, name='busquedaproducto'),
-    url(r'^busquedaproductodetalle/$', views.busquedaProductoDetalle, name='busquedaproductodetalle'),
-    url(r'^verproductobusquedadetalle/$', views.verProductoBusquedaDetalle, name='verproductobusquedadetalle'),
-    url(r'^verproductobusqueda/$', views.verProductoBusqueda, name='verproductobusqueda'),
-    url(r'^obtenerlistaproductos/$', views.llenarListadoProductosBusqueda, name='obtenerlistaproductos'),
-    url(r'^obtenerlistabodegas/$', views.llenarListadoBodegasBusqueda, name='obtenerlistabodegas'),
+    url(r'^busquedaproducto/$', views_busqueda_producto.busqueda_producto, name='busquedaproducto'),
+    url(r'^busquedaproductodetalle/$', views_busqueda_producto.busqueda_producto_detalle, name='busquedaproductodetalle'),
+    url(r'^verproductobusquedadetalle/$', views_busqueda_producto.ver_producto_busqueda_detalle, name='verproductobusquedadetalle'),
+    url(r'^verproductobusqueda/$', views_busqueda_producto.ver_producto_busqueda, name='verproductobusqueda'),
+    url(r'^obtenerlistaproductos/$', views_busqueda_producto.llenar_listado_productos_busqueda, name='obtenerlistaproductos'),
+    url(r'^obtenerlistabodegas/$', views_busqueda_producto.llenar_listado_bodegas_busqueda, name='obtenerlistabodegas'),
     url(r'^convertirUnidad/$', views.convertirUnidad, name='convertirUnidad'),
 
+    url(r'^verordenespedido/$', views_orden_pedido.ir_ver_ordenes_pedido, name='verordenespedido'),
+    url(r'^actordenpedido/$', views_orden_pedido.ir_act_orden_pedido, name='actordenpedido'),
+    url(r'^ordenpedido/$', views_orden_pedido.ir_orden_pedido, name='ordenpedido'),
+    url(r'^obtenerSoloUsuarios/$', views_orden_pedido.obtenerSoloUsuarios, name='obtenerSoloUsuarios'),
+    url(r'^obtenerEstadosOP/$', views_orden_pedido.obtenerEstadosOP, name='obtenerEstadosOP'),
+    url(r'^obtenerFechaActual/$', views_orden_pedido.obtener_fecha_actual, name='obtenerFechaActual'),
+    url(r'^crearOPedido/$', views_orden_pedido.crear_orden_pedido, name='crearOPedido'),
+    url(r'^obtener_op/$', views_orden_pedido.obtener_op, name='obtener_op'),
+    url(r'^obtenerFP/$', views_orden_pedido.obtener_fecha_peticion_op, name='obtenerFP'),
+    url(r'^obtenerOrdenesPedido/$', views_orden_pedido.obtenerOrdenesPedido, name='obtenerOrdenesPedido'),
+    url(r'^obtenerProductos/$', views_orden_pedido.obtenerProductos, name='obtenerProductos'),
+    url(r'^modal_do/$', views_orden_pedido.ir_modal_do, name=''),
+    url(r'^guardarOrdenDetalle/$', views_orden_pedido.guardarOrdenDetalle, name='guardarOrdenDetalle'),
+    url(r'^obtenerDetalleOrden/$', views_orden_pedido.obtener_do, name='obtenerDetalleOrden'),
+    url(r'^recibirordenpedido/$', views_orden_pedido.ir_recibir_orden_pedido, name='recibirordenpedido'),
+    url(r'^recibirOrdenDetalle/$', views_orden_pedido.ejecutar_transacciones_orden, name='recibirOrdenDetalle'),
+    url(r'^procesoAprobacionOrden/$', views_orden_pedido.proceso_aprobacion_orden, name='procesoAprobacionOrden'),
+    url(r'^aprobarOrden/$', views_orden_pedido.aprobar_orden, name='aprobarOrden'),
+    url(r'^rechazarOrden/$', views_orden_pedido.rechazar_orden, name='rechazarOrden'),
+    url(r'^obtenerComentariosOrden/$', views_orden_pedido.obtener_comentarios_orden, name='obtenerComentariosOrden'),
+    url(r'^enProveedor/$', views_orden_pedido.cambiar_aprobada_en_proveedor, name='enProveedor'),
+
+    url(r'^nivelInsumo/(?P<id>\d+)$',views_nivel_insumos.ir_nivel_insumos, name='nivelInsumo'),
+    url(r'^nivelActual/$', views_nivel_insumos.recalcular_nivel_actual_, name='nivelActual'),
+    url(r'^historialNivel/$', views_nivel_insumos.historial_nivel, name='historialNivel'),
+
+    url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
+    url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),
 ]

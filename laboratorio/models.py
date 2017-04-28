@@ -1,5 +1,5 @@
+# coding=utf-8
 from __future__ import unicode_literals
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -40,7 +40,7 @@ class Bodega(models.Model):
     fecha_creacion = models.DateTimeField(null=True)
     fecha_actualizacion = models.DateTimeField(null=True)
     unidad_medida = models.ForeignKey(Tipo, null=True)
-    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  #Segun el excel se toma el nombre BODEGA
+    tipo_bodega = models.ForeignKey(Tipo, related_name="BODEGA", null=True)  # Segun el excel se toma el nombre BODEGA
     usuario = models.ForeignKey(Usuario, null=True)
 
 """Clase - Modelo Producto.
@@ -82,11 +82,25 @@ class Producto(models.Model):
         ('Otros', 'Moleculas genericas'),
     )
     clasificacion = models.CharField(max_length=35,choices=clasificacion_choices)
-    #unidad_medida = models.ForeignKey(Tipo, null=True)
     unidad_medida = models.ForeignKey(Tipo, related_name="prod_tipo_unidadmedida", null=True)  # Segun TransaccionInventario.unidad_medida, seria tipo_unidadmedida
     unidad_unitaria = models.DecimalField(max_digits=11,decimal_places=8, null=True)
     imageFile = models.ImageField(upload_to='images', null=True, blank=True)
     proveedor = models.ForeignKey(Usuario, null=True)
+    frecuencia_uso = (
+        ('Continua', 'Muchas veces al dia'),
+        ('Frecuente', 'Al menos 1 vez al dia'),
+        ('Ocasional', 'Al menos 1 vez a la semana'),
+        ('PocoUsual', 'Al menos 1 vez al mes'),
+        ('Rara', 'Unas pocas veces al anio'),
+        ('MuyRara', 'Al menos 1 vez al anio'),
+        ('NA', 'NA')
+    )
+    frecuencia_media_uso = models.CharField(max_length=26, choices=frecuencia_uso, null=True)
+    frecuencia_minima_uso = models.CharField(max_length=26, choices=frecuencia_uso, null=True)
+    cantidad_media_uso = models.DecimalField(max_digits=15, decimal_places=8, null=True)
+    tiempo_reaprovisionamiento = models.IntegerField(default=0)
+    stock_seguridad = models.DecimalField(max_digits=15, decimal_places=8, null=True)
+    punto_pedido = models.DecimalField(max_digits=15, decimal_places=8, null=True)
 
 """Clase - Modelo ProductosEnBodega.
 """
@@ -97,6 +111,11 @@ class ProductosEnBodega(models.Model):
     seccion = models.IntegerField(null=True)
     cantidad = models.IntegerField(null=True)
     unidad_medida = models.ForeignKey(Tipo, related_name="prodbod_tipo_unidadmedida", null=True)
+    # Sprint2 fecha_vencimiento. Por aplicación se validará que los Productos que deban tener fecha de vencimiento sean
+    # los que están en control del Jefe de Bodega, es decir los que en su historial de transacciones
+    # NO figure un TIPOTRX "Traslado a experimento", "Devolucion a proveedor", "Mover por perdida o desperdicio" o
+    # "Devolucion a proveedor"
+    fecha_vencimiento = models.DateField(null=True)
 
 """Clase - Modelo TransaccionInventario.
 """
@@ -149,3 +168,35 @@ class Experimento(models.Model):
     protocolo = models.ManyToManyField(Protocolo)
     asignado = models.ManyToManyField(Usuario)
 
+"""Clase - Orden de Pedido.
+"""
+class OrdenPedido(models.Model):
+    fecha_peticion = models.DateTimeField(null=True)
+    fecha_recepcion = models.DateTimeField(null=True)
+    observaciones = models.CharField(max_length=500)
+    usuario_creacion = models.ForeignKey(Usuario, related_name="op_usuario_creacion", null=True)
+    usuario_aprobacion = models.ForeignKey(Usuario, related_name="op_usuario_aprobacion", null=True)
+    proveedor = models.ForeignKey(Usuario, related_name="op_proveedor", null=True)
+    notas_aprobacion = models.CharField(max_length=500)
+    estado = models.ForeignKey(Tipo, related_name="op_estado", null=True)
+
+
+"""Clase - Comentario Orden de Pedido.
+"""
+class ComentarioOrden(models.Model):
+    comentario = models.CharField(max_length=500)
+    timestamp = models.DateTimeField(null=True)
+    orden = models.ForeignKey(OrdenPedido, related_name="op_comentarios", null=True)
+
+"""Clase - Detalle Orden Pedido.
+"""
+class DetalleOrden(models.Model):
+    producto = models.ForeignKey(Producto, null=True)
+    cantidad = models.DecimalField(null=True, max_digits=11, decimal_places=8)
+    estado = models.ForeignKey(Tipo, related_name="do_estado", null=True)
+    transaccion_inventario = models.ForeignKey(TransaccionInventario, related_name="do_transaccion", null=True)
+    fecha_movimiento = models.DateTimeField(null=True)
+    bodega = models.ForeignKey(Bodega, null=True)
+    nivel_bodega_destino = models.IntegerField(null=True)
+    seccion_bodega_destino = models.IntegerField(null=True)
+    orden = models.ForeignKey(OrdenPedido, null=True)

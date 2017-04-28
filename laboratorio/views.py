@@ -1,31 +1,23 @@
 # coding=utf-8
 
-import decimal
 import json
 import time
-from datetime import datetime
-from django.utils.timezone import localtime
-from operator import attrgetter
+import sys
 
+from datetime import datetime
 from decimal import Decimal
 
-import sys
 from django.core import serializers
-
 from django.core.exceptions import ObjectDoesNotExist
-from django.http.response import JsonResponse, HttpResponse
-
+from django.http.response import JsonResponse
 from django.shortcuts import render
-from django.db.models import Q
-
-# Create your views here.
 from django.views.decorators.csrf import csrf_exempt
-from psycopg2.extensions import JSON
 
-from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, RecursoBusquedaVista, RecursoBusquedaDetalleVista, TransaccionVista, json_default
-from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Producto, Protocolo
+from laboratorio.modelos_vista import BodegaVista, Convertidor, ProductoVista, ProductosBodegaVista, TransaccionVista, json_default
+from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProtocolo, Protocolo
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
+from laboratorio import views_nivel_insumos
 
 # Navegacion de paginas
 
@@ -182,212 +174,12 @@ def crearBodega(request):
     return JsonResponse({"mensaje": mensaje})
 
 
-# HU: LCINV-5
-# FB.
-# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
-# request: Petición desde el form de usuario.
-# return: Página html con la plantilla y los resultados de la búsqueda asociada.
 @csrf_exempt
-def verProductoBusqueda(request):
-    global bproducto
-    global bBodega
-    global bFechaTransaccion
-
-    bproducto = ""
-    bBodega = ""
-    bFechaTransaccion = ""
-
-    # Capturar el valor de los campos
-    if request.method == 'POST':
-        bproducto = request.POST.get('producto', "")
-        bBodega = request.POST.get('bodega', "")
-        bFechaTransaccion = request.POST.get('fechatransaccion', "")
-
-    busquedaProducto(request)
-    return render(request, "laboratorio/busquedaproducto.html")
-
-
-# HU: LCINV-5
-# FB.
-# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
-# Aquí puntualmente es donde se hace el filtro.
-# request: Petición desde el form de usuario.
-# return: json con los datos encontrados
-@csrf_exempt
-def busquedaProducto(request):
-    # Filtra por la expresion; si no hay nada, muestra todos los productos
-    if bproducto == "" and bBodega == "":  # Sin filtro
-        qs = ProductosEnBodega.objects.all()
-    else: # Filtro
-        if bproducto != "" and bBodega == "":  # Si solo se filtra por producto
-            qs = ProductosEnBodega.objects.filter(producto__codigo=bproducto)
-        elif bproducto == "" and bBodega != "": # Si solo se filtra por bodega
-            qs = ProductosEnBodega.objects.filter(bodega__serial=bBodega)
-        else: #Filtro por producto y bodega
-            qs = ProductosEnBodega.objects.filter(producto__codigo=bproducto, bodega__serial=bBodega)
-
-    listaRecurso = []
-
-    for peb in qs:
-        req = RecursoBusquedaVista()
-        req.id = peb.id
-        req.nombre = peb.producto.nombre
-        req.unidadesExistentes = peb.cantidad
-        req.unidad_medida = peb.producto.unidad_medida.nombre
-        req.fechaTransaccion = obtenerBodegaAcutalxPEBxTransaccion(peb, 2)
-        #Convertir a unidades de preferencia
-        req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre, peb.bodega.unidad_medida.nombre))
-
-        localizacion = ""
-        if str(peb.nivel) != "":
-            localizacion = ", Nivel " + str(peb.nivel)
-        if str(peb.seccion) != "":
-            localizacion = localizacion + ", Seccion " + str(peb.seccion)
-
-        req.bodegaActual = peb.bodega.nombre + localizacion
-        req.hidden1 = "bFechaTransaccion:" + bFechaTransaccion + " req.fechaTransaccion:" + req.fechaTransaccion  #Variable oculta para debug en html
-
-        if bFechaTransaccion == "":
-            listaRecurso.append(req)
-        else:
-            if bFechaTransaccion in req.fechaTransaccion:
-                listaRecurso.append(req)
-
-    listaRecurso.sort(key=attrgetter('fechaTransaccion'), reverse=True)
-    json_string = json.dumps(listaRecurso, cls=Convertidor)
-    return JsonResponse(json_string, safe=False)
-
-
-# HU: LCINV-5
-# FB.
-# Obtiene la última transacción ordenada por fecha de ejecucuón (la más reciente).
-# peb: Petición desde el form de usuario.
-# campo: El campo que se requiere retornar.
-# return: El dato puntual solicitado.
-def obtenerBodegaAcutalxPEBxTransaccion(peb, campo):
-    qs = TransaccionInventario.objects.filter(producto_bodega_destino=peb).order_by('-fecha_ejecucion')[:1]
-    retorno="N/A"
-    if qs.exists():
-        if campo == 1:
-            retorno = qs[0].bodega_destino.nombre
-        if campo == 2:
-            fecha = localtime(qs[0].fecha_ejecucion)
-            retorno = fecha.strftime('%Y-%m-%d %H:%M:%S')
-        if campo == 3:
-            retorno = localtime(qs[0].fecha_ejecucion)
-    return retorno
-
-
-# HU: LCINV-5
-# FB.
-# Obtiene el nombre completo del usuario consultado.
-# usuario: Id de usuario.
-# return: Nombre de usuario compuesto por Nombre y Apellido.
-def obtenerNombreUsuarioxId(usuario):
-    qs = Usuario.objects.filter(id=usuario)[:1]
-
-    retorno = "N/A"
-
-    retorno = qs[0].first_name + " " + qs[0].last_name
-
-    return retorno
-
-
-# HU: LCINV-5
-# FB.
-# Muestra el detalle de transacciones para un Producto dado.
-# request: Petición desde el form de usuario.
-# return: Página html con la plantilla y los resultados de la búsqueda asociada.
-@csrf_exempt
-def verProductoBusquedaDetalle(request):
-    global globvar
-    globvar = request.GET.get('id')
-    busquedaProductoDetalle(request)
-    return render(request, "laboratorio/busquedaproductodetalle.html")
-
-
-# HU: LCINV-5
-# FB.
-# Muestra el detalle de transacciones para un Producto dado. Esta es la búsqueda como tal.
-# request: Petición desde el form de usuario.
-# globvar: El Id de ProductosEnBodega (Producto).
-# return: json con los datos encontrados
-def busquedaProductoDetalle(request):
-    idpeb = int(globvar)
-    qs = TransaccionInventario.objects.filter(producto_bodega_destino_id=idpeb).order_by('-fecha_creacion')
-
-    listaTrans = []
-
-    for transaccion in qs:
-        req = RecursoBusquedaDetalleVista()
-        req.id = transaccion.id
-        req.recurso = transaccion.producto.nombre
-        fecha = localtime(transaccion.fecha_ejecucion)
-        req.fecha = fecha.strftime('%Y-%m-%d %H:%M:%S')
-        req.tipoTransaccion = transaccion.tipo.nombre  # TIPOTRX
-        req.estadoTrans = transaccion.estado.nombre  # STATUSTRX
-
-        localizacion1 = ""
-        if str(transaccion.nivel_origen) != "":
-            localizacion1 = localizacion1 + ", Nivel " + str(transaccion.nivel_origen)
-        if str(transaccion.seccion_origen) != "":
-            localizacion1 = localizacion1 + ", Seccion " + str(transaccion.seccion_origen)
-
-        # req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " + str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
-        req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + localizacion1
-        req.nivel_origen = ""  # n/a
-        req.seccion_origen = ""  # n/a
-
-        localizacion2 = ""
-        if str(transaccion.nivel_destino) != "":
-            localizacion2 = localizacion2 + ", Nivel " + str(transaccion.nivel_destino)
-        if str(transaccion.seccion_destino) != "":
-            localizacion2 = localizacion2 + ", Seccion " + str(transaccion.seccion_destino)
-
-        # req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " + str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
-        req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + localizacion2
-        req.nivel_destino = ""  # n/a
-        req.seccion_destino = ""  # n/a
-        req.cantidad = str(transaccion.cantidad)
-        req.unidad_medida = transaccion.unidad_medida.nombre
-        #req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
-        #req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
-        # req.usuario = obtenerNombreUsuarioxId(transaccion.usuario.id)
-        # req.autoriza = obtenerNombreUsuarioxId(transaccion.autoriza.id)
-        req.comentarios = transaccion.comentarios
-        listaTrans.append(req)
-
-    json_string = json.dumps(listaTrans, cls=Convertidor)
-    return JsonResponse(json_string, safe=False)
-
-
-# HU: LCINV-5
-# FB.
-# Lista los productos, esto se utiliza para mostrar el listado en el html para la búsqueda.
-# request: Petición desde el form de usuario.
-# return: json con los datos encontrados
-@csrf_exempt
-def llenarListadoProductosBusqueda(request):
-    qs = Producto.objects.all().order_by('nombre')
-    qs_json = serializers.serialize('json', qs)
-    return JsonResponse(qs_json, safe=False)
-
-
-# HU: LCINV-5
-# FB.
-# Lista las bodegas, esto se utiliza para mostrar el listado en el html para la búsqueda.
-# request: Petición desde el form de usuario.
-# return: json con los datos encontrados
-@csrf_exempt
-def llenarListadoBodegasBusqueda(request):
-    qs = Bodega.objects.all().order_by('nombre')
-    qs_json = serializers.serialize('json', qs)
-    return JsonResponse(qs_json, safe=False)
-
-
-@csrf_exempt
-def obtenerBodegas(request):
-    qs = Bodega.objects.all()
+def obtenerBodegas(request, tipo_bodega = None):
+    if tipo_bodega == None:
+        qs = Bodega.objects.all()
+    else:
+        qs = Bodega.objects.filter(tipo_bodega=Tipo.objects.get(nombre=tipo_bodega))
     listaBodegas = []
     for bodega in qs:
         bod = BodegaVista()
@@ -530,7 +322,6 @@ def ejecutar_transaccion(transaccion):
         else:
             producto = transaccion.producto
 
-
         producto_bodega_destino_list = ProductosEnBodega.objects.filter(bodega=transaccion.bodega_destino)
         producto_bodega_destino_list = producto_bodega_destino_list.filter(producto=transaccion.producto)
         producto_bodega_destino_list = producto_bodega_destino_list.filter(nivel=transaccion.nivel_destino)
@@ -661,6 +452,7 @@ def experimentos(request):
 def registrarInsumoReactivo(request):
     mensaje = ""
     dosLugares = Decimal('00.01')
+    errNum = False
     if request.method == 'POST':
         codigo = request.POST['codigo']
         nombre = request.POST['nombre']
@@ -679,11 +471,45 @@ def registrarInsumoReactivo(request):
         else:
             unitaria = Decimal(request.POST['cantidad'])
         imageFile = request.FILES.get('imageFile', None)
-
-        if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+        frecuencia_media = request.POST['frecuencia_media']
+        if frecuencia_media == "Continua" or frecuencia_media == "Rara":
+            numero_medio_veces = int(request.POST['numero_medio_promedio'])
+            if int(numero_medio_veces) <= 0:
+                errNum = True
+        else:
+            numero_medio_veces = 0
+        if request.POST['cantidad_media'] == "":
+            cantidad_media = 0.0
+        else:
+            cantidad_media = Decimal(request.POST['cantidad_media'])
+        frecuencia_minima =  request.POST['frecuencia_minima']
+        if frecuencia_minima == "Continua" or frecuencia_minima == "Rara":
+            numero_minimo_veces = int(request.POST['numero_minimo_promedio'])
+            if int(numero_minimo_veces) <= 0:
+                errNum = True
+        else:
+            numero_minimo_veces = 0
+        if request.POST['tiempo'] == "":
+            tiempo = 0
+        else:
+            tiempo = int(request.POST['tiempo'])
+        if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and imageFile != None and request.POST['cantidad'] != "" and request.POST['proveedor'] != "" and cantidad_media != 0.0 and tiempo != 0 and errNum == False:
             if Producto.objects.filter(codigo=codigo).first() != None or Producto.objects.filter(nombre=nombre).first() !=None:
                 mensaje = "El insumo/reactivo con el codigo o nombre ingresado ya existe."
             else:
+                proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
+                if proveedor.first_name == "Interno (recurso propio)":
+                    frecuencia_media = "NA"
+                    frecuencia_minima = "NA"
+                    cantidad_media = 0.0
+                    tiempo = 0
+                    stock_seguridad = 0.0
+                    punto_pedido = 0.0
+
+                else:
+                    stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima, cantidad_media, tiempo, numero_minimo_veces)
+                    punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media, cantidad_media, tiempo, numero_medio_veces)
+
                 #Es un producto con un codigo y un nombre nuevos
                 producto = Producto(codigo=codigo,
                                     nombre=nombre,
@@ -694,9 +520,18 @@ def registrarInsumoReactivo(request):
                                     unidad_medida=Tipo.objects.filter(id=request.POST['medida']).first(),
                                     unidad_unitaria=unitaria,
                                     imageFile=imageFile,
-                                    proveedor=Usuario.objects.filter(id=request.POST['proveedor']).first())
+                                    proveedor=proveedor,
+                                    frecuencia_media_uso=frecuencia_media,
+                                    cantidad_media_uso=cantidad_media,
+                                    frecuencia_minima_uso=frecuencia_minima,
+                                    tiempo_reaprovisionamiento=tiempo,
+                                    stock_seguridad=stock_seguridad,
+                                    punto_pedido=punto_pedido)
 
                 producto.unidad_unitaria.quantize(dosLugares, 'ROUND_DOWN')
+                producto.cantidad_media_uso.quantize(dosLugares, 'ROUND_DOWN')
+                producto.stock_seguridad.quantize(dosLugares, 'ROUND_DOWN')
+                producto.punto_pedido.quantize(dosLugares, 'ROUND_DOWN')
                 producto.save()
                 mensaje = "ok"
         else:
@@ -735,6 +570,11 @@ def obtenerRecursos(request):
         prod.unidad_unitaria = str(producto.unidad_unitaria)
         prod.imageFile = str(producto.imageFile)
         prod.proveedor = producto.proveedor.first_name
+        codigo_color = views_nivel_insumos.nivel_insumo_tabla(producto.id, producto.punto_pedido)
+        prod.codigo_color = str(codigo_color[0])
+        prod.punto_pedido = str(producto.punto_pedido)
+        prod.nivel_actual = str(codigo_color[1])
+        print>> sys.stdout, 'punto_pedido '+ producto.nombre + ' '+ str(producto.punto_pedido)+ ' nivel actual '+ str(codigo_color[1])
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
@@ -762,6 +602,7 @@ def obtenerRecurso(request):
 def guardarEdicionInsumo(request):
 
     mensaje = ""
+    errNum = False
     if request.method == 'POST':
         codigo = request.POST['codigo']
         nombre = request.POST['nombre']
@@ -781,14 +622,35 @@ def guardarEdicionInsumo(request):
             unitaria = Decimal(request.POST['cantidad'])
         clasificacion = request.POST['clasificacion']
         imageFile = request.FILES.get('imageFile',None)
-        proveedor = request.POST['proveedor']
+        frecuencia_media = request.POST['frecuencia_media']
+        if frecuencia_media == "Continua" or frecuencia_media == "Rara":
+            numero_medio_veces = int(request.POST['numero_medio_promedio'])
+            if int(numero_medio_veces) <= 0:
+                errNum = True
+        else:
+            numero_medio_veces = 0
+        if request.POST['cantidad_media'] == "":
+            cantidad_media = 0.0
+        else:
+            cantidad_media = Decimal(request.POST['cantidad_media'])
+        frecuencia_minima = request.POST['frecuencia_minima']
+        if frecuencia_minima == "Continua" or frecuencia_minima == "Rara":
+            numero_minimo_veces = int(request.POST['numero_minimo_promedio'])
+            if int(numero_minimo_veces) <= 0:
+                errNum = True
+        else:
+            numero_minimo_veces = 0
+        if request.POST['tiempo'] == "":
+            tiempo = 0
+        else:
+            tiempo = int(request.POST['tiempo'])
         producto = Producto.objects.filter(id=int(request.POST['id_producto_guardado'])).first()
 
 
         modificacion = False
         error = False
         if producto != None:
-            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "":
+            if codigo != "" and nombre != "" and descripcion != "" and valor != 0 and unidadesExistentes != 0 and unitaria != 0 and request.POST['cantidad'] != "" and request.POST['proveedor'] != "" and cantidad_media != 0.0 and tiempo != 0 and errNum == False:
                 if producto.codigo != codigo or producto.nombre != nombre:
                     try:
                         Producto.objects.get(codigo=codigo)
@@ -822,6 +684,19 @@ def guardarEdicionInsumo(request):
                     mensaje="El insumo/reactivo con el codigo o nombre ingresado ya existe."
                 else:
                     if modificacion == True:
+                        proveedor = Usuario.objects.filter(id=request.POST['proveedor']).first()
+                        if proveedor.first_name == "Interno (recurso propio)":
+                            frecuencia_media = "NA"
+                            frecuencia_minima = "NA"
+                            cantidad_media = 0.0
+                            tiempo = 0
+                            stock_seguridad = 0.0
+                            punto_pedido = 0.0
+
+                        else:
+                            stock_seguridad = views_nivel_insumos.calcularStockSeguridad(frecuencia_minima,cantidad_media, tiempo,numero_minimo_veces)
+                            punto_pedido = views_nivel_insumos.calcularPuntoPedido(stock_seguridad, frecuencia_media,cantidad_media, tiempo,numero_medio_veces)
+
                         producto.codigo = codigo
                         producto.nombre = nombre
                         producto.descripcion = descripcion
@@ -832,7 +707,13 @@ def guardarEdicionInsumo(request):
                         producto.unidad_unitaria = unitaria
                         if (imageFile != None):
                             producto.imageFile = imageFile
-                        producto.proveedor = Usuario.objects.filter(id=proveedor).first()
+                        producto.proveedor = proveedor
+                        producto.frecuencia_media_uso = frecuencia_media
+                        producto.frecuencia_minima_uso = frecuencia_minima
+                        producto.cantidad_media_uso = cantidad_media
+                        producto.tiempo_reaprovisionamiento = tiempo
+                        producto.stock_seguridad = stock_seguridad
+                        producto.punto_pedido = punto_pedido
                         producto.save()
                         mensaje = "ok"
 
