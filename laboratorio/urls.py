@@ -3,6 +3,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 
 from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos
+from laboratorio import views_conteoabc
 from . import views
 
 urlpatterns = [
@@ -82,4 +83,6 @@ urlpatterns = [
 
     url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
     url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),
+
+    url(r'^conteoabc/$', views_conteoabc.ver_conteoabc, name='conteo_abc'),
 ]
