@@ -255,10 +255,17 @@
                                     detalleOrden.no = contadorItems;
                                     detalleOrden.idProducto = detalle[indiceDetalle].idProducto;
                                     detalleOrden.nombreProducto = detalle[indiceDetalle].nombreProducto;
-                                    detalleOrden.idBodega = detalle[indiceDetalle].idBodega;
-                                    detalleOrden.nombreBodega = detalle[indiceDetalle].nombreBodega;
-                                    detalleOrden.nivel = detalle[indiceDetalle].nivel;
-                                    detalleOrden.seccion = detalle[indiceDetalle].seccion;
+                                    if (detalle[indiceDetalle].idBodega){
+                                        detalleOrden.idBodega = detalle[indiceDetalle].idBodega;
+                                        detalleOrden.nombreBodega = detalle[indiceDetalle].nombreBodega;
+                                        detalleOrden.nivel = detalle[indiceDetalle].nivel;
+                                        detalleOrden.seccion = detalle[indiceDetalle].seccion;
+                                    }else{
+                                        detalleOrden.idBodega = "";
+                                        detalleOrden.nombreBodega = "";
+                                        detalleOrden.nivel = "";
+                                        detalleOrden.seccion = "";
+                                    }
                                     detalleOrden.cantidad = detalle[indiceDetalle].cantidad;
                                     detalleOrden.valorUnitario = detalle[indiceDetalle].valorUnitario;
                                     detalleOrden.fechaMovimiento = detalle[indiceDetalle].fechaMovimiento;
@@ -275,9 +282,9 @@
                                     strInicio = "<tr class=\"bg-info\">";
                                     strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreProducto+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreBodega+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nivel+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.seccion+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+(detalleOrden.nombreBodega ? detalleOrden.nombreBodega : '')+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+(detalleOrden.nivel ? detalleOrden.nivel : '')+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+(detalleOrden.seccion ? detalleOrden.seccion : '')+"</td>";
                                     //strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.valorUnitario+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.cantidad+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.estado+"</td>";
@@ -438,6 +445,9 @@
 
             $('#producto').attr('disabled', true);
             $('#producto').bind('click', false);
+
+            $("#hdEstado").val(itemEditar.estado);
+            $("#hdTrx").val(itemEditar.transaccion_inventario);
 
             $('#myModal').modal('show');
         }
