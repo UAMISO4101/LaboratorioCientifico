@@ -9,6 +9,7 @@ from decimal import Decimal
 from django.http.response import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from laboratorio import views_nivel_insumos
 from laboratorio.modelos_vista import BodegaVista, Convertidor, TransaccionVista, json_default
 from laboratorio.models import Tipo, Usuario, Bodega, TransaccionInventario, ProductosEnBodega, Producto
 from django.shortcuts import render
@@ -92,8 +93,13 @@ def crear_transaccion(request):
         )
         ejecutar_transaccion(transaccion)
         transaccion.save()
-        tran_json = json.loads(serializers.serialize('json', [transaccion]));
-        return JsonResponse(tran_json, safe=False)
+        res = lanzar_notificacionOrdenReposicion(pk_producto=json_tran['producto'])
+        tran_json = json.loads(serializers.serialize('json', [transaccion]))
+        if len(res) != 0:
+            # se lanza notificacion de reposicion, na, pp
+            return JsonResponse({'tran': tran_json, 'res0': res[0], 'res1': res[1]}, safe=False)
+        else:
+            return JsonResponse({'tran': tran_json}, safe=False)
 
 
 # HU-LCINV-13
@@ -141,3 +147,15 @@ def ejecutar_transaccion(transaccion):
 
     except Exception as e:
         print 'EXCEPCION: %s (%s)' % (e.message, type(e))
+
+def lanzar_notificacionOrdenReposicion(pk_producto):
+
+    notifi = []
+    producto = Producto.objects.get(id=pk_producto)
+    punto_pedido = producto.punto_pedido
+    listres = views_nivel_insumos.nivel_insumo_tabla(pk_producto=pk_producto, punto_pedido=punto_pedido)
+    codigo_color = listres[0]
+    if codigo_color <= 0:
+        notifi.append(listres[1])
+        notifi.append(punto_pedido)
+    return notifi
