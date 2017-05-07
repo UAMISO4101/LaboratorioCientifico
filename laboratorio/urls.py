@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 
 from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos, \
-    views_bodegas, views_usuarios, views_transacciones
+    views_bodegas, views_usuarios, views_transacciones, views_recursos
 from . import views
 
 urlpatterns = [
@@ -33,15 +33,15 @@ urlpatterns = [
     url(r'^obtenerPPPorProtocolo/$', views.obtenerPPPorProtocolo, name='obtenerPPPorProtocolo'),
     url(r'^experimentos/$', views.experimentos, name='experimentos'),
 
-    url(r'^recursos/$', views.ir_recursos, name='recursos'),
-    url(r'^registrarInsumo/$', views.ir_regitrarInsumos, name='registrarInsumo'),
-    url(r'^guardarInsumo/$', views.registrarInsumoReactivo, name='guardarInsumo'),
+    url(r'^recursos/$', views_recursos.ir_recursos, name='recursos'),
+    url(r'^registrarInsumo/$', views_recursos.ir_regitrarInsumos, name='registrarInsumo'),
+    url(r'^guardarInsumo/$', views_recursos.registrarInsumoReactivo, name='guardarInsumo'),
     url(r'^obtenerTiposMedida/$', views.obtenerTiposMedida, name='obtenerTiposMedida'),
-    url(r'^verRecursos/$', views.ir_ver_recursos, name='verRecursos'),
-    url(r'^obtenerRecursos/$', views.obtenerRecursos, name='obtenerRecursos'),
-    url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views.ir_editarRecurso, name='editarRecurso'),
-    url(r'obtenerRecurso/$', views.obtenerRecurso, name='obtenerRecurso'),
-    url(r'^guardarEdicionInsumo/$', views.guardarEdicionInsumo, name='guardarEdicionInsumo'),
+    url(r'^verRecursos/$', views_recursos.ir_ver_recursos, name='verRecursos'),
+    url(r'^obtenerRecursos/$', views_recursos.obtenerRecursos, name='obtenerRecursos'),
+    url(r'^editarRecurso/(?P<recurso_id>\d+)/$', views_recursos.ir_editarRecurso, name='editarRecurso'),
+    url(r'obtenerRecurso/$', views_recursos.obtenerRecurso, name='obtenerRecurso'),
+    url(r'^guardarEdicionInsumo/$', views_recursos.guardarEdicionInsumo, name='guardarEdicionInsumo'),
     url(r'^obtenerProveedores/$', views_usuarios.obtenerProveedores, name='obtenerProveedores'),
 
     url(r'^obtenerTransacciones/$', views_transacciones.obtenerTransacciones, name='obtenerTransacciones'),
