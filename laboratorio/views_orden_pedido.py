@@ -30,7 +30,7 @@ from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProto
     DetalleOrden, ComentarioOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
-from .views import ejecutar_transaccion
+from .views_transacciones import ejecutar_transaccion
 
 """Metodo para navegar proceso de aprobacion.
 """
@@ -73,7 +73,7 @@ return, formato json con los usuarios
 """
 @csrf_exempt
 def obtenerEstadosOP(request):
-    qs = Tipo.objects.filter(grupo='ORDENPEDIDO').exclude(nombre="Aprobada").exclude(nombre="Rechazada").exclude(nombre="En proveedor")
+    qs = Tipo.objects.filter(grupo='ORDENPEDIDO').exclude(nombre="Aprobada").exclude(nombre="Rechazada")
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
@@ -228,10 +228,11 @@ def guardarOrdenDetalle(request):
                 detalle.fecha_movimiento = datetime.strptime(item["fechaMovimiento"], '%c')
                 detalle.cantidad = item["cantidad"]
                 detalle.producto = Producto.objects.filter(id=item["idProducto"]).first()
-                detalle.bodega = Bodega.objects.filter(id=item["idBodega"]).first()
+                if item["idBodega"] is not None and item["idBodega"] != "":
+                    detalle.bodega = Bodega.objects.filter(id=item["idBodega"]).first()
+                    detalle.nivel_bodega_destino = item["nivel"]
+                    detalle.seccion_bodega_destino = item["seccion"]
                 detalle.estado = Tipo.objects.filter(grupo="DETALLEPEDIDO",nombre="Recibido").first()
-                detalle.nivel_bodega_destino = item["nivel"]
-                detalle.seccion_bodega_destino = item["seccion"]
                 detalle.orden = orden_pedido
                 detalle.save()
 
@@ -254,11 +255,12 @@ def obtener_do(request):
             detalleOrden.idProducto = det_orden.producto.id
             detalleOrden.nombreProducto = det_orden.producto.nombre
             detalleOrden.valorUnitario = int(det_orden.producto.valorUnitario)
-            detalleOrden.idBodega = det_orden.bodega.id
-            detalleOrden.nombreBodega = det_orden.bodega.nombre
+            if det_orden.bodega is not None:
+                detalleOrden.idBodega = det_orden.bodega.id
+                detalleOrden.nombreBodega = det_orden.bodega.nombre
+                detalleOrden.nivel = det_orden.nivel_bodega_destino
+                detalleOrden.seccion = det_orden.seccion_bodega_destino
             detalleOrden.cantidad = int(det_orden.cantidad)
-            detalleOrden.nivel = det_orden.nivel_bodega_destino
-            detalleOrden.seccion = det_orden.seccion_bodega_destino
             detalleOrden.estado=Tipo.objects.get(pk=det_orden.estado.pk).nombre
             detalleOrden.transaccion_inventario=det_orden.transaccion_inventario_id
             dh = timedelta(hours=5)
