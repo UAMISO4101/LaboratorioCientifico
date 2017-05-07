@@ -30,7 +30,7 @@ from laboratorio.models import Tipo, Usuario, Bodega, Experimento, ProductoProto
     DetalleOrden, ComentarioOrden
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
 from laboratorio.utils.utils import utils
-from .views import ejecutar_transaccion
+from .views_transacciones import ejecutar_transaccion
 
 """Metodo para navegar proceso de aprobacion.
 """
