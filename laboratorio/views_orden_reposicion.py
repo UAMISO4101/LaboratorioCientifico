@@ -45,4 +45,6 @@ def obtenerInfoProducto(request):
         prod_json = json.loads(serializers.serialize('json', [producto]))
         return JsonResponse({'producto':prod_json, 'pk_orden':pk_orden}, safe=False)
 
-
+@csrf_exempt
+def guardarDetalleOrdenReposicion(request):
+    return None
