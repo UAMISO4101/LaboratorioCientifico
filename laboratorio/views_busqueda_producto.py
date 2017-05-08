@@ -6,8 +6,10 @@ from operator import attrgetter
 
 from django.core import serializers
 from django.http.response import JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+
 
 from laboratorio.modelos_vista import Convertidor,  RecursoBusquedaVista, RecursoBusquedaDetalleVista
 from laboratorio.models import Usuario, Bodega
@@ -220,3 +222,102 @@ def llenar_listado_bodegas_busqueda(request):
     qs = Bodega.objects.all().order_by('nombre')
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
+
+# ------------------------------------------
+
+# HU: LCINV-21
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# request: Petición desde el form de usuario.
+# return: Página html con la plantilla y los resultados de la búsqueda asociada.
+@csrf_exempt
+def ver_producto_busqueda_2(request):
+    global tipoinventario
+    global producto
+    global bodega
+    global fecha_transaccion
+    global ordenamiento
+
+    tipoinventario = ""
+    producto = ""
+    bodega = ""
+    fecha_transaccion = ""
+    ordenamiento = ""
+
+    # Capturar el valor de los campos
+    if request.method == 'POST':
+        tipoinventario = request.POST.get('tipo', "")
+        producto = request.POST.get('producto', "")
+        bodega = request.POST.get('bodega', "")
+        fecha_transaccion = request.POST.get('fechatransaccion', "")
+        # ordenamiento = request.POST.get('ordenamiento', "")
+
+    busqueda_producto_2(request)
+    return render(request, "laboratorio/conteoabc.html")
+
+
+# HU: LCINV-21
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# Aquí puntualmente es donde se hace el filtro.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
+@csrf_exempt
+def busqueda_producto_2(request):
+    # tipo_inventario = request.POST.get('tipo', "")
+    # producto = request.POST.get('producto', "")
+    # bodega = request.POST.get('bodega', "")
+    # fecha_transaccion = request.POST.get('fechatransaccion', "")
+    # ordenamiento = request.POST.get('ordenamiento', "")
+    ordenamiento = "2"  # todo: Ordenamiento por parámetro
+
+    qs = ProductosEnBodega.objects.all()
+
+    # Filtra por la expresion; si no hay nada, muestra todos los productos
+    if tipoinventario == "" and producto == "" and bodega == "" and fecha_transaccion == "":  # Sin filtro, no hacer nada
+        a = 1
+    else: # Tiene algún filtro
+        if tipoinventario != "":
+            qs = qs.filter(producto__clasificacion__in=tipoinventario)  # todo: filtro por este criterio
+        if producto != "":
+            qs = qs.filter(producto__codigo=producto)
+        if bodega != "":
+            qs = qs.filter(bodega__serial=bodega)
+        # TODO: Filtro por fecha
+
+    lista_recurso = []
+
+    for peb in qs:
+        req = RecursoBusquedaVista()
+        req.id = peb.id
+        tipo_inventario = "A".capitalize()
+        req.nombre = peb.producto.nombre
+        req.unidadesExistentes = peb.cantidad
+        req.unidad_medida = peb.producto.unidad_medida.nombre
+        req.fechaTransaccion = obtener_bodega_actualxpebxtransaccion(peb, 2)
+        # Convertir a unidades de preferencia
+        req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre,
+                                                      peb.bodega.unidad_medida.nombre))
+
+        localizacion = ""
+        if str(peb.nivel) != "":
+            localizacion = ", Nivel " + str(peb.nivel)
+        if str(peb.seccion) != "":
+            localizacion = localizacion + ", Seccion " + str(peb.seccion)
+
+        req.bodegaActual = peb.bodega.nombre + localizacion
+
+        if fecha_transaccion == "":
+            lista_recurso.append(req)
+        else:
+            if fecha_transaccion in req.fechaTransaccion:
+                lista_recurso.append(req)
+
+    if ordenamiento == "":
+        lista_recurso.sort(key=attrgetter('fechaTransaccion'), reverse=True)
+    else:
+        # Si el ordemaniento es para la parte de conteos abc, siempre tiene que ser "tipo, producto, bodega"
+        lista_recurso.sort(key=attrgetter('nombre', 'bodegaActual'), reverse=False)  # todo: ordenar por tipo
+
+    json_string = json.dumps(lista_recurso, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)

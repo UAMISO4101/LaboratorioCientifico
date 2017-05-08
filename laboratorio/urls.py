@@ -84,5 +84,7 @@ urlpatterns = [
     url(r'^vencidos/$', views_vencimiento_productos.ver_vencimiento_producto, name='ver_vencimiento_producto'),
     url(r'^vencidoslista/$', views_vencimiento_productos.lista_vencidos, name='lista_vencidos'),
 
-    url(r'^conteoabc/$', views_conteoabc.ver_conteoabc, name='conteo_abc'),
+    url(r'^conteoabc/$', views_busqueda_producto.ver_producto_busqueda_2, name='conteo_abc_busqueda'),
+    url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_producto_2, name='conteo_abc_json'),
+
 ]
