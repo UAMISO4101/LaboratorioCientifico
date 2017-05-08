@@ -97,6 +97,8 @@ def crear_transaccion(request):
         tran_json = json.loads(serializers.serialize('json', [transaccion]))
         if len(res) != 0:
             # se lanza notificacion de reposicion, na, pp
+            request.session['producto_id'] = transaccion.producto.id
+            print >> sys.stdout, 'ID PRODUCTO '+str(request.session.get('producto_id', None))
             return JsonResponse({'tran': tran_json, 'res0': res[0], 'res1': res[1]}, safe=False)
         else:
             return JsonResponse({'tran': tran_json}, safe=False)
