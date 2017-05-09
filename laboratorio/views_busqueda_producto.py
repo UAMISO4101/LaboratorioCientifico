@@ -212,6 +212,7 @@ def llenar_listado_productos_busqueda(request):
     return JsonResponse(qs_json, safe=False)
 
 
+# TODO: unificar con llenar_listado_productos_busqueda y poner filtro (no todas las bodegas tienen que salir)
 # HU: LCINV-5
 # FB.
 # Lista las bodegas, esto se utiliza para mostrar el listado en el html para la búsqueda.
