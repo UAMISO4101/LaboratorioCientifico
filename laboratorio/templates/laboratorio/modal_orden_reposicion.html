@@ -4,7 +4,7 @@
 </head>
 <body>
 <!-- Modal -->
-<form id="formOrdenRepos" method="post">
+<form id="formOrdenRepos" method="post" action="../guardarDetalleOrdenReposicion/">
     <div class="modal fade" id="modalOrden" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document" style="width: 60%">
             <div class="modal-content">
@@ -58,7 +58,6 @@
                                    style="padding: 0px 4px;height:30px;" readonly/>
                         </div>
                     </div>
-                    <input id="pk_orden" type="hidden">
                 </div>
                 <div class="modal-footer">
                     <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Guardar" />
@@ -70,16 +69,16 @@
 </form>
 </body>
 <script>
-    (function ()
+    $('#modalOrden').on('shown.bs.modal', function ()
     {
+        alert('mostrando modal');
         $.getJSON("../obtenerInfoProducto").done(function (data) {
             if(data)
             {
                 prod =  data.producto[0];
-                pk_orden = $.parseJSON(data.pk_orden);
-                $("#pk_orden").val(pk_orden);
+                console.log('producto info '+prod)
                 var producto = $("#producto");
-                producto.append($("<option data-vu='"+prod.fields.valorUnitario+"'/>").val(prod.fields.id).text(prod.fields.nombre));
+                producto.append($("<option data-vu='"+prod.fields.valorUnitario+"'/>").val(prod.pk).text(prod.fields.nombre));
                 var valorUnitario = $("#producto").find('option:selected').data('vu');
                 $('#valor_unitario').val(valorUnitario);
             }
@@ -95,7 +94,15 @@
                 bodega.append($("<option />").val(this.id).text(this.nombre));
             });
         })
-    })();
+
+        $.getJSON("../fechaPeticionOrRep").done(function (data) {
+            if(data)
+            {
+                fecha = data.fecha;
+                $("#fecha_movimiento").val(fecha);
+            }
+        })
+    });
 
     $("#bodega").change(function () {
         var val = $(this).val();
@@ -128,5 +135,25 @@
         $("#cantidad").val("");
         $('#modalOrden').modal('hide');
     }
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formOrdenRepos")[0]);
+        console.log(formData)
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $("#modalOrden").modal('hide')
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    demo.showNotification('bottom', 'center', data.mensaje)
+                } else {
+                    window.location = "../verordenespedido";
+                }
+            }
+        });
+        e.preventDefault();
+    });
 </script>
 </html>

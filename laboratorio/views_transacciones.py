@@ -70,7 +70,7 @@ def obtenerTransaccion(request):
 @csrf_exempt
 def crear_transaccion(request):
     if request.method == 'POST':
-        json_tran = json.loads(request.body);
+        json_tran = json.loads(request.body)
         print >> sys.stdout, "Prod" + json_tran['producto']
         print >> sys.stdout, "PRODProd" + json_tran['producto_bodega_origen']
         transaccion = TransaccionInventario(

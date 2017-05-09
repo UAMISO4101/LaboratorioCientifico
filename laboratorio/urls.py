@@ -87,5 +87,6 @@ urlpatterns = [
     url(r'^crearOrdenReposicion/$', views_orden_reposicion.crearOrdenPedido, name='crearOrdenReposicion'),
     url(r'^obtenerInfoProducto/$', views_orden_reposicion.obtenerInfoProducto, name='obtenerInfoProducto'),
     url(r'^modal_or/$', views_orden_reposicion.ir_modal_or, name=''),
-    url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion')
+    url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
+    url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
 ]
