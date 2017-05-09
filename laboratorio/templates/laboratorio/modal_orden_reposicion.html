@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+<!-- Modal -->
+<form id="formOrdenRepos" method="post" action="../guardarDetalleOrdenReposicion/">
+    <div class="modal fade" id="modalOrden" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Detalle Orden de Reposición</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Fecha Movimiento</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                            <input id="fecha_movimiento" name="fecha_movimiento" type="text" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" readonly/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label><b>Producto</b></label></div>
+                        <div class="col-6 col-sm-3">
+                            <select id="producto" name="producto" class="selectpicker form-control" required
+                                    style="padding: 0px 4px;height:30px;" readonly>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Cantidad</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold; ">
+                            <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" required/>
+                        </div>
+                        <div id="lblBodega" class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
+                        <div id="slcBodega" class="col-6 col-sm-3">
+                            <select id="bodega" name="bodega" class="selectpicker form-control"
+                                    style="padding: 0px 4px;height:30px;">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="divbodegaDestino" class="row">
+                        <div class="col-6 col-sm-3"><label id="labelNivelBodega"><b>Nivel Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="nivel" name="nivel" type="number" min="1" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;"/>
+                        </div>
+                        <div class="col-6 col-sm-3"><label id="labelSeccionBodega"><b>Sección Bodega Destino</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="seccion" name="seccion" type="number" min="1" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
+                        <div class="col-6 col-sm-3" style="font-weight: bold;">
+                            <input id="valor_unitario" name="valor_unitario" type="number" class="form-control input-md"
+                                   style="padding: 0px 4px;height:30px;" readonly/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Guardar" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cerrarItem()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    $('#modalOrden').on('shown.bs.modal', function ()
+    {
+        alert('mostrando modal');
+        $.getJSON("../obtenerInfoProducto").done(function (data) {
+            if(data)
+            {
+                prod =  data.producto[0];
+                console.log('producto info '+prod)
+                var producto = $("#producto");
+                producto.append($("<option data-vu='"+prod.fields.valorUnitario+"'/>").val(prod.pk).text(prod.fields.nombre));
+                var valorUnitario = $("#producto").find('option:selected').data('vu');
+                $('#valor_unitario').val(valorUnitario);
+            }
+        })
+        $.getJSON("../obtenerBodegas/Nevera").done(function (data)
+        {
+            data =  $.parseJSON(data);
+            console.log(data)
+            var bodega = $("#bodega");
+            bodega.append($("<option />").val("").text("Seleccione Bodega..."));
+            $(data).each(function()
+            {
+                bodega.append($("<option />").val(this.id).text(this.nombre));
+            });
+        })
+
+        $.getJSON("../fechaPeticionOrRep").done(function (data) {
+            if(data)
+            {
+                fecha = data.fecha;
+                $("#fecha_movimiento").val(fecha);
+            }
+        })
+    });
+
+    $("#bodega").change(function () {
+        var val = $(this).val();
+        if(val != "")
+        {
+            $.getJSON("../obtenerBodega",{
+                    id_bodega:val
+                }).done(function (data) {
+                if(data)
+                {
+                    bodega = $.parseJSON(data.bodega);
+                    niveles = bodega.fields.niveles
+                    secciones = bodega.fields.secciones
+                    $("#labelNivelBodega").html("Nivel Bodega Destino <br>(Max "+niveles+")")
+                    $("#labelNivelBodega").css({ 'font-weight': 'bold' })
+                    $("#labelSeccionBodega").html("Sección Bodega Destino <br>(Max "+secciones+")")
+                    $("#labelSeccionBodega").css({ 'font-weight': 'bold' })
+                }
+            })
+        }
+    })
+    function cerrarItem()
+    {
+        $("#fecha_movimiento").val("");
+        $('#producto').prop('selectedIndex',0);
+        $('#bodega').prop('selectedIndex',0);
+        $("#nivel").val("");
+        $("#seccion").val("");
+        $("#valor_unitario").val("");
+        $("#cantidad").val("");
+        $('#modalOrden').modal('hide');
+    }
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formOrdenRepos")[0]);
+        console.log(formData)
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $("#modalOrden").modal('hide')
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    demo.showNotification('bottom', 'center', data.mensaje)
+                } else {
+                    window.location = "../verordenespedido";
+                }
+            }
+        });
+        e.preventDefault();
+    });
+</script>
+</html>
