@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
     <meta name="viewport" content="width=device-width">
     <title>.:Laboratorio Científico:.</title>
-  <!-- Bootstrap core CSS     -->
-  <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Animation library for notifications   -->
-  <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
-  <!--  Light Bootstrap Table core CSS    -->
-  <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
-  <!--  CSS for Demo Purpose, don't include it in your project     -->
-  <link href="../../../images/assets/css/demo.css" rel="stylesheet">
-  <!--     Fonts and icons     -->
+    <!-- Bootstrap core CSS     -->
+    <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animation library for notifications   -->
+    <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+    <!--     Fonts and icons     -->
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
   <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
@@ -111,16 +112,19 @@
         <div id="pie"></div>
     </div>
     </div>
+    <div id="modal2" class="card"></div>
 </div>
 </body>
+<script src="../../../images/assets/js/bootstrap.min.js"></script>
 <!--  Checkbox, Radio & Switch Plugins -->
-  <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
-  <!--  Charts Plugin -->
-  <script src="../../../images/assets/js/chartist.min.js"></script>
-  <!--  Notifications Plugin    -->
-  <script src="../../../images/assets/js/bootstrap-notify.js"></script>
-  <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
-  <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
+<script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+<!--  Charts Plugin -->
+<script src="../../../images/assets/js/chartist.min.js"></script>
+<!--  Notifications Plugin    -->
+<script src="../../../images/assets/js/bootstrap-notify.js"></script>
+<!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+<script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
+  <script src="../../../images/assets/js/demo.js"></script>
 <script>
     //Llena la lista de valores de tipos de transaccion
     (function(){
@@ -330,6 +334,7 @@
     // Coloca el encabezado y pie de pagina
     (function(){
         try {
+            $("#modal2").load("../modal_or")
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
             var niveles = $( "#niveles" ).spinner();
@@ -377,9 +382,18 @@
                             $("#mensaje1").text(data.mensaje);
                             $("#mensaje").show();
                         } else {
-                            $("#mensaje1Suc").val(data[0].pk).text("Transacción guardada con el codigo: " + data[0].pk);
+                            console.log(data.tran[0].fields);
+                            window.scrollTo(0,0);
+                            $("#mensaje1Suc").val(data.tran[0].pk).text("Transacción guardada con el código: " + data.tran[0].pk);
                             $("#mensajeSuc").show();
                             $("#btnsubmit").prop('disabled', true);
+                            if (Object.keys(data).length > 0)
+                            {
+                                nivel_actual = $.parseJSON(data.res0);
+                                punto_pedido = $.parseJSON(data.res1);
+                                message = '<p style="text-align: justify">El recurso actual tiene un <b>nivel disponible</b> de '+ nivel_actual+ ' y un <b>punto de pedido (mínimo)</b> de '+ punto_pedido + ' por lo que se recomienda generar una orden de reposición. Desea generarla automáticamente?</p> <button class="btn btn-success" onclick="crearOrdenReapro()"><span class="pe-7s-check"></span> Si</button><button style="margin-left: 80px !important;" class="btn btn-danger" onclick="demo.closeNotification()"><span class="pe-7s-close-circle"></span> No</button>';
+                                demo.showNotification('bottom','center', message)
+                            }
                         }
                     },
                     failure: function () {
@@ -395,29 +409,49 @@
     });
     function validarForma() {
         if ($('#bodega_destino').val() == "") {
-            alert("La bodega destino debe ser seleccionada")
+            alert("La bodega destino debe ser seleccionada");
             return false;
         }
         if ($('#nivel_destino').val() == "" || $('#nivel_destino').val() == 0 ||
             $('#seccion_destino').val() == "" || $('#seccion_destino').val() == 0 ||
             $('#cantidad').val() == "" || $('#nivel_destino').val() == 0
         ) {
-            alert("Revisar los campos de: cantidad, nivel y seccion destino, no pueden ser nulos o cero ")
+            alert("Revisar los campos de: cantidad, nivel y seccion destino, no pueden ser nulos o cero ");
             return false;
         }
         if ($('#nivel_destino').val() > $('#nivel_destino').attr('max') || $('#nivel_destino').val() < 0) {
-            alert("Revisar los campos de: El nivel no puede ser superior a la capacidad de la bodega")
+            alert("Revisar los campos de: El nivel no puede ser superior a la capacidad de la bodega");
             return false;
         }
         if ($('#seccion_destino').val() > $('#seccion_destino').attr('max') || $('#seccion_destino').val() < 0) {
-            alert("Revisar los campos de: La sección no puede ser superior a la capacidad de la bodega")
+            alert("Revisar los campos de: La sección no puede ser superior a la capacidad de la bodega");
             return false;
         }
         if ($("#tipo option[value='" + $('#tipo').val() + "']").text() == 'Mover por perdida o desperdicio' && $('#comentarios').val() == "" ) {
-            alert("Para registrar desperdicios por favor actualice el campo de comentarios con el motivo ")
+            alert("Para registrar desperdicios por favor actualice el campo de comentarios con el motivo ");
             return false;
         }
         return true;
+    }
+
+    function crearOrdenReapro()
+    {
+        $.getJSON("../crearOrdenReposicion").done(function (data) {
+            if(data)
+            {
+                mensaje = data.mensaje
+                console.log(mensaje);
+                if(mensaje == "ok")
+                {
+                    demo.closeNotification();
+                    $("#modalOrden").modal('show');
+                }
+                else
+                {
+                    demo.showNotification('bottom', 'center', mensaje)
+                }
+            }
+        })
     }
     </script>
 </html>

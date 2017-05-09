@@ -302,9 +302,9 @@
                                     strInicio = "<tr class=\"bg-info\">";
                                     strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreProducto+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nombreBodega+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.nivel+"</td>";
-                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+detalleOrden.seccion+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+(detalleOrden.nombreBodega ? detalleOrden.nombreBodega : '')+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+(detalleOrden.nivel ? detalleOrden.nivel : '')+"</td>";
+                                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+(detalleOrden.seccion ? detalleOrden.seccion : '')+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.valorUnitario+"</td>";
                                     strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+detalleOrden.cantidad+"</td>";
                                     var subTotal = detalleOrden.cantidad * detalleOrden.valorUnitario;

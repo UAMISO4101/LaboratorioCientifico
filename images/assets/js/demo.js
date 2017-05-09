@@ -12,6 +12,7 @@ demo = {
     series:[],
     high:0,
     unidad:"",
+    nofity:null,
     initChartDonut: function(){
         Chartist.Pie('#chartPreferences', {
           series: [this.proveedor, this.perdida, this.experimento, this.devolucion, this.paso],
@@ -78,10 +79,28 @@ demo = {
             }
           }]
         ];
-
         Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
-    }
-}
+    },
+    showNotification: function(from, align, message){
+    	this.nofity = $.notify({
+        	icon: "pe-7s-info",
+        	message: message
+
+        },{
+            type: type[1],
+            timer: 20000,
+            allow_dismiss: false,
+            placement: {
+                from: from,
+                align: align
+            }
+        });
+	},
+    closeNotification:function () {
+        this.nofity.close();
+    },
+
+};
 
 
 

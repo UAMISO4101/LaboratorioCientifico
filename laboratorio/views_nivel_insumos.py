@@ -57,16 +57,16 @@ def nivel_insumo_tabla(pk_producto, punto_pedido):
     nivel_actual =(nivelProveedor-nivelPerdidaDesperdicio-nivelDevolucion-nivelExperimento)
     print >> sys.stdout, 'nivel actual '+ str(nivel_actual)
     if nivel_actual == 0 or nivel_actual < Decimal(punto_pedido):
-        listress.append(-1)
+        listress.append(-1) #Rojo
         listress.append(nivel_actual)
     elif nivel_actual >= Decimal(punto_pedido) and nivel_actual<valRojoMax:
-        listress.append(0)
+        listress.append(0) #Rojo
         listress.append(nivel_actual)
     elif nivel_actual>=valRojoMax and nivel_actual<valNaranjaMax:
-        listress.append(1)
+        listress.append(1) #Naranja
         listress.append(nivel_actual)
     elif nivel_actual>=valNaranjaMax:
-        listress.append(2)
+        listress.append(2) #Verde
         listress.append(nivel_actual)
     return listress
 

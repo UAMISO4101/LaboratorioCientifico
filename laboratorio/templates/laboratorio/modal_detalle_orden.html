@@ -32,23 +32,23 @@
                             <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
                                    style="padding: 0px 4px;height:30px;" required/>
                         </div>
-                        <div class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
-                        <div class="col-6 col-sm-3">
+                        <div id="lblBodega" class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
+                        <div id="slcBodega" class="col-6 col-sm-3">
                             <select id="bodega" name="bodega" class="selectpicker form-control"
-                                    style="padding: 0px 4px;height:30px;" required>
+                                    style="padding: 0px 4px;height:30px;">
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div id="divbodegaDestino" class="row">
                         <div class="col-6 col-sm-3"><label><b>Nivel Bodega Destino</b></label></div>
                         <div class="col-6 col-sm-3" style="font-weight: bold;">
                             <input id="nivel" name="nivel" type="number" min="1" class="form-control input-md"
-                                   style="padding: 0px 4px;height:30px;" required/>
+                                   style="padding: 0px 4px;height:30px;"/>
                         </div>
                         <div class="col-6 col-sm-3"><label><b>Sección Bodega Destino</b></label></div>
                         <div class="col-6 col-sm-3" style="font-weight: bold;">
                             <input id="seccion" name="seccion" type="number" min="1" class="form-control input-md"
-                                   style="padding: 0px 4px;height:30px;" required/>
+                                   style="padding: 0px 4px;height:30px;"/>
                         </div>
                     </div>
                     <div class="row">
@@ -58,6 +58,8 @@
                                    style="padding: 0px 4px;height:30px;" readonly/>
                         </div>
                     </div>
+                    <input id="hdEstado" type="hidden">
+                    <input id="hdTrx" type="hidden">
                 </div>
                 <div class="modal-footer">
                     <input id="btnAdicionarItem" type="submit" class="btn btn-primary" value="Guardar Item" />
@@ -93,18 +95,36 @@
                 detalleOrden.seccion = $("#seccion").val();
                 detalleOrden.cantidad = $("#cantidad").val();
                 detalleOrden.valorUnitario = $("#valor_unitario").val();
+                detalleOrden.estado = $("#hdEstado").val();
+                detalleOrden.transaccion_inventario = $("#hdTrx").val();
+                //detalleOrden.valorUnitario = $("#valor_unitario").val();
                 detalleOrden.fechaMovimiento = data.fecha;
                 strTd = "";
                 strInicio = "<tr class=\"bg-info\">";
                 strCont =  "<td style=\"border: 1px solid #ddd;\">"+contadorItems+"</td>";
                 strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#producto option:selected").text()+"</td>";
-                strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#bodega option:selected").text()+"</td>";
+                if ($("#bodega option:selected").val()){
+                    strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#bodega option:selected").text()+"</td>";
+                }else{
+                    strTd +=  "<td style=\"border: 1px solid #ddd;\"></td>";
+                }
+
                 strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#nivel").val()+"</td>";
                 strTd +=  "<td style=\"border: 1px solid #ddd;\">"+$("#seccion").val()+"</td>";
-                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#valor_unitario").val()+"</td>";
+
+
+                if (detalleOrden.estado == ""){
+                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#valor_unitario").val()+"</td>";
+                }
+
                 strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#cantidad").val()+"</td>";
                 var subTotal = $("#valor_unitario").val() * $("#cantidad").val();
-                strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                if (detalleOrden.estado == ""){
+                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+subTotal+"</td>";
+                }else{
+                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#hdEstado").val()+"</td>";
+                    strTd +=  "<td style=\"border: 1px solid #ddd;text-align: right;\">"+$("#hdTrx").val()+"</td>";
+                }
                 strFin =  "</tr>";
 
                 if (itemEditar == null){
@@ -157,7 +177,6 @@
         $("#seccion").val("");
         $("#valor_unitario").val("");
         $("#cantidad").val("");
-        $("#valor_unitario").val("");
         $('#myModal').modal('hide');
     }
 </script>
