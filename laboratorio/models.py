@@ -101,6 +101,7 @@ class Producto(models.Model):
     tiempo_reaprovisionamiento = models.IntegerField(default=0)
     stock_seguridad = models.DecimalField(max_digits=15, decimal_places=8, null=True)
     punto_pedido = models.DecimalField(max_digits=15, decimal_places=8, null=True)
+    tipo_inventario_producto = models.ForeignKey(Tipo, related_name="TIPO_INVENTARIO_PRODUCTO", null=True)
 
 """Clase - Modelo ProductosEnBodega.
 """
@@ -200,3 +201,45 @@ class DetalleOrden(models.Model):
     nivel_bodega_destino = models.IntegerField(null=True)
     seccion_bodega_destino = models.IntegerField(null=True)
     orden = models.ForeignKey(OrdenPedido, null=True)
+
+
+"""Clase - ConteoInventario.
+"""
+class ConteoInventario(models.Model):
+    fecha_creacion = models.DateTimeField(null=False)
+    usuario_creacion = models.ForeignKey(Usuario, related_name="usuario_creacion_conteo", null=True)
+    estado = models.ForeignKey(Tipo, related_name="STATUS_CONTEO", null=False)
+    fecha_cambio_estado = models.DateTimeField(null=True)
+    tipo_inventario_producto = models.ForeignKey(Tipo, related_name="TIPO_INVENTARIO_PRODUCTO_CONTEO", null=True)
+
+
+"""Clase - DetalleProductos.
+"""
+class DetalleProductos(models.Model):
+    conteoinventario = models.ForeignKey(ConteoInventario, null=False)
+    productosenbodega = models.ForeignKey(ProductosEnBodega, null=True)
+    bodega = models.ForeignKey(Bodega, null=False)
+    producto = models.ForeignKey(Producto, null=True)
+    nivel = models.IntegerField(null=True)
+    seccion = models.IntegerField(null=True)
+    cantidad_contada = models.IntegerField(null=True)
+    unidad_medida = models.ForeignKey(Tipo, related_name="tipo_unidadmedida_detalle", null=True)
+    cantidad_fisica = models.IntegerField(null=True)
+    usuario_conteo = models.ForeignKey(Usuario, related_name="usuario_creacion_detalle", null=True)
+    estado = models.ForeignKey(Tipo, related_name="STATUS_CONTEO_DETALLE", null=False)
+    diferencia_cantidad = models.IntegerField(null=True)
+    tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_detalle", null=False)
+
+
+"""Clase - Ajuste.
+"""
+class Ajuste(models.Model):
+    detalle_productos = models.ForeignKey(DetalleProductos, null=False)
+    productosenbodega = models.ForeignKey(ProductosEnBodega, null=True)
+    bodega = models.ForeignKey(Bodega, null=False)
+    producto = models.ForeignKey(Producto, null=True)
+    nivel = models.IntegerField(null=True)
+    seccion = models.IntegerField(null=True)
+    diferencia_cantidad = models.IntegerField(null=True)
+    tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_ajuste", null=False)
+    transaccion_inventario = models.ForeignKey(TransaccionInventario, related_name="do_transaccion_ajuste", null=True)
