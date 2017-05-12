@@ -4,7 +4,7 @@ import unittest
 from django.http.request import HttpRequest
 
 from laboratorio.models import Tipo
-from laboratorio.views import crearBodega, obtenerBodega
+from laboratorio.views_bodegas import crearBodega, obtenerBodega
 
 """Clase BodegaTestCase.
 
