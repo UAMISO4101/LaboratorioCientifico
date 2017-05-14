@@ -91,6 +91,7 @@ urlpatterns = [
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
 
     url(r'^verconteosabc/$', views_conteoabc_manual.ir_conteosabc, name='verconteosabc'),
+    url(r'^obtenerConteosABC/$', views_conteoabc_manual.obtener_conteos_abc, name='obtenerConteosABC'),
     url(r'^conteoabc/$', views_busqueda_producto.ver_producto_busqueda_2, name='conteo_abc'),
     url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_producto_2, name='conteo_abc_json'),
 ]

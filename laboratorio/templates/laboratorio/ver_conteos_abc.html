@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
     <meta name="viewport" content="width=device-width">
     <title>.:Laboratorio Científico:.</title>
-  <!-- Bootstrap core CSS     -->
-  <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Animation library for notifications   -->
-  <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
-  <!--  Light Bootstrap Table core CSS    -->
-  <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
-  <!--  CSS for Demo Purpose, don't include it in your project     -->
-  <link href="../../../images/assets/css/demo.css" rel="stylesheet">
-  <!--     Fonts and icons     -->
-  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
-  <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
+    <!-- Bootstrap core CSS     -->
+    <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animation library for notifications   -->
+    <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+    <!--     Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+    <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
@@ -58,17 +58,17 @@
                     <p class="category">Lista de Conteos ABC - Inventario</p>
                 </div>
                    <div id="mensaje_ok" class="alert alert-info">
-                                <label id="mensaje1_ok">La orden de pedido actualizo su estado a En Proveedor correctamente</label>
-                            </div>
-                            <div id="mensaje" class="alert alert-warning">
-                                <label id="mensaje1"></label>
-                            </div>
-                    <form id="formOP" action = "../enProveedor/" method = "post" style="padding: 20px">
+                        <label id="mensaje1_ok"></label>
+                    </div>
+                    <div id="mensaje" class="alert alert-warning">
+                        <label id="mensaje1"></label>
+                    </div>
+                    <form id="formConteo" action = "../enProveedor/" method = "post" style="padding: 20px">
                         <div style="text-align: center;">
-                            <a href="../ordenpedido" class="btn btn-primary" role="button">Crear Conteo</a>
-                            <a id="btnEditarOP" href="../actordenpedido" class="btn btn-primary" role="button">Conteo Físico</a>
-                            <a id="btnAprobarOP" href="../procesoAprobacionOrden" class="btn btn-primary" role="button">Ajustar</a>
-                            <input id="id_op_select" name="id_op" type="hidden" />
+                            <a href="../conteoabc" class="btn btn-primary" role="button">Crear Conteo</a>
+                            <a id="btnConteoABC" href="../conteoabc" class="btn btn-primary" role="button">Conteo Físico</a>
+                            <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
+                            <input id="id_conteo" name="id_conteo" type="hidden" />
                             <a href="../">Cancelar</a>
                         </div>
                         <table id="tabla" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%"></table>
@@ -96,14 +96,10 @@
         try {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
-            $('#btnEditarOP').attr('disabled', true);
-            $('#btnEditarOP').bind('click', false);
-            $('#btnAprobarOP').attr('disabled', true);
-            $('#btnAprobarOP').bind('click', false);
-            $('#enProveedores').attr('disabled', true);
-            $('#enProveedores').attr('click', false);
-            $('#btnRecibirOP').attr('disabled', true);
-            $('#btnRecibirOP').bind('click', false);
+            $('#btnConteoABC').attr('disabled', true);
+            $('#btnConteoABC').bind('click', false);
+            $('#btnAjustarABC').attr('disabled', true);
+            $('#btnAjustarABC').bind('click', false);
             $("#mensaje_ok").hide();
             $("#mensaje").hide();
         }catch (exc){
@@ -111,7 +107,7 @@
         }
     })();
     $(function () {
-        $.getJSON("../obtenerOrdenesPedido").done(function (data) {
+        $.getJSON("../obtenerConteosABC").done(function (data) {
             datos =  $.parseJSON(data);
             var tabla = $('#tabla').DataTable( {
                 "language": {
@@ -121,86 +117,58 @@
                 "scrollX": true,
                 aaData: datos,
                 aoColumns: [
-                    { mData: "id" , sTitle: "Código"},
-                    { mData: "fechaPeticion" , sTitle: "Fecha Petición"},
-                    { mData: "estado" , sTitle: "Estado Orden"},
-                    { mData: "nombreUsuarioCreacion" , sTitle: "Usuario Creación"},
-                    { mData: "nombreUsuarioAprobacion" , sTitle: "Usuario Aprobación"},
-                    { mData: "nombreProveedor" , sTitle: "Proveedor"}
+                    { mData: "id" , sTitle: "Id"},
+                    { mData: "fechaCreacion" , sTitle: "Fecha Creación"},
+                    { mData: "estado" , sTitle: "Estado Conteo"},
+                    { mData: "nombreUsuarioCreacion" , sTitle: "Usuario Creación"}
                 ],
             } );
             $('#tabla tbody').on( 'click', 'tr', function () {
                 if ( $(this).hasClass('selected') ) {
                     $(this).removeClass('selected');
-                    $('#btnEditarOP').attr('disabled', true);
-                    $('#btnEditarOP').bind('click', false);
-                    $('#btnAprobarOP').attr('disabled', true);
-                    $('#btnAprobarOP').bind('click', false);
-                    $('#enProveedores').attr('disabled', true);
-                    $('#enProveedores').attr('click', false);
-                    $('#btnRecibirOP').attr('disabled', true);
-                    $('#btnRecibirOP').bind('click', false);
+                    $('#btnConteoABC').attr('disabled', true);
+                    $('#btnConteoABC').bind('click', false);
+                    $('#btnAjustarABC').attr('disabled', true);
+                    $('#btnAjustarABC').bind('click', false);
                 }
                 else {
                     $("#mensaje_ok").hide();
                     $("#mensaje").hide();
                     tabla.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
-                    valor = $("#btnEditarOP").attr('href');
-                    valorTrx = $("#btnRecibirOP").attr('href');
-                    valorAprobacion = $("#btnAprobarOP").attr('href');
-                    if (valor.indexOf("id_op")!=-1){
+                    valor = $("#btnConteoABC").attr('href');
+                    valorAjuste = $("#btnAjustarABC").attr('href');
+                    if (valor.indexOf("id_conteo")!=-1){
                         valor = valor.split("?")[0];
                     }
-                    valor += "?id_op="+$(this).children()[0].innerText;
-                    valorTrx += "?id_op="+$(this).children()[0].innerText;
-                    valorAprobacion += "?id_op="+$(this).children()[0].innerText;
-                    valorEnProveedor = $(this).children()[0].innerText;
-                    if ($(this).children()[2].innerText == "Ingresada" || $(this).children()[2].innerText == "Rechazada") {
-                        $("#btnEditarOP").attr("href", valor);
-                        $('#btnEditarOP').unbind('click', false);
-                        $('#btnEditarOP').attr('disabled', false);
-                    }else{
-                        if (valor.indexOf("id_op")!=-1){
-                        valor = valor.split("?")[0];
-                        $("#btnEditarOP").attr("href", valor);
-                        $('#btnEditarOP').unbind('click', true);
-                        $('#btnEditarOP').attr('disabled', true);
-                    }}
+                    valor += "?id_conteo="+$(this).children()[0].innerText;
+                    valorAjuste += "?id_conteo="+$(this).children()[0].innerText;
 
-                    if ($(this).children()[2].innerText == "En proveedor") {
-                        $("#btnRecibirOP").attr("href", valorTrx);
-                        $('#btnRecibirOP').unbind('click', false);
-                        $('#btnRecibirOP').attr('disabled', false);
+                    if ($(this).children()[2].innerText == "Ejecutada") {
+                        $('#btnConteoABC').unbind('click', false);
+                        $('#btnConteoABC').attr('disabled', false);
                     }else{
-                        if (valorTrx.indexOf("id_op")!=-1){
-                        valorTrx = valorTrx.split("?")[0];
-                        $("#btnRecibirOP").attr("href", valorTrx);
-                        $('#btnRecibirOP').unbind('click', true);
-                        $('#btnRecibirOP').attr('disabled', true);
-                    }}
+                        if (valor.indexOf("id_conteo") != -1) {
+                            valor = valor.split("?")[0];
+                            $("#btnConteoABC").attr("href", valor);
+                            $('#btnConteoABC').unbind('click', true);
+                            $('#btnConteoABC').attr('disabled', true);
+                        }
+                    }
 
-                    if ($(this).children()[2].innerText == "En aprobacion") {
-                        $("#btnAprobarOP").attr("href", valorAprobacion);
-                        $('#btnAprobarOP').unbind('click', false);
-                        $('#btnAprobarOP').attr('disabled', false);
+                    if ($(this).children()[2].innerText == "Conteo Fisico" ||
+                        $(this).children()[2].innerText == "Ajustes") {
+                        $("#btnAjustarABC").attr("href", valorAjuste);
+                        $('#btnAjustarABC').unbind('click', false);
+                        $('#btnAjustarABC').attr('disabled', false);
                     }
-                    else{
-                        if (valorAprobacion.indexOf("id_op")!=-1){
-                        valorAprobacion = valorAprobacion.split("?")[0];
-                        $("#btnAprobarOP").attr("href", valorAprobacion);
-                        $('#btnAprobarOP').unbind('click', true);
-                        $('#btnAprobarOP').attr('disabled', true);
-                    }
-                    }
-                    if($(this).children()[2].innerText == "Aprobada"){
-                       $('#id_op_select').attr('value', valorEnProveedor);
-                       $('#enProveedores').unbind('click', false);
-                       $('#enProveedores').attr('disabled', false);
-                    }
-                    else{
-                       $('#enProveedores').unbind('click', true);
-                       $('#enProveedores').attr('disabled', true);
+                    else {
+                        if (valorAjuste.indexOf("id_conteo") != -1) {
+                            valorAjuste = valorAjuste.split("?")[0];
+                            $("#btnAjustarABC").attr("href", valorAjuste);
+                            $('#btnAjustarABC').unbind('click', true);
+                            $('#btnAjustarABC').attr('disabled', true);
+                        }
                     }
 
                 }
@@ -208,8 +176,8 @@
         });
     });
 
-     $('#formOP').submit(function (e) {
-        var formData = new FormData($("#formOP")[0]);
+     $('#formConteo').submit(function (e) {
+        var formData = new FormData($("#formConteo")[0]);
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
