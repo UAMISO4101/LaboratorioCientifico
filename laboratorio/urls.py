@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 
 from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos, \
-    views_bodegas, views_usuarios, views_transacciones, views_recursos, views_orden_reposicion
+    views_bodegas, views_usuarios, views_transacciones, views_recursos, views_orden_reposicion, views_conteoabc_manual
 from . import views
 
 urlpatterns = [
@@ -89,4 +89,8 @@ urlpatterns = [
     url(r'^modal_or/$', views_orden_reposicion.ir_modal_or, name=''),
     url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
+
+    url(r'^verconteosabc/$', views_conteoabc_manual.ir_conteosabc, name='verconteosabc'),
+    url(r'^conteoabc/$', views_busqueda_producto.ver_producto_busqueda_2, name='conteo_abc'),
+    url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_producto_2, name='conteo_abc_json'),
 ]

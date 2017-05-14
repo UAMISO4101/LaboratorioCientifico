@@ -78,7 +78,7 @@
                             result=result+"<td>"+this.nombre+"</td>";
                             result=result+"<td>"+this.bodegaActual+"</td>";
                             result=result+"<td style=\"text-align: right\">"+this.unidadesExistentes+" " + this.unidad_medida +" " + this.cantidad_convertida + "</td>";
-                            result=result+"<td style=\"text-align: center\"><input type=\"text\" size=\"4\">&nbsp;" +
+                            result=result+"<td style=\"text-align: center\"><input id=\""+('**'+this.nombre.replace(/ /g,"*")+'__'+this.bodegaActual.replace(/ /g,"*").replace(/,/g,"__")+'__'+this.unidadesExistentes)+"\" type=\"text\" size=\"4\">&nbsp;" +
                                 "<select id=\"tipoajuste\" name=\"tipoajuste\" style=\"width: auto; display: inline\">" +
                                 "<option value=\"0\" selected>Defecto</option>" +
                                 "<option value=\"1\">Exceso</option>" +

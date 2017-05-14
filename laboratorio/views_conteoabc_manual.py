@@ -13,5 +13,5 @@ from laboratorio.models import TransaccionInventario, Tipo, Producto, Bodega
 
 
 # @csrf_exempt
-#def ver_conteoabc(request):
-#    return render(request, "laboratorio/conteoabc_manual.html")
+def ir_conteosabc(request):
+    return render(request, "laboratorio/ver_conteos_abc.html")
