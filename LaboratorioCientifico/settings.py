@@ -76,14 +76,11 @@ WSGI_APPLICATION = 'LaboratorioCientifico.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'laboratorio',
-        'USER': 'usr_laboratorio',
-        'PASSWORD': 'laboratorio',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'TEST': {
-            'ENGINE': 'django.db.backends.sqlite3',
-        }
+        'HOST': os.environ["HOST"],
+        'NAME': os.environ["DATABASE"],
+        'USER': os.environ["USER"],
+        'PASSWORD': os.environ["PASSWORD"],
+        'PORT': os.environ["PORT"],
     }
 }
 
