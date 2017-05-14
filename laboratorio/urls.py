@@ -90,6 +90,8 @@ urlpatterns = [
     url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
 
+    url(r'^verconteosabc/$', views_conteoabc_manual.ir_conteosabc, name='verconteosabc'),
+    url(r'^obtenerConteosABC/$', views_conteoabc_manual.obtener_conteos_abc, name='obtenerConteosABC'),
     url(r'^conteoabc/$', views_busqueda_producto.ver_conteoabc_busqueda, name='conteo_abc_busqueda'),
     url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_conteoabc, name='conteo_abc_json'),
 ]
