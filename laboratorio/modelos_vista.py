@@ -45,7 +45,7 @@ Clase que sirve de vista para objetos a mostrar al usuario
 """
 class RecursoBusquedaVista():
     id = 0
-    tipo_inventario = ""
+    tipo_producto_conteo = ""
     nombre = ""
     unidadesExistentes = ""
     unidad_medida = ""

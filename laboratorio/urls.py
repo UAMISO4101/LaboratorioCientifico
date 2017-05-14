@@ -89,4 +89,5 @@ urlpatterns = [
     url(r'^modal_or/$', views_orden_reposicion.ir_modal_or, name=''),
     url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
+
 ]

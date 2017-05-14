@@ -42,6 +42,7 @@
                         var tablaresult="<table class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\" width=\"85%%\">";
                         tablaresult=tablaresult+"<thead>";
                         tablaresult=tablaresult+"<tr>";
+                        tablaresult=tablaresult+"<th style=\"text-align: center;\">ID</th>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo <br> Inventario</th>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">Producto</th>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">Bodega Actual</th>";
@@ -83,7 +84,8 @@
                             sumatoria = sumatoria + this.unidadesExistentes;
 
                             result=result+"<tr>";
-                            result=result+"<td style=\"text-align: center\">A</td>";
+                            result=result+"<td style=\"text-align: center\">"+this.id+"</td>";
+                            result=result+"<td style=\"text-align: center\">"+this.tipo_producto_conteo+"</td>";
                             result=result+"<td>"+this.nombre+"</td>";
                             result=result+"<td>"+this.bodegaActual+"</td>";
                             result=result+"<td style=\"text-align: right\">"+this.unidadesExistentes+" " + this.unidad_medida +" " + this.cantidad_convertida + "</td>";
@@ -110,40 +112,6 @@
                 }
                 else {
                     $(resultados).append("<table class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\" width=\"85%%\"><tr><td align=\"center\"><b>No hay productos para mostrar</b></td></tr></table>");
-                }
-            });
-        })();
-
-        //Llena selector de Productos
-        (function(){
-            $.getJSON("../obtenerlistaproductos").done(function (data) {
-                var selectprod = $("#producto");
-
-                if (data){
-                    data = $.parseJSON(data);
-
-                    var result ="";
-
-                    $(data).each(function() {
-                        selectprod.append("<option value=\""+this.fields.codigo+"\">"+this.fields.nombre+"</option>");
-                    });
-                }
-            });
-        })();
-
-        //Llena selector de Bodegas
-        (function(){
-            $.getJSON("../obtenerlistabodegas").done(function (data) {
-                var selectb = $("#bodega");
-
-                if (data){
-                    data = $.parseJSON(data);
-
-                    var result ="";
-
-                    $(data).each(function() {
-                        selectb.append("<option value=\""+this.fields.serial+"\">"+this.fields.nombre+"</option>");
-                    });
                 }
             });
         })();
@@ -186,29 +154,15 @@
 
                                             <td>
                                                 <b>Tipo Inventario</b>&nbsp;
-                                                <select id="tipo" name="tipo" class="selectpicker form-control" multiple title="Seleccione..." data-width="auto">
-                                                    <option value="a" data-subtext="-- Alta rotación, Bajo costo" style="font-weight: bold" selected>&nbsp;&nbsp;A</option>
-                                                    <option value="b" data-subtext="-- Media rotación, costo Medio" style="font-weight: bold" selected>&nbsp;&nbsp;B</option>
-                                                    <option value="c" data-subtext="-- Baja rotación, Alto costo" style="font-weight: bold" selected>&nbsp;&nbsp;C</option>
+                                                <select id="tipoproductoinventario" name="tipoproductoinventario" class="form-control" style="width: auto; display: inline">
+                                                    <option selected disabled="disabled" value="">Seleccione...</option>
+                                                    <option value="A">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A</option>
+                                                    <option value="B">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B</option>
+                                                    <option value="C">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C</option>
                                                 </select>
                                             </td>
-                                            <td>
-                                                <b>Producto</b>&nbsp;
-                                                <select id="producto" name="producto" class="form-control" style="width: auto; display: inline">
-                                                    <option selected value="">Todos</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <b>Bodega</b>&nbsp;
-                                                <select id="bodega" name="bodega" class="form-control" style="width: auto; display: inline">
-                                                    <option selected value="">Todas</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="center" colspan="3">
-                                                <input type="submit" id="buscar" value="Buscar" class="btn btn-primary">&nbsp;&nbsp;<a href="">cancelar</a>
-                                            </td>
+                                            <td align="center"><input type="submit" id="btnmostrar" name="btnmostrar" value="Mostrar productos" class="btn btn-primary"></td>
+                                            <td align="center"><input type="submit" id="btngenerar" name="btngenerar" value="Generar Conteo" class="btn btn-primary"></td>
                                         </tr>
                                     </table>
                                 </div>
