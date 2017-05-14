@@ -6,8 +6,10 @@ from operator import attrgetter
 
 from django.core import serializers
 from django.http.response import JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+
 
 from laboratorio.modelos_vista import Convertidor,  RecursoBusquedaVista, RecursoBusquedaDetalleVista
 from laboratorio.models import Usuario, Bodega
@@ -58,6 +60,8 @@ def busqueda_producto(request):
             qs = ProductosEnBodega.objects.filter(bodega__serial=bBodega)
         else:  # Filtro por producto y bodega
             qs = ProductosEnBodega.objects.filter(producto__codigo=bproducto, bodega__serial=bBodega)
+
+    # todo: quitar los productos en las bodegas que no deben salir (desperdicio, ...)
 
     lista_recurso = []
 
@@ -210,6 +214,7 @@ def llenar_listado_productos_busqueda(request):
     return JsonResponse(qs_json, safe=False)
 
 
+# TODO: unificar con llenar_listado_productos_busqueda y poner filtro (no todas las bodegas tienen que salir)
 # HU: LCINV-5
 # FB.
 # Lista las bodegas, esto se utiliza para mostrar el listado en el html para la búsqueda.
@@ -220,3 +225,81 @@ def llenar_listado_bodegas_busqueda(request):
     qs = Bodega.objects.all().order_by('nombre')
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
+
+# ------------------------------------------
+
+# HU: LCINV-21
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# request: Petición desde el form de usuario.
+# return: Página html con la plantilla y los resultados de la búsqueda asociada.
+@csrf_exempt
+def ver_conteoabc_busqueda(request):
+    global tipoinventario
+    tipoinventario = ""
+    generar = ""
+
+    # valida si es el botón de filtro o de generar conteo
+
+    # Capturar el valor de los campos
+    if request.method == 'POST':
+        tipoinventario = request.POST.get('tipoproductoinventario', "")
+        generar=request.POST.get('btngenerar', "")
+
+    if generar != "":
+        generar_conteo(request)
+    else:
+        busqueda_conteoabc(request)
+
+    return render(request, "laboratorio/conteoabc.html")
+
+
+@csrf_exempt
+def generar_conteo(request):
+    # todo: Generar ConteoInventario y DetalleProductos
+    return
+
+
+# HU: LCINV-21
+# FB.
+# Hace una búsqueda para saber en qué bodega está y cuál fue su última fecha de transacción.
+# Aquí puntualmente es donde se hace el filtro.
+# request: Petición desde el form de usuario.
+# return: json con los datos encontrados
+@csrf_exempt
+def busqueda_conteoabc(request):
+    if tipoinventario == "A" or tipoinventario == "B" or tipoinventario == "C":
+        qs = ProductosEnBodega.objects.all()
+        qs = qs.filter(producto__tipo_producto_conteo=''+ tipoinventario + '')
+        # todo: quitar los productos en las bodegas que no deben salir (desperdicio, ...)
+    else:
+        qs = ""
+
+    lista_recurso = []
+
+    for peb in qs:
+        req = RecursoBusquedaVista()
+        req.id = peb.id
+        req.tipo_producto_conteo = peb.producto.tipo_producto_conteo
+        req.nombre = peb.producto.nombre
+        req.unidadesExistentes = peb.cantidad
+        req.unidad_medida = peb.producto.unidad_medida.nombre
+
+        # TODO: Convertir a unidades de preferencia
+        req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre,
+                                                      peb.bodega.unidad_medida.nombre))
+
+        localizacion = ""
+        if str(peb.nivel) != "":
+            localizacion = ", Nivel " + str(peb.nivel)
+        if str(peb.seccion) != "":
+            localizacion = localizacion + ", Seccion " + str(peb.seccion)
+
+        req.bodegaActual = peb.bodega.nombre + localizacion
+
+        lista_recurso.append(req)
+
+    lista_recurso.sort(key=attrgetter('nombre', 'bodegaActual'), reverse=False)
+
+    json_string = json.dumps(lista_recurso, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)

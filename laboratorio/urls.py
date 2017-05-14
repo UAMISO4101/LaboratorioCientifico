@@ -89,4 +89,7 @@ urlpatterns = [
     url(r'^modal_or/$', views_orden_reposicion.ir_modal_or, name=''),
     url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
+
+    url(r'^conteoabc/$', views_busqueda_producto.ver_conteoabc_busqueda, name='conteo_abc_busqueda'),
+    url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_conteoabc, name='conteo_abc_json'),
 ]

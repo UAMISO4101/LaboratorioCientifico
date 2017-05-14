@@ -102,6 +102,7 @@ class Producto(models.Model):
     stock_seguridad = models.DecimalField(max_digits=15, decimal_places=8, null=True)
     punto_pedido = models.DecimalField(max_digits=15, decimal_places=8, null=True)
     tipo_inventario_producto = models.ForeignKey(Tipo, related_name="TIPO_INVENTARIO_PRODUCTO", null=True)
+    tipo_producto_conteo = models.CharField(max_length=1, null=True)
 
 """Clase - Modelo ProductosEnBodega.
 """
