@@ -10,6 +10,7 @@ from django.http.response import JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.http import QueryDict
 
 
 from laboratorio.modelos_vista import Convertidor,  RecursoBusquedaVista, RecursoBusquedaDetalleVista
@@ -259,6 +260,14 @@ def ver_conteoabc_busqueda(request):
 @csrf_exempt
 def generar_conteo(request):
     # Aqui ya se supone que se validó que el request fuera POST y que proviniera del btngenerar.
+
+    ids = []
+    ids = request.POST.get('id', "")
+
+    qd = QueryDict(request.body)
+    for values in qd.lists():
+        for value in values:
+            a = 1
 
     # Insertar registro en ConteoInventario
     estado = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSCONTEO').first().id)
