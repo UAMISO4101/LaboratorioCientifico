@@ -3,6 +3,7 @@
 import json
 from django.utils.timezone import localtime
 from operator import attrgetter
+from datetime import datetime
 
 from django.core import serializers
 from django.http.response import JsonResponse
@@ -14,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from laboratorio.modelos_vista import Convertidor,  RecursoBusquedaVista, RecursoBusquedaDetalleVista
 from laboratorio.models import Usuario, Bodega
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
+from laboratorio.models import Tipo, ConteoInventario
 from laboratorio.utils.utils import utils
 
 
@@ -256,8 +258,26 @@ def ver_conteoabc_busqueda(request):
 
 @csrf_exempt
 def generar_conteo(request):
-    # todo: Generar ConteoInventario y DetalleProductos
-    return
+    # Aqui ya se supone que se validó que el request fuera POST y que proviniera del btngenerar.
+
+    # Insertar registro en ConteoInventario
+    estado = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSCONTEO').first().id)
+
+    cabecera = ConteoInventario(fecha_creacion=datetime.now(),
+                               usuario_creacion=Usuario.objects.get(pk=1),
+                               estado=estado,
+                               fecha_cambio_estado=datetime.now())
+    # cabecera.save()
+
+    # Capturar la información del formulario
+    # Insertar N registros en DetalleProductos
+
+
+    # Desplegar la información de confirmación
+    mensaje = "ok"
+
+    mensaje = "Todos los campos deben estar debidamente diligenciados"
+    return JsonResponse({"mensaje":mensaje})
 
 
 # HU: LCINV-21
@@ -270,7 +290,7 @@ def generar_conteo(request):
 def busqueda_conteoabc(request):
     if tipoinventario == "A" or tipoinventario == "B" or tipoinventario == "C":
         qs = ProductosEnBodega.objects.all()
-        qs = qs.filter(producto__tipo_producto_conteo=''+ tipoinventario + '')
+        qs = qs.filter(producto__tipo_producto_conteo='' + tipoinventario + '')
         # todo: quitar los productos en las bodegas que no deben salir (desperdicio, ...)
     else:
         qs = ""
