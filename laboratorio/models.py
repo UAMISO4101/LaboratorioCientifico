@@ -219,7 +219,7 @@ class ConteoInventario(models.Model):
 class DetalleProductos(models.Model):
     conteoinventario = models.ForeignKey(ConteoInventario, null=False)
     productosenbodega = models.ForeignKey(ProductosEnBodega, null=True)
-    bodega = models.ForeignKey(Bodega, null=False)
+    bodega = models.ForeignKey(Bodega, null=True)
     producto = models.ForeignKey(Producto, null=True)
     nivel = models.IntegerField(null=True)
     seccion = models.IntegerField(null=True)
@@ -227,9 +227,9 @@ class DetalleProductos(models.Model):
     unidad_medida = models.ForeignKey(Tipo, related_name="tipo_unidadmedida_detalle", null=True)
     cantidad_fisica = models.IntegerField(null=True)
     usuario_conteo = models.ForeignKey(Usuario, related_name="usuario_creacion_detalle", null=True)
-    estado = models.ForeignKey(Tipo, related_name="STATUS_CONTEO_DETALLE", null=False)
+    estado = models.ForeignKey(Tipo, related_name="STATUS_CONTEO_DETALLE", null=True)
     diferencia_cantidad = models.IntegerField(null=True)
-    tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_detalle", null=False)
+    tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_detalle", null=True)
 
 
 """Clase - Ajuste.
