@@ -66,7 +66,7 @@
                     <form id="formConteo" action = "../enProveedor/" method = "post" style="padding: 20px">
                         <div style="text-align: center;">
                             <a href="../conteoabc" class="btn btn-primary" role="button">Crear Conteo</a>
-                            <a id="btnConteoABC" href="../conteoabc" class="btn btn-primary" role="button">Conteo Físico</a>
+                            <a id="btnConteoABC" href="../obtenerconteoabc" class="btn btn-primary" role="button">Conteo Físico</a>
                             <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
                             <input id="id_conteo" name="id_conteo" type="hidden" />
                             <a href="../">Cancelar</a>
@@ -145,6 +145,7 @@
                     valorAjuste += "?id_conteo="+$(this).children()[0].innerText;
 
                     if ($(this).children()[2].innerText == "Ejecutada") {
+                        $("#btnConteoABC").attr("href", valor);
                         $('#btnConteoABC').unbind('click', false);
                         $('#btnConteoABC').attr('disabled', false);
                     }else{

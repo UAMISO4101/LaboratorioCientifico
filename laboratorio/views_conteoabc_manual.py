@@ -8,13 +8,18 @@ from laboratorio import views_busqueda_producto
 from django.db.models import Q
 from django.db import connection
 from datetime import datetime, timedelta
-from laboratorio.modelos_vista import Convertidor, json_default, ConteoABCVista
-from laboratorio.models import Tipo, Producto, Bodega, ConteoInventario
+from laboratorio.modelos_vista import Convertidor, json_default, ConteoABCVista, DetalleProductoVista
+from laboratorio.models import Tipo, Producto, Bodega, ConteoInventario, DetalleProductos
 
 
 @csrf_exempt
 def ir_conteosabc(request):
     return render(request, "laboratorio/ver_conteos_abc.html")
+
+@csrf_exempt
+def ir_obtenerconteoabc(request):
+    return render(request, "laboratorio/conteoabc_fisico.html")
+
 
 """Metodo obtener conteos abc.
 HU: EC-LCINV-20: Adicionar conteo abc manual
@@ -37,5 +42,31 @@ def obtener_conteos_abc(request):
         dh = timedelta(hours=5)
         c.fechaCreacion = (conteo.fecha_creacion - dh).strftime("%c")
         listaConteos.append(c)
+    json_string = json.dumps(listaConteos, cls=Convertidor)
+    return JsonResponse(json_string, safe=False)
+
+"""Metodo obtener conteo abc.
+HU: EC-LCINV-20: Adicionar conteo abc manual
+Sirve para obtener detalle de un conteo de inventario abc que tiene el sistema
+request, es la peticion dada por el usuario
+return, formato json con los usuarios
+"""
+@csrf_exempt
+def obtener_conteo_abc(request):
+    qs = DetalleProductos.objects.filter(conteoinventario=request.GET['id_conteo'])
+    listaConteos = []
+    if qs.exists():
+        for det_producto in qs:
+            detalle = DetalleProductoVista()
+            detalle.idDetalle = det_producto.id
+            detalle.nombreProducto = det_producto.producto.nombre
+            if det_producto.bodega is not None:
+                detalle.nombreBodega = det_producto.bodega.nombre
+                detalle.nivel = det_producto.nivel
+                detalle.seccion = det_producto.seccion
+            detalle.cantidad = int(det_producto.cantidad_contada)
+            detalle.unidadMedida = det_producto.unidad_medida.nombre
+            listaConteos.append(detalle)
+
     json_string = json.dumps(listaConteos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)

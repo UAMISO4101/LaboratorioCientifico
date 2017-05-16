@@ -94,4 +94,7 @@ urlpatterns = [
     url(r'^obtenerConteosABC/$', views_conteoabc_manual.obtener_conteos_abc, name='obtenerConteosABC'),
     url(r'^conteoabc/$', views_busqueda_producto.ver_conteoabc_busqueda, name='conteo_abc_busqueda'),
     url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_conteoabc, name='conteo_abc_json'),
+
+    url(r'^obtenerconteoabc/$', views_conteoabc_manual.ir_obtenerconteoabc, name='obtenerconteoabc'),
+    url(r'^obtenerconteo/$', views_conteoabc_manual.obtener_conteo_abc, name='obtenerconteo'),
 ]
