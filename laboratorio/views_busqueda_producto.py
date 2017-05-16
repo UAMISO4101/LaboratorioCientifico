@@ -16,7 +16,7 @@ from django.http import QueryDict
 from laboratorio.modelos_vista import Convertidor,  RecursoBusquedaVista, RecursoBusquedaDetalleVista
 from laboratorio.models import Usuario, Bodega
 from laboratorio.models import TransaccionInventario, Producto, ProductosEnBodega
-from laboratorio.models import Tipo, ConteoInventario
+from laboratorio.models import Tipo, ConteoInventario, DetalleProductos
 from laboratorio.utils.utils import utils
 
 
@@ -261,14 +261,6 @@ def ver_conteoabc_busqueda(request):
 def generar_conteo(request):
     # Aqui ya se supone que se validó que el request fuera POST y que proviniera del btngenerar.
 
-    ids = []
-    ids = request.POST.get('id', "")
-
-    qd = QueryDict(request.body)
-    for values in qd.lists():
-        for value in values:
-            a = 1
-
     # Insertar registro en ConteoInventario
     estado = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSCONTEO').first().id)
 
@@ -280,7 +272,15 @@ def generar_conteo(request):
 
     # Capturar la información del formulario
     # Insertar N registros en DetalleProductos
+    peb_ids = ""
 
+    qd = QueryDict(request.body)
+    for values in qd.lists():
+        for value in values:
+            if value == "id":
+                for valor in values[1]:
+                    # Insercion
+                    peb_ids = peb_ids + "_" + valor
 
     # Desplegar la información de confirmación
     mensaje = "ok"
@@ -288,6 +288,23 @@ def generar_conteo(request):
     mensaje = "Todos los campos deben estar debidamente diligenciados"
     return JsonResponse({"mensaje":mensaje})
 
+
+def guardar_DetalleProductos_Estado1(conteo, peb_id):
+    # Insertar registro en ConteoInventario
+    producto_en_bodega = ProductosEnBodega.objects.get(pk=ProductosEnBodega.objects.filter(id=int(peb_id)))
+
+    # detalle = DetalleProductos(conteoinventario=conteo, productosenbodega=producto_en_bodega,
+    #                           bodega=producto_en_bodega.bodega,
+    #                           producto=producto_en_bodega.producto,
+    #                           nivel=producto_en_bodega.nivel,
+    #                           seccion=producto_en_bodega.seccion,
+    #                           cantidad_contada=producto_en_bodega.cantidad,
+    #                           unidad_medida=producto_en_bodega.unidad_medida,
+    #                           usuario_conteo=Usuario.objects.get(pk=1),
+    #                           estado=1,
+
+    # detalle.save()
+    return
 
 # HU: LCINV-21
 # FB.
