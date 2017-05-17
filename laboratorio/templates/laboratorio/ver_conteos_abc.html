@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
+    <title>.:Laboratorio Científico:.</title>
+    <!-- Bootstrap core CSS     -->
+    <link href="../../../images/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animation library for notifications   -->
+    <link href="../../../images/assets/css/animate.min.css" rel="stylesheet">
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="../../../images/assets/css/light-bootstrap-dashboard.css" rel="stylesheet">
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="../../../images/assets/css/demo.css" rel="stylesheet">
+    <!--     Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+    <link href="../../../images/assets/css/pe-icon-7-stroke.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src=" https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
+
+</head>
+<body>
+<div id="wrapper">
+    <div class="sidebar" data-color="blue" data-image="../../../images/assets/img/sidebar-4.jpg" style="position: fixed">
+      <div class="sidebar-wrapper" style="position: fixed">
+        <div id="encabezado"></div>
+      </div>
+    </div>
+    <div class="main-panel">
+      <nav class="navbar navbar-default navbar-fixed">
+        <div class="container-fluid">
+          <div class="navbar-header"> <a class="navbar-brand" href="#">Profile</a> </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li> <a href="#">
+                                Log out
+                            </a> </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+        <br>
+    <div id="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Conteos ABC</h4>
+                    <p class="category">Lista de Conteos ABC - Inventario</p>
+                </div>
+                   <div id="mensaje_ok" class="alert alert-info">
+                        <label id="mensaje1_ok"></label>
+                    </div>
+                    <div id="mensaje" class="alert alert-warning">
+                        <label id="mensaje1"></label>
+                    </div>
+                    <form id="formConteo" action = "../enProveedor/" method = "post" style="padding: 20px">
+                        <div style="text-align: center;">
+                            <a href="../conteoabc" class="btn btn-primary" role="button">Crear Conteo</a>
+                            <a id="btnConteoABC" href="../conteoabc" class="btn btn-primary" role="button">Conteo Físico</a>
+                            <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
+                            <input id="id_conteo" name="id_conteo" type="hidden" />
+                            <a href="../">Cancelar</a>
+                        </div>
+                        <table id="tabla" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%"></table>
+                    </form>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+        <div id="pie"></div>
+    </div>
+</div>
+</body>
+<!--  Checkbox, Radio & Switch Plugins -->
+  <script src="../../../images/assets/js/bootstrap-checkbox-radio-switch.js"></script>
+  <!--  Charts Plugin -->
+  <script src="../../../images/assets/js/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../../../images/assets/js/bootstrap-notify.js"></script>
+  <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+  <script src="../../../images/assets/js/light-bootstrap-dashboard.js"></script>
+
+<script>
+    (function(){
+        try {
+            $("#encabezado").load("../encabezado");
+            $("#pie").load("../pie");
+            $('#btnConteoABC').attr('disabled', true);
+            $('#btnConteoABC').bind('click', false);
+            $('#btnAjustarABC').attr('disabled', true);
+            $('#btnAjustarABC').bind('click', false);
+            $("#mensaje_ok").hide();
+            $("#mensaje").hide();
+        }catch (exc){
+            alert(exc.message);
+        }
+    })();
+    $(function () {
+        $.getJSON("../obtenerConteosABC").done(function (data) {
+            datos =  $.parseJSON(data);
+            var tabla = $('#tabla').DataTable( {
+                "language": {
+                    "url": "../../../images/assets/js/dataTables.spanish.lang"
+                },
+                bProcessing: true,
+                "scrollX": true,
+                aaData: datos,
+                aoColumns: [
+                    { mData: "id" , sTitle: "Id"},
+                    { mData: "fechaCreacion" , sTitle: "Fecha Creación"},
+                    { mData: "estado" , sTitle: "Estado Conteo"},
+                    { mData: "nombreUsuarioCreacion" , sTitle: "Usuario Creación"}
+                ],
+            } );
+            $('#tabla tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                    $('#btnConteoABC').attr('disabled', true);
+                    $('#btnConteoABC').bind('click', false);
+                    $('#btnAjustarABC').attr('disabled', true);
+                    $('#btnAjustarABC').bind('click', false);
+                }
+                else {
+                    $("#mensaje_ok").hide();
+                    $("#mensaje").hide();
+                    tabla.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    valor = $("#btnConteoABC").attr('href');
+                    valorAjuste = $("#btnAjustarABC").attr('href');
+                    if (valor.indexOf("id_conteo")!=-1){
+                        valor = valor.split("?")[0];
+                    }
+                    valor += "?id_conteo="+$(this).children()[0].innerText;
+                    valorAjuste += "?id_conteo="+$(this).children()[0].innerText;
+
+                    if ($(this).children()[2].innerText == "Ejecutada") {
+                        $('#btnConteoABC').unbind('click', false);
+                        $('#btnConteoABC').attr('disabled', false);
+                    }else{
+                        if (valor.indexOf("id_conteo") != -1) {
+                            valor = valor.split("?")[0];
+                            $("#btnConteoABC").attr("href", valor);
+                            $('#btnConteoABC').unbind('click', true);
+                            $('#btnConteoABC').attr('disabled', true);
+                        }
+                    }
+
+                    if ($(this).children()[2].innerText == "Conteo Fisico" ||
+                        $(this).children()[2].innerText == "Ajustes") {
+                        $("#btnAjustarABC").attr("href", valorAjuste);
+                        $('#btnAjustarABC').unbind('click', false);
+                        $('#btnAjustarABC').attr('disabled', false);
+                    }
+                    else {
+                        if (valorAjuste.indexOf("id_conteo") != -1) {
+                            valorAjuste = valorAjuste.split("?")[0];
+                            $("#btnAjustarABC").attr("href", valorAjuste);
+                            $('#btnAjustarABC').unbind('click', true);
+                            $('#btnAjustarABC').attr('disabled', true);
+                        }
+                    }
+
+                }
+            });
+        });
+    });
+
+     $('#formConteo').submit(function (e) {
+        var formData = new FormData($("#formConteo")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    $("#mensaje_ok").show();
+                }
+                setTimeout(function(){
+                    location.reload();
+                },1000);
+            }
+        });
+        e.preventDefault();
+    });
+    /*
+    $('form').submit(function (e) {
+        var formData = new FormData($("#formCrearBodega")[0]);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data && data.mensaje && data.mensaje != "ok") {
+                    $("#mensaje1").text(data.mensaje);
+                    $("#mensaje").show();
+                } else {
+                    window.location = "../";
+                }
+            }
+        });
+        e.preventDefault();
+    });*/
+    /*
+    function logout(){
+        $.getJSON("logout").done(function (data) {
+            if (data.mensaje == 'ok'){
+                location.reload();
+            }else{
+                alert("Hubo un error");
+            }
+        });
+    }
+*/
+    </script>
+</html>

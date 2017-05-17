@@ -54,6 +54,12 @@
                         <p>Vencidos</p>
                     </a>
                 </li>
+                <li id="conteo">
+                    <a href="/laboratorio/verconteosabc">
+                        <i class="pe-7s-pen"></i>
+                        <p>Conteos ABC</p>
+                    </a>
+                </li>
             </ul>
 </body>
 
@@ -87,6 +93,10 @@
         else if(url.includes("vencidos"))
         {
             $("#ven").attr('class', 'active');
+        }
+        else if(url.includes("conteo"))
+        {
+            $("#conteo").attr('class', 'active');
         }
     })();
 

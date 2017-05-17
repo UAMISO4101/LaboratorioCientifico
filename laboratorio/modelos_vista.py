@@ -45,6 +45,7 @@ Clase que sirve de vista para objetos a mostrar al usuario
 """
 class RecursoBusquedaVista():
     id = 0
+    tipo_producto_conteo = ""
     nombre = ""
     unidadesExistentes = ""
     unidad_medida = ""
@@ -169,3 +170,13 @@ class ProductoVencimientoVista():
     dias_anticipacion = ""
     semaforo_vencimiento = ""
     semaforo_estado = ""
+
+"""Clase - Auxiliar  ConteoABCVista.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class ConteoABCVista():
+    id = 0
+    nombreUsuarioCreacion = ""
+    tipoInventario = ""
+    estado = ""
+    fechaCreacion = ""

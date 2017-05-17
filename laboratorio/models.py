@@ -102,6 +102,7 @@ class Producto(models.Model):
     stock_seguridad = models.DecimalField(max_digits=15, decimal_places=8, null=True)
     punto_pedido = models.DecimalField(max_digits=15, decimal_places=8, null=True)
     tipo_inventario_producto = models.ForeignKey(Tipo, related_name="TIPO_INVENTARIO_PRODUCTO", null=True)
+    tipo_producto_conteo = models.CharField(max_length=1, null=True)
 
 """Clase - Modelo ProductosEnBodega.
 """
@@ -218,7 +219,7 @@ class ConteoInventario(models.Model):
 class DetalleProductos(models.Model):
     conteoinventario = models.ForeignKey(ConteoInventario, null=False)
     productosenbodega = models.ForeignKey(ProductosEnBodega, null=True)
-    bodega = models.ForeignKey(Bodega, null=False)
+    bodega = models.ForeignKey(Bodega, null=True)
     producto = models.ForeignKey(Producto, null=True)
     nivel = models.IntegerField(null=True)
     seccion = models.IntegerField(null=True)
@@ -226,9 +227,9 @@ class DetalleProductos(models.Model):
     unidad_medida = models.ForeignKey(Tipo, related_name="tipo_unidadmedida_detalle", null=True)
     cantidad_fisica = models.IntegerField(null=True)
     usuario_conteo = models.ForeignKey(Usuario, related_name="usuario_creacion_detalle", null=True)
-    estado = models.ForeignKey(Tipo, related_name="STATUS_CONTEO_DETALLE", null=False)
+    estado = models.ForeignKey(Tipo, related_name="STATUS_CONTEO_DETALLE", null=True)
     diferencia_cantidad = models.IntegerField(null=True)
-    tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_detalle", null=False)
+    tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_detalle", null=True)
 
 
 """Clase - Ajuste.
@@ -243,3 +244,4 @@ class Ajuste(models.Model):
     diferencia_cantidad = models.IntegerField(null=True)
     tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_ajuste", null=False)
     transaccion_inventario = models.ForeignKey(TransaccionInventario, related_name="do_transaccion_ajuste", null=True)
+    estado = models.ForeignKey(Tipo, related_name="do_estado_ajuste", null=True)
