@@ -245,3 +245,6 @@ class Ajuste(models.Model):
     tipo_diferencia = models.ForeignKey(Tipo, related_name="tipo_diferencia_ajuste", null=False)
     transaccion_inventario = models.ForeignKey(TransaccionInventario, related_name="do_transaccion_ajuste", null=True)
     estado = models.ForeignKey(Tipo, related_name="do_estado_ajuste", null=True)
+
+class ProductoReposicionPendiente(models.Model):
+    producto = models.ForeignKey(Producto, null=True)

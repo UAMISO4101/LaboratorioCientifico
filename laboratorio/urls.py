@@ -91,7 +91,8 @@ urlpatterns = [
     url(r'^modal_or/$', views_orden_reposicion.ir_modal_or, name=''),
     url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
-
+    url(r'^guardarNotificacionOrden/$', views_orden_reposicion.guardarNotificacionOrden, name='guardarNotificacionOrden'),
+    url(r'^obtenerProductosOrdenPendiente/$', views_orden_reposicion.obtenerProductosPendienteReposicion, name='obtenerProductosOrdenPendiente'),
 
     url(r'^generarAjustesInventario/$', views_generar_ajustes_aprobacion.generarAjustesConteo, name='generarAjustesConteo'),
   
