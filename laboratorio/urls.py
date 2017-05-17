@@ -2,9 +2,11 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 
-from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos, \
-    views_bodegas, views_usuarios, views_transacciones, views_recursos, views_orden_reposicion, views_conteoabc_manual
+from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos, 
+views_bodegas, views_usuarios, views_transacciones, views_recursos, views_orden_reposicion, views_conteoabc_manual, views_generar_ajustes_aprobacion
 from . import views
+
+
 
 urlpatterns = [
     url(r'^$', views.ir_index, name=''),
@@ -90,6 +92,9 @@ urlpatterns = [
     url(r'^guardarDetalleOrdenReposicion/$', views_orden_reposicion.guardarDetalleOrdenReposicion, name='guardarDetalleOrdenReposicion'),
     url(r'^fechaPeticionOrRep/$', views_orden_reposicion.fechaPeticionOrdenReposicion, name='fechaPeticionOrRep'),
 
+
+    url(r'^generarAjustesInventario/$', views_generar_ajustes_aprobacion.generarAjustesConteo, name='generarAjustesConteo')
+  
     url(r'^verconteosabc/$', views_conteoabc_manual.ir_conteosabc, name='verconteosabc'),
     url(r'^obtenerConteosABC/$', views_conteoabc_manual.obtener_conteos_abc, name='obtenerConteosABC'),
     url(r'^conteoabc/$', views_busqueda_producto.ver_conteoabc_busqueda, name='conteo_abc_busqueda'),
