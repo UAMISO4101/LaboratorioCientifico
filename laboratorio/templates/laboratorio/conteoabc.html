@@ -24,9 +24,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="../../../images/assets/js/bootbox.min.js"></script>
 
     <script>
         (function(){
@@ -43,11 +41,10 @@
                         tablaresult=tablaresult+"<thead>";
                         tablaresult=tablaresult+"<tr>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">ID</th>";
-                        tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo <br> Inventario</th>";
+                        //tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo <br> Inventario</th>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">Producto</th>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">Bodega Actual</th>";
                         tablaresult=tablaresult+"<th style=\"text-align: center;\">Cantidad</th>";
-                        tablaresult=tablaresult+"<th style=\"text-align: center;\">Ajuste</th>";
                         tablaresult=tablaresult+"</tr>";
                         tablaresult=tablaresult+"</thead>";
 
@@ -70,9 +67,9 @@
                             if(productoactual != this.nombre)
                             {
                                 //Agregar fila totales
-                                result=result+"<tr><td align=\"right\" colspan=\"3\"><b>" + productoactual + " TOTAL</b></td>" +
+                                result=result+"<tr><td align=\"center\" colspan=\"3\"><b>" + productoactual + " TOTAL</b></td>" +
                                     "<td align=\"right\">" + sumatoria + " " + unidad_medida_actual +"</td>" +
-                                    "<td></td></tr>";
+                                    "</tr>";
 
                                 //Una vez creado los totales, actualizar las variables para el producto actual.
                                 productoactual = this.nombre;
@@ -85,33 +82,32 @@
 
                             result=result+"<tr>";
                             result=result+"<td style=\"text-align: center\">"+this.id+"<input type=\"hidden\" name=\"id\" value=\""+this.id+"\"></td>";
-                            result=result+"<td style=\"text-align: center\">"+this.tipo_producto_conteo+"</td>";
+                            //result=result+"<td style=\"text-align: center\">"+this.tipo_producto_conteo+"</td>";
                             result=result+"<td>"+this.nombre+"</td>";
                             result=result+"<td>"+this.bodegaActual+"</td>";
                             result=result+"<td style=\"text-align: right\">"+this.unidadesExistentes+" " + this.unidad_medida +" " + this.cantidad_convertida + "</td>";
-                            result=result+"<td style=\"text-align: center\"><input id=\""+('**'+this.nombre.replace(/ /g,"*")+'__'+this.bodegaActual.replace(/ /g,"*").replace(/,/g,"__")+'__'+this.unidadesExistentes)+"\" type=\"text\" size=\"4\">&nbsp;" +
-                                "<select id=\"tipoajuste\" name=\"tipoajuste\" style=\"width: auto; display: inline\">" +
-                                "<option value=\"0\" selected>Defecto</option>" +
-                                "<option value=\"1\">Exceso</option>" +
-                                "</select>" +
-                                "</td>";
                             result=result+"</tr>";
                         });
 
-                        result=result+"<tr><td align=\"right\" colspan=\"3\"><b>" + productoactual + " TOTAL</b></td>" +
+                        result=result+"<tr><td align=\"center\" colspan=\"3\"><b>" + productoactual + " TOTAL</b></td>" +
                             "<td align=\"right\">" + sumatoria + " " + unidad_medida_actual +"</td>" +
-                            "<td></td></tr>";
+                            "</tr>";
 
                         tablaresult=tablaresult+result+"</table>";
 
                         $(resultados).append(tablaresult);
+
+                        //Habilitar el boto Generar.
+
                     }
                     else{
                         $(resultados).append("<table class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\" width=\"85%%\"><tr><td align=\"center\"><b>No hay productos para mostrar</b></td></tr></table>");
+                        $("#btngenerar").hide();
                     }
                 }
                 else {
                     $(resultados).append("<table class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\" width=\"85%%\"><tr><td align=\"center\"><b>No hay productos para mostrar</b></td></tr></table>");
+                    $("#btngenerar").hide();
                 }
             });
         })();
@@ -148,21 +144,24 @@
                                 <p class="category"></p>
                             </div>
                             <form id="formconteoabc" action="../conteoabc/" method="post">
-                                <div id="busqueda" class="col-md-6 col-sm-offset-3" style="margin-left: 25%">
+                                <div id="busqueda" class="col-md-6 col-sm-offset-2"  >
                                     <table class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
                                         <tr>
 
                                             <td>
                                                 <b>Tipo Inventario</b>&nbsp;
-                                                <select id="tipoproductoinventario" name="tipoproductoinventario" class="form-control" style="width: auto; display: inline">
-                                                    <option selected disabled="disabled" value="">Seleccione...</option>
-                                                    <option value="A">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A</option>
-                                                    <option value="B">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B</option>
-                                                    <option value="C">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C</option>
+                                                <select id="tipoproductoinventario" name="tipoproductoinventario" onChange="this.form.submit();" class="form-control" style="width: auto; display: inline">
+                                                    <option value="" {% ifequal tipoproductoinventario '' %}selected {% endifequal %} disabled="disabled">Seleccione...</option>
+                                                    {% for item in opciones %}
+                                                    <option value="{{ item }}"
+                                                            {% ifequal tipoproductoinventario item %}selected{% endifequal %}>{{ item }}</option>
+                                                    {% endfor %}
                                                 </select>
+                                                &nbsp;
+                                                <input type="submit" id="btngenerar" name="btngenerar" value="Ejecutar Conteo" class="btn btn-primary"
+                                                       onclick="return pregunta();">
                                             </td>
-                                            <td align="center"><input type="submit" id="btnmostrar" name="btnmostrar" value="Mostrar productos" class="btn btn-primary"></td>
-                                            <td align="center"><input type="submit" id="btngenerar" name="btngenerar" value="Generar Conteo" class="btn btn-primary"></td>
+                                            </td>
                                         </tr>
                                     </table>
                                 </div>
@@ -198,4 +197,10 @@
         }
     })();
 </script>
+<script>
+    function pregunta () {
+        return confirm("Confirma que desea ejecutar el conteo con los productos listados?");
+        //return bootbox.confirm('Confirma que desea ejecutar el conteo con los productos listados?', function(){});
+    }
+    </script>
 </html>

@@ -251,60 +251,57 @@ def ver_conteoabc_busqueda(request):
 
     if generar != "":
         generar_conteo(request)
+        mensaje = "Se generó el conteo correctamente"
     else:
         busqueda_conteoabc(request)
 
-    return render(request, "laboratorio/conteoabc.html")
+    opciones = ["A", "B", "C"]
+
+    context = {'tipoproductoinventario': tipoinventario, 'opciones': opciones}
+
+    return render(request, "laboratorio/conteoabc.html", context)
 
 
-@csrf_exempt
 def generar_conteo(request):
     # Aqui ya se supone que se validó que el request fuera POST y que proviniera del btngenerar.
 
     # Insertar registro en ConteoInventario
     estado = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada', grupo='STATUSCONTEO').first().id)
 
-    cabecera = ConteoInventario(fecha_creacion=datetime.now(),
+    conteo = ConteoInventario(fecha_creacion=datetime.now(),
                                usuario_creacion=Usuario.objects.get(pk=1),
                                estado=estado,
                                fecha_cambio_estado=datetime.now())
-    # cabecera.save()
+    conteo.save()
 
-    # Capturar la información del formulario
-    # Insertar N registros en DetalleProductos
-    peb_ids = ""
-
+    # Capturar la información del formulario e insertar N registros en DetalleProductos
     qd = QueryDict(request.body)
     for values in qd.lists():
         for value in values:
             if value == "id":
                 for valor in values[1]:
                     # Insercion
-                    peb_ids = peb_ids + "_" + valor
+                    guardar_DetalleProductos_Estado_Inicial(conteo, valor)
 
-    # Desplegar la información de confirmación
-    mensaje = "ok"
-
-    mensaje = "Todos los campos deben estar debidamente diligenciados"
-    return JsonResponse({"mensaje":mensaje})
+    return True
 
 
-def guardar_DetalleProductos_Estado1(conteo, peb_id):
+def guardar_DetalleProductos_Estado_Inicial(conteo, peb_id):
     # Insertar registro en ConteoInventario
     producto_en_bodega = ProductosEnBodega.objects.get(pk=ProductosEnBodega.objects.filter(id=int(peb_id)))
 
-    # detalle = DetalleProductos(conteoinventario=conteo, productosenbodega=producto_en_bodega,
-    #                           bodega=producto_en_bodega.bodega,
-    #                           producto=producto_en_bodega.producto,
-    #                           nivel=producto_en_bodega.nivel,
-    #                           seccion=producto_en_bodega.seccion,
-    #                           cantidad_contada=producto_en_bodega.cantidad,
-    #                           unidad_medida=producto_en_bodega.unidad_medida,
-    #                           usuario_conteo=Usuario.objects.get(pk=1),
-    #                           estado=1,
+    detalle = DetalleProductos(conteoinventario=conteo, productosenbodega=producto_en_bodega,
+                               bodega=producto_en_bodega.bodega,
+                               producto=producto_en_bodega.producto,
+                               nivel=producto_en_bodega.nivel,
+                               seccion=producto_en_bodega.seccion,
+                               cantidad_contada=producto_en_bodega.cantidad,
+                               unidad_medida=producto_en_bodega.unidad_medida,
+                               usuario_conteo=Usuario.objects.get(pk=1)
+                               )
 
-    # detalle.save()
-    return
+    detalle.save()
+    return True
 
 # HU: LCINV-21
 # FB.
