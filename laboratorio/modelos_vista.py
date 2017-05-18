@@ -193,3 +193,4 @@ class DetalleProductoVista():
     cantidad = 0
     cantidad_fisica = 0
     unidadMedida = ""
+    diferencia_cantidad = 0

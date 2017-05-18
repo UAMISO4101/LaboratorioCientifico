@@ -97,4 +97,6 @@ urlpatterns = [
 
     url(r'^obtenerconteoabc/$', views_conteoabc_manual.ir_obtenerconteoabc, name='obtenerconteoabc'),
     url(r'^obtenerconteo/$', views_conteoabc_manual.obtener_conteo_abc, name='obtenerconteo'),
+    url(r'^actualizarconteofisico/$', views_conteoabc_manual.actualizar_conteo_fisico, name='actualizarconteofisico'),
+
 ]

@@ -62,7 +62,9 @@
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Nivel</th>";
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Sección</th>";
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Cantidad</th>";
+                            tablaresult=tablaresult+"<th style=\"text-align: center;\">Diferencia</th>";
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Ajuste</th>";
+                            tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo Diferencia</th>";
                             tablaresult=tablaresult+"</tr>";
                             tablaresult=tablaresult+"</thead>";
 
@@ -84,8 +86,8 @@
                                 {
                                     //Agregar fila totales
                                     if (productoactual && productoactual != 'undefined '){
-                                        result=result+"<tr><td align=\"right\" colspan=\"3\"><b>" + productoactual + " TOTAL</b></td>" +
-                                            "<td align=\"right\">" + sumatoria + " " + unidad_medida_actual +"</td>" +
+                                        result=result+"<tr><td align=\"right\" colspan=\"5\"><b>" + productoactual + " TOTAL</b></td>" +
+                                            "<td align=\"right\" style=\"font-weight:bold;\">" + sumatoria + " " + unidad_medida_actual +"</td>" +
                                             "<td></td></tr>";
                                     }
                                     //Una vez creado los totales, actualizar las variables para el producto actual.
@@ -103,14 +105,15 @@
                                 result=result+"<td>"+this.nombreBodega+"</td>";
                                 result=result+"<td>"+this.nivel+"</td>";
                                 result=result+"<td>"+this.seccion+"</td>";
-                                result=result+"<td style=\"text-align: right\">"+this.cantidad+" " + this.unidadMedida + "</td>";
-                                result=result+"<td style=\"text-align: center; width:20%;\"><input type=\"number\" maxlength=\"3\" style=\"width:60px;\">&nbsp;"+
-                                        "Exceso";
+                                result=result+"<td style=\"text-align: right\"><div id=\"cantidad"+(this.idDetalle)+"\">"+this.cantidad+" " + this.unidadMedida + "</div></td>";
+                                result=result+"<td style=\"text-align: right\"><div id=\"diferencia_cantidad"+(this.idDetalle)+"\">"+(this.diferencia_cantidad!=null?this.diferencia_cantidad:0) +" " + this.unidadMedida + "</div></td>";
+                                result=result+"<td style=\"text-align: center; width:10%;\"><input type=\"number\" maxlength=\"3\" style=\"width:60px;\" onblur=\"guardarCantidadFisica(this,"+this.idDetalle+");\">";
+                                result=result+"<td style=\"text-align: center; width:10%;\"><div id=\"tipo_diferencia"+(this.idDetalle)+"\"></div></td>";
                                 result=result+"</tr>";
                             });
 
-                            result=result+"<tr><td align=\"right\" colspan=\"3\"><b>" + productoactual + " TOTAL</b></td>" +
-                                "<td align=\"right\">" + sumatoria + " " + unidad_medida_actual +"</td>" +
+                            result=result+"<tr><td align=\"right\" colspan=\"5\"><b>" + productoactual + " TOTAL</b></td>" +
+                                "<td align=\"right\" style=\"font-weight:bold;\">" + sumatoria + " " + unidad_medida_actual +"</td>" +
                                 "<td></td></tr>";
 
                             tablaresult=tablaresult+result+"</table>";
@@ -192,5 +195,27 @@
             alert(exc.message);
         }
     })();
+
+    function guardarCantidadFisica(input, id_detalle_conteo){
+        $.ajax({
+            url: '../actualizarconteofisico/',
+            dataType: 'text',
+            type: 'post',
+            data: {
+                    "id_detalle_conteo":id_detalle_conteo,
+                    "cantidad_fisica":input.value
+                    },
+            success: function( data, textStatus, jQxhr ){
+                if (data){
+                    data = $.parseJSON(data);
+                    document.getElementById("diferencia_cantidad"+id_detalle_conteo).innerText = data.diferencia_cantidad;
+                    document.getElementById("tipo_diferencia"+id_detalle_conteo).innerText = data.tipo_diferencia;
+                }
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                console.log( errorThrown );
+            }
+        });
+    }
 </script>
 </html>
