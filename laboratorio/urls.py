@@ -95,9 +95,14 @@ urlpatterns = [
     url(r'^obtenerProductosOrdenPendiente/$', views_orden_reposicion.obtenerProductosPendienteReposicion, name='obtenerProductosOrdenPendiente'),
 
     url(r'^generarAjustesInventario/$', views_generar_ajustes_aprobacion.generarAjustesConteo, name='generarAjustesConteo'),
-  
+
     url(r'^verconteosabc/$', views_conteoabc_manual.ir_conteosabc, name='verconteosabc'),
     url(r'^obtenerConteosABC/$', views_conteoabc_manual.obtener_conteos_abc, name='obtenerConteosABC'),
     url(r'^conteoabc/$', views_busqueda_producto.ver_conteoabc_busqueda, name='conteo_abc_busqueda'),
     url(r'^busquedaproductofiltros/$', views_busqueda_producto.busqueda_conteoabc, name='conteo_abc_json'),
+
+    url(r'^obtenerconteoabc/$', views_conteoabc_manual.ir_obtenerconteoabc, name='obtenerconteoabc'),
+    url(r'^obtenerconteo/$', views_conteoabc_manual.obtener_conteo_abc, name='obtenerconteo'),
+    url(r'^actualizarconteofisico/$', views_conteoabc_manual.actualizar_conteo_fisico, name='actualizarconteofisico'),
+
 ]

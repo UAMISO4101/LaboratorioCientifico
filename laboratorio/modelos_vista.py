@@ -132,17 +132,17 @@ class OrdenPedidoVista():
 Clase que sirve de vista para objetos a mostrar al usuario
 """
 class DetalleOrdenVista():
-    idProducto = 0;
-    nombreProducto = "";
-    idBodega = 0;
-    nombreBodega = "";
-    nivel = 0;
-    seccion = 0;
-    valorUnitario = 0.0;
-    cantidad = 0.0;
-    fechaMovimiento = None;
-    transaccion_inventario=0;
-    estado="";
+    idProducto = 0
+    nombreProducto = ""
+    idBodega = 0
+    nombreBodega = ""
+    nivel = 0
+    seccion = 0
+    valorUnitario = 0.0
+    cantidad = 0.0
+    fechaMovimiento = None
+    transaccion_inventario=0
+    estado=""
 
 # HU-LCINV-13
 # GZ
@@ -180,3 +180,19 @@ class ConteoABCVista():
     tipoInventario = ""
     estado = ""
     fechaCreacion = ""
+
+"""Clase - Auxiliar  Detalle Productos.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class DetalleProductoVista():
+    idDetalle = 0;
+    nombreProducto = ""
+    nombreBodega = ""
+    nivel = 0
+    seccion = 0
+    cantidad = 0
+    cantidad_fisica = 0
+    unidadMedida = ""
+    diferencia_cantidad = 0
+    ver_btn_ajuste = "0"
+    ver_msj_cerrada = "0"
