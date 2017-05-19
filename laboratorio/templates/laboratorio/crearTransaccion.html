@@ -400,7 +400,7 @@
                             {
                                 nivel_actual = $.parseJSON(data.res0);
                                 punto_pedido = $.parseJSON(data.res1);
-                                message = '<p style="text-align: justify">El recurso actual tiene un <b>nivel disponible</b> de '+ nivel_actual+ ' y un <b>punto de pedido (mínimo)</b> de '+ punto_pedido + ' por lo que se recomienda generar una orden de reposición. Desea generarla automáticamente?</p> <button class="btn btn-success" onclick="crearOrdenReapro()"><span class="pe-7s-check"></span> Si</button><button style="margin-left: 80px !important;" class="btn btn-danger" onclick="posponerOrdenRepo()"><span class="pe-7s-close-circle"></span> No</button>';
+                                message = '<p style="text-align: justify">El recurso actual tiene un <b>nivel disponible</b> de '+ nivel_actual+ ' y un <b>punto de pedido (mínimo)</b> de '+ punto_pedido + ' por lo que se recomienda generar una orden de reposición. Desea generarla automáticamente?</p> <button class="btn btn-success" onclick="demo.crearOrdenReapro(null)"><span class="pe-7s-check"></span> Si</button><button style="margin-left: 80px !important;" class="btn btn-danger" onclick="demo.posponerOrdenRepo(null)"><span class="pe-7s-close-circle"></span> No</button>';
                                 demo.showNotification('bottom','center', message)
                             }
                         }
@@ -441,41 +441,6 @@
             return false;
         }
         return true;
-    }
-
-    function crearOrdenReapro()
-    {
-        $.getJSON("../crearOrdenReposicion").done(function (data) {
-            if(data)
-            {
-                mensaje = data.mensaje
-                console.log(mensaje);
-                if(mensaje == "ok")
-                {
-                    demo.closeNotification();
-                    $("#modalOrden").modal('show');
-                }
-                else
-                {
-                    demo.showNotification('bottom', 'center', mensaje)
-                }
-            }
-        })
-    }
-    function posponerOrdenRepo()
-    {
-        $.getJSON("../guardarNotificacionOrden").done(function (data) {
-            if(data)
-            {
-                mensaje = data.mensaje
-                console.log(mensaje);
-                if(mensaje == "ok")
-                {
-                    demo.closeNotification();
-                    demo.actualizarNotificaciones();
-                }
-            }
-        })
     }
     </script>
 </html>

@@ -18,14 +18,13 @@ def ir_modal_or(request):
 
 @csrf_exempt
 def crearOrdenPedido(request):
-
-    pk_producto = request.session.get('producto_id', None)
-    if pk_producto != None:
-        producto = Producto.objects.get(id=pk_producto)
+    if request.method == 'GET' and 'id' in request.GET:
+        id = request.GET['id']
+        producto = Producto.objects.get(id=id)
         proveedor = producto.proveedor
         fecha_actual = datetime.now()
         estado = Tipo.objects.get(nombre="Ingresada")
-        usuario_creacion = Usuario.objects.filter(is_superuser=False).exclude(roles__nombre = 'Proveedor').first()
+        usuario_creacion = Usuario.objects.filter(is_superuser=False).exclude(roles__nombre='Proveedor').first()
         observaciones = "Orden de Reposición por nivel mínimo generada automáticamente."
         orden_pedido = OrdenPedido(fecha_peticion=fecha_actual,
                                    estado=estado,
@@ -36,8 +35,25 @@ def crearOrdenPedido(request):
         mensaje = "ok"
         request.session['orden_pedido_id'] = orden_pedido.id
     else:
-        mensaje = "Error al crear la orden de reposición"
-    return JsonResponse({'mensaje':mensaje})
+        pk_producto = request.session.get('producto_id', None)
+        if pk_producto != None:
+            producto = Producto.objects.get(id=pk_producto)
+            proveedor = producto.proveedor
+            fecha_actual = datetime.now()
+            estado = Tipo.objects.get(nombre="Ingresada")
+            usuario_creacion = Usuario.objects.filter(is_superuser=False).exclude(roles__nombre = 'Proveedor').first()
+            observaciones = "Orden de Reposición por nivel mínimo generada automáticamente."
+            orden_pedido = OrdenPedido(fecha_peticion=fecha_actual,
+                                      estado=estado,
+                                      usuario_creacion=usuario_creacion,
+                                      proveedor=proveedor,
+                                      observaciones=observaciones)
+            orden_pedido.save()
+            mensaje = "ok"
+            request.session['orden_pedido_id'] = orden_pedido.id
+        else:
+            mensaje = "Error al crear la orden de reposición"
+        return JsonResponse({'mensaje':mensaje})
 
 @csrf_exempt
 def obtenerInfoProducto(request):
@@ -98,14 +114,23 @@ def fechaPeticionOrdenReposicion(request):
 @csrf_exempt
 def guardarNotificacionOrden(request):
 
-    pk_producto = request.session.get('producto_id', None)
-    if pk_producto != None:
-        producto = Producto.objects.get(id=pk_producto)
-        productoReposicion = ProductoReposicionPendiente()
-        productoReposicion.producto = producto
-        productoReposicion.save()
-        del request.session['producto_id']
-        return JsonResponse({'mensaje':'ok'})
+    if request.method == 'GET' and 'id' in request.GET:
+        id = request.GET['id']
+        if id != None and ProductoReposicionPendiente.objects.filter(producto_id=id).exists() == False:
+            producto = Producto.objects.get(id=id)
+            productoReposicion = ProductoReposicionPendiente()
+            productoReposicion.producto = producto
+            productoReposicion.save()
+            return JsonResponse({'mensaje':'ok'})
+    else:
+        pk_producto = request.session.get('producto_id', None)
+        if pk_producto != None and ProductoReposicionPendiente.objects.filter(producto_id=pk_producto).exists() == False:
+            producto = Producto.objects.get(id=pk_producto)
+            productoReposicion = ProductoReposicionPendiente()
+            productoReposicion.producto = producto
+            productoReposicion.save()
+            del request.session['producto_id']
+            return JsonResponse({'mensaje':'ok'})
 
 @csrf_exempt
 def obtenerProductosPendienteReposicion(request):
