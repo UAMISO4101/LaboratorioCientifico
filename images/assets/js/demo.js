@@ -99,7 +99,33 @@ demo = {
     closeNotification:function () {
         this.nofity.close();
     },
-
+    actualizarNotificaciones:function()
+    {
+        $.getJSON("../obtenerProductosOrdenPendiente").done(function (data) {
+            if(data)
+            {
+                productos = data.productos;
+                produc = $.parseJSON(productos)
+                console.log(produc.length)
+                var prod;
+                var strn = "";
+                if(produc.length > 0)
+                {
+                    $("#linkOrdenes").html('<i class="fa fa-globe"></i> <b class="caret"></b> <span class="notification">'+produc.length+'</span>');
+                    for(prod in produc)
+                    {
+                        strn+='<li><a href="#">'+produc[prod].nombre+'</a></li>';
+                        prod++;
+                    }
+                    $("#dropOrdenes").html(strn);
+                }
+                else
+                {
+                    $("#linkOrdenes").html('<i class="fa fa-globe"></i> <b class="caret"></b>');
+                }
+            }
+        })
+    }
 };
 
 

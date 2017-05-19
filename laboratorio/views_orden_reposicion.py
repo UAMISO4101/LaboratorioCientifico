@@ -9,7 +9,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-from laboratorio.models import Producto, Tipo, Usuario, OrdenPedido, Rol, Bodega, DetalleOrden
+from laboratorio.modelos_vista import Convertidor, ProductoVista
+from laboratorio.models import Producto, Tipo, Usuario, OrdenPedido, Bodega, DetalleOrden, ProductoReposicionPendiente
 
 
 def ir_modal_or(request):
@@ -93,3 +94,41 @@ def fechaPeticionOrdenReposicion(request):
         orden = OrdenPedido.objects.get(id=pk_orden)
         fechaPeticion = orden.fecha_peticion.strftime('%c')
         return JsonResponse({"fecha": fechaPeticion})
+
+@csrf_exempt
+def guardarNotificacionOrden(request):
+
+    pk_producto = request.session.get('producto_id', None)
+    if pk_producto != None:
+        producto = Producto.objects.get(id=pk_producto)
+        productoReposicion = ProductoReposicionPendiente()
+        productoReposicion.producto = producto
+        productoReposicion.save()
+        del request.session['producto_id']
+        return JsonResponse({'mensaje':'ok'})
+
+@csrf_exempt
+def obtenerProductosPendienteReposicion(request):
+
+    productos = ProductoReposicionPendiente.objects.all()
+    listaProductos = []
+    for producto in productos:
+        produc = Producto.objects.get(id=producto.producto_id)
+        prod = ProductoVista()
+        prod.id = produc.id
+        prod.codigo = produc.codigo
+        prod.nombre = produc.nombre
+        prod.descripcion = produc.descripcion
+        prod.valorUnitario = str(produc.valorUnitario)
+        prod.unidadesExistentes = str(produc.unidadesExistentes)
+        prod.clasificacion = produc.get_clasificacion_display()
+        prod.unidad_medida = produc.unidad_medida.nombre
+        prod.unidad_unitaria = str(produc.unidad_unitaria)
+        prod.imageFile = str(produc.imageFile)
+        prod.proveedor = produc.proveedor.first_name
+        prod.codigo_color = str("")
+        prod.punto_pedido = str(produc.punto_pedido)
+        prod.nivel_actual = str("")
+        listaProductos.append(prod)
+    json_string = json.dumps(listaProductos, cls=Convertidor)
+    return JsonResponse({'productos':json_string})
