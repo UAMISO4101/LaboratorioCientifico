@@ -40,6 +40,7 @@
         }
 
         (function(){
+            $("#btnCerrada").hide();
             var parametroConteo = GetParameterValues("id_conteo");
             if (parametroConteo) {
                 //cargar informacion
@@ -80,6 +81,19 @@
                                     unidad_medida_actual = this.unidad_medida;
                                     sumatoria = 0;
                                     primercalculo = false;
+                                    if (this.ver_btn_ajuste=='0'){
+                                        $('#btnAjustarABC').attr('disabled', true);
+                                        $('#btnAjustarABC').bind('click', false);
+                                    }else {
+                                        $('#btnAjustarABC').attr('disabled', false);
+                                    }
+                                    if (this.ver_msj_cerrada == '1'){
+                                        $("#btnCerrada").show();
+                                        $('#btnCerrada').attr('disabled', true);
+                                        $('#btnCerrada').bind('click', false);
+                                    }else{
+                                        $("#btnCerrada").hide();
+                                    }
                                 }
 
                                 if(productoactual != this.nombreProducto)
@@ -164,10 +178,15 @@
                                 <h4 class="title">Conteo Físico</h4>
                                 <p class="category"></p>
                             </div>
-                            <form id="formconteoabc" action="../conteoabc/" method="post">
-                                <div id="resultados" style="padding: 20px">
-                                </div>
-                            </form>
+
+                            <div style="text-align: center;">
+                                <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
+                                <a id="btnCerrada" href="" class="btn btn-info" role="button">Conteo Fisico Cerrado</a>
+                                <a href="../verconteosabc/">Cancelar</a>
+                            </div>
+                            <div id="resultados" style="padding: 20px">
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -210,6 +229,20 @@
                     data = $.parseJSON(data);
                     document.getElementById("diferencia_cantidad"+id_detalle_conteo).innerText = data.diferencia_cantidad;
                     document.getElementById("tipo_diferencia"+id_detalle_conteo).innerText = data.tipo_diferencia;
+                    if (data.ver_btn_ajuste=='0'){
+                        $('#btnAjustarABC').attr('disabled', true);
+                        $('#btnAjustarABC').bind('click', false);
+                    }else{
+                        $('#btnAjustarABC').attr('disabled', false);
+                    }
+                    if (data.ver_msj_cerrada == '1'){
+                        $("#btnCerrada").show();
+                        $('#btnCerrada').attr('disabled', true);
+                        $('#btnCerrada').bind('click', false);
+                    }else{
+                        $("#btnCerrada").hide();
+                    }
+
                 }
             },
             error: function( jqXhr, textStatus, errorThrown ){

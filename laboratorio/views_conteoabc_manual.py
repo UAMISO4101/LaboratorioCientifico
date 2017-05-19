@@ -53,8 +53,9 @@ return, formato json con los usuarios
 """
 @csrf_exempt
 def obtener_conteo_abc(request):
-    qs = DetalleProductos.objects.filter(conteoinventario=request.GET['id_conteo']).order_by('producto')
+    qs = DetalleProductos.objects.filter(conteoinventario=request.GET['id_conteo']).order_by('producto','id')
     listaConteos = []
+    ver_btn_ajuste = False
     if qs.exists():
         for det_producto in qs:
             detalle = DetalleProductoVista()
@@ -68,7 +69,29 @@ def obtener_conteo_abc(request):
             detalle.diferencia_cantidad = det_producto.diferencia_cantidad
             detalle.unidadMedida = det_producto.unidad_medida.nombre
             listaConteos.append(detalle)
+            if not ver_btn_ajuste and (det_producto.diferencia_cantidad == None or det_producto.diferencia_cantidad != 0):
+                ver_btn_ajuste = True
 
+        if ver_btn_ajuste:
+            listaConteos.__getitem__(0).ver_btn_ajuste = "1"
+        else:
+            listaConteos.__getitem__(0).ver_btn_ajuste = "0"
+
+        detalles_prod = DetalleProductos.objects.filter(conteoinventario=det_producto.conteoinventario)
+        cantidadNone = detalles_prod.filter(cantidad_fisica=None).count()
+        cantidadCero = detalles_prod.filter(diferencia_cantidad=0).count()
+        ver_msj_cerrada = "0"
+        if cantidadNone == 0:
+            cont_inv = ConteoInventario.objects.filter(id=det_producto.conteoinventario.id).first()
+            if cantidadCero != detalles_prod.count():
+                cont_inv.estado = Tipo.objects.get(grupo = "STATUSCONTEO",nombre__contains="Ajustes")
+            else:
+                cont_inv.estado = Tipo.objects.get(grupo = "STATUSCONTEO",nombre__contains="Cerrada")
+                ver_msj_cerrada = "1"
+            cont_inv.save()
+        else:
+            listaConteos.__getitem__(0).ver_btn_ajuste = "0"
+        listaConteos.__getitem__(0).ver_msj_cerrada = ver_msj_cerrada
     json_string = json.dumps(listaConteos, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
@@ -82,6 +105,9 @@ return, formato json con la respuesta si es exceso o defecto
 def actualizar_conteo_fisico(request):
     diferencia_cantidad = 0
     tipo_diferencia = "-"
+    ver_btn_ajuste = "0"
+    ver_msj_cerrada = "0"
+
     # Capturar el valor de los campos
     if request.method == 'POST':
         qs = DetalleProductos.objects.filter(id=request.POST['id_detalle_conteo'])
@@ -101,11 +127,22 @@ def actualizar_conteo_fisico(request):
                     det_producto.diferencia_cantidad = 0
 
                 det_producto.save()
-
+                detalles_prod = DetalleProductos.objects.filter(conteoinventario=det_producto.conteoinventario)
+                cantidadNone = detalles_prod.filter(cantidad_fisica = None).count()
+                cantidadCero = detalles_prod.filter(diferencia_cantidad = 0).count()
+                if cantidadNone == 0:
+                    cont_inv = ConteoInventario.objects.filter(id=det_producto.conteoinventario.id).first()
+                    if cantidadCero != detalles_prod.count():
+                        ver_btn_ajuste = "1"
+                        cont_inv.estado = Tipo.objects.get(grupo = "STATUSCONTEO", nombre__contains="Ajustes")
+                    else:
+                        cont_inv.estado = Tipo.objects.get(grupo = "STATUSCONTEO", nombre__contains="Cerrada")
+                        ver_msj_cerrada = "1"
+                    cont_inv.save()
             strDiferencia = '0'
             if det_producto.diferencia_cantidad != None:
                 strDiferencia = str(det_producto.diferencia_cantidad)
             diferencia_cantidad = strDiferencia + " " + det_producto.unidad_medida.nombre
             tipo_diferencia = det_producto.tipo_diferencia.nombre
 
-    return JsonResponse({"diferencia_cantidad": diferencia_cantidad,"tipo_diferencia": tipo_diferencia})
+    return JsonResponse({"diferencia_cantidad": diferencia_cantidad,"tipo_diferencia": tipo_diferencia, "ver_btn_ajuste": ver_btn_ajuste, "ver_msj_cerrada":ver_msj_cerrada})

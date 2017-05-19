@@ -194,3 +194,5 @@ class DetalleProductoVista():
     cantidad_fisica = 0
     unidadMedida = ""
     diferencia_cantidad = 0
+    ver_btn_ajuste = "0"
+    ver_msj_cerrada = "0"

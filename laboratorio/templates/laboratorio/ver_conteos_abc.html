@@ -67,7 +67,6 @@
                         <div style="text-align: center;">
                             <a href="../conteoabc" class="btn btn-primary" role="button">Crear Conteo</a>
                             <a id="btnConteoABC" href="../obtenerconteoabc" class="btn btn-primary" role="button">Conteo Físico</a>
-                            <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
                             <input id="id_conteo" name="id_conteo" type="hidden" />
                             <a href="../">Cancelar</a>
                         </div>
@@ -98,8 +97,6 @@
             $("#pie").load("../pie");
             $('#btnConteoABC').attr('disabled', true);
             $('#btnConteoABC').bind('click', false);
-            $('#btnAjustarABC').attr('disabled', true);
-            $('#btnAjustarABC').bind('click', false);
             $("#mensaje_ok").hide();
             $("#mensaje").hide();
         }catch (exc){
@@ -128,8 +125,6 @@
                     $(this).removeClass('selected');
                     $('#btnConteoABC').attr('disabled', true);
                     $('#btnConteoABC').bind('click', false);
-                    $('#btnAjustarABC').attr('disabled', true);
-                    $('#btnAjustarABC').bind('click', false);
                 }
                 else {
                     $("#mensaje_ok").hide();
@@ -137,18 +132,17 @@
                     tabla.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                     valor = $("#btnConteoABC").attr('href');
-                    valorAjuste = $("#btnAjustarABC").attr('href');
                     if (valor.indexOf("id_conteo")!=-1){
                         valor = valor.split("?")[0];
                     }
                     valor += "?id_conteo="+$(this).children()[0].innerText;
-                    valorAjuste += "?id_conteo="+$(this).children()[0].innerText;
 
-                    if ($(this).children()[2].innerText == "Ejecutada") {
+                    if ($(this).children()[2].innerText == "Ejecutada" ||
+                            $(this).children()[2].innerText == "Ajustes") {
                         $("#btnConteoABC").attr("href", valor);
                         $('#btnConteoABC').unbind('click', false);
                         $('#btnConteoABC').attr('disabled', false);
-                    }else{
+                    }else {
                         if (valor.indexOf("id_conteo") != -1) {
                             valor = valor.split("?")[0];
                             $("#btnConteoABC").attr("href", valor);
@@ -156,22 +150,6 @@
                             $('#btnConteoABC').attr('disabled', true);
                         }
                     }
-
-                    if ($(this).children()[2].innerText == "Conteo Fisico" ||
-                        $(this).children()[2].innerText == "Ajustes") {
-                        $("#btnAjustarABC").attr("href", valorAjuste);
-                        $('#btnAjustarABC').unbind('click', false);
-                        $('#btnAjustarABC').attr('disabled', false);
-                    }
-                    else {
-                        if (valorAjuste.indexOf("id_conteo") != -1) {
-                            valorAjuste = valorAjuste.split("?")[0];
-                            $("#btnAjustarABC").attr("href", valorAjuste);
-                            $('#btnAjustarABC').unbind('click', true);
-                            $('#btnAjustarABC').attr('disabled', true);
-                        }
-                    }
-
                 }
             });
         });
