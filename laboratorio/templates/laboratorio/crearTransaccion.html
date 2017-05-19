@@ -33,7 +33,15 @@
       <nav class="navbar navbar-default navbar-fixed">
         <div class="container-fluid">
           <div class="navbar-header"> <a class="navbar-brand" href="#">Profile</a> </div>
-          <div class="collapse navbar-collapse">
+          <div class="collapse navbar-collapse"><ul class="nav navbar-nav navbar-left"><li class="dropdown">                              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="linkOrdenes">                              </a>                              <ul class="dropdown-menu" id="dropOrdenes">                              </ul>                        </li>               </ul>
+               <ul class="nav navbar-nav navbar-left">
+                   <li class="dropdown">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="linkOrdenes">
+                              </a>
+                              <ul class="dropdown-menu" id="dropOrdenes">
+                              </ul>
+                        </li>
+               </ul>
             <ul class="nav navbar-nav navbar-right">
               <li> <a href="#">
                                 Log out
@@ -336,7 +344,8 @@
         try {
             $("#modal2").load("../modal_or")
             $("#encabezado").load("../encabezado");
-            $("#pie").load("../pie");
+            $("#pie").load("../pie"); demo.actualizarNotificaciones();
+            demo.actualizarNotificaciones();
             var niveles = $( "#niveles" ).spinner();
             var secciones = $( "#secciones" ).spinner();
             var temperaturaMinima = $( "#temperaturaMinima" ).spinner({
@@ -391,7 +400,7 @@
                             {
                                 nivel_actual = $.parseJSON(data.res0);
                                 punto_pedido = $.parseJSON(data.res1);
-                                message = '<p style="text-align: justify">El recurso actual tiene un <b>nivel disponible</b> de '+ nivel_actual+ ' y un <b>punto de pedido (mínimo)</b> de '+ punto_pedido + ' por lo que se recomienda generar una orden de reposición. Desea generarla automáticamente?</p> <button class="btn btn-success" onclick="crearOrdenReapro()"><span class="pe-7s-check"></span> Si</button><button style="margin-left: 80px !important;" class="btn btn-danger" onclick="demo.closeNotification()"><span class="pe-7s-close-circle"></span> No</button>';
+                                message = '<p style="text-align: justify">El recurso actual tiene un <b>nivel disponible</b> de '+ nivel_actual+ ' y un <b>punto de pedido (mínimo)</b> de '+ punto_pedido + ' por lo que se recomienda generar una orden de reposición. Desea generarla automáticamente?</p> <button class="btn btn-success" onclick="crearOrdenReapro()"><span class="pe-7s-check"></span> Si</button><button style="margin-left: 80px !important;" class="btn btn-danger" onclick="posponerOrdenRepo()"><span class="pe-7s-close-circle"></span> No</button>';
                                 demo.showNotification('bottom','center', message)
                             }
                         }
@@ -449,6 +458,21 @@
                 else
                 {
                     demo.showNotification('bottom', 'center', mensaje)
+                }
+            }
+        })
+    }
+    function posponerOrdenRepo()
+    {
+        $.getJSON("../guardarNotificacionOrden").done(function (data) {
+            if(data)
+            {
+                mensaje = data.mensaje
+                console.log(mensaje);
+                if(mensaje == "ok")
+                {
+                    demo.closeNotification();
+                    demo.actualizarNotificaciones();
                 }
             }
         })
