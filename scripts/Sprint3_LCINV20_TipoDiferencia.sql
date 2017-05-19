@@ -1,0 +1,1 @@
+INSERT INTO laboratorio_tipo (grupo, nombre, valor) SELECT 'TIPODIFERENCIA', '-', '3'
