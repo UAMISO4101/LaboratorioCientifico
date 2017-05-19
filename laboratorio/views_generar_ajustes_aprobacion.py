@@ -36,7 +36,7 @@ def generarAjustesConteo(request):
             seccion = det_conteo.seccion,
             diferencia_cantidad = det_conteo.diferencia_cantidad,
             tipo_diferencia = det_conteo.tipo_diferencia,
-            #estado='Por aprobar'
+            estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='En aprobacion', grupo='AJUSTE').first().id),
         )
         ajuste.save()
     mensaje = "ok"
