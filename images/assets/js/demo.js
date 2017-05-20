@@ -114,17 +114,106 @@ demo = {
                     $("#linkOrdenes").html('<i class="fa fa-globe"></i> <b class="caret"></b> <span class="notification">'+produc.length+'</span>');
                     for(prod in produc)
                     {
-                        strn+='<li><a href="#">'+produc[prod].nombre+'</a></li>';
+                        id = produc[prod].id;
+                        strn += '<li><a href="#" id="' + id + '">' + produc[prod].nombre + '</a></li>';
                         prod++;
                     }
                     $("#dropOrdenes").html(strn);
+                    for (prod in produc)
+                    {
+                        id = produc[prod].id;
+                        nivel_actual = produc[prod].nivel_actual;
+                        punto_pedido = produc[prod].punto_pedido;
+                        message = '<p style="text-align: justify">El recurso actual tiene un <b>nivel disponible</b> de '+ nivel_actual+ ' y un <b>punto de pedido (mínimo)</b> de '+ punto_pedido + ' por lo que se recomienda generar una orden de reposición. Desea generarla automáticamente?</p> <button class="btn btn-success" onclick="demo.crearOrdenReapro('+id+')"><span class="pe-7s-check"></span> Si</button><button style="margin-left: 80px !important;" class="btn btn-danger" onclick="demo.posponerOrdenRepo('+id+')"><span class="pe-7s-close-circle"></span> No</button>';
+                        $('#'+id).click(function () {
+                            demo.showNotification('bottom', 'center', message);
+                        })
+                    }
                 }
                 else
                 {
                     $("#linkOrdenes").html('<i class="fa fa-globe"></i> <b class="caret"></b>');
+                    $("#dropOrdenes").html('<li><a href="#">No hay ordenes de reposición <br>pendientes.</a> </li>')
                 }
             }
         })
+    },
+    crearOrdenReapro: function (id)
+    {
+        if(id == null)
+        {
+            $.getJSON("../crearOrdenReposicion").done(function (data) {
+            if(data)
+            {
+                mensaje = data.mensaje
+                console.log(mensaje);
+                if(mensaje == "ok")
+                {
+                    demo.closeNotification();
+                    $("#modalOrden").modal('show');
+                }
+                else
+                {
+                    demo.showNotification('bottom', 'center', mensaje)
+                }
+            }
+            })
+        }
+        else
+        {
+             $.getJSON("../crearOrdenReposicion",
+                 {id:id}).done(function (data) {
+            if(data)
+            {
+                mensaje = data.mensaje
+                console.log(mensaje);
+                if(mensaje == "ok")
+                {
+                    demo.closeNotification();
+                    $("#modalOrden").modal('show');
+                }
+                else
+                {
+                    demo.showNotification('bottom', 'center', mensaje)
+                }
+            }
+            })
+        }
+
+    },
+    posponerOrdenRepo: function(id)
+    {
+        if(id == null)
+        {
+            $.getJSON("../guardarNotificacionOrden").done(function (data) {
+            if(data)
+            {
+                mensaje = data.mensaje
+                console.log(mensaje);
+                if(mensaje == "ok")
+                {
+                    demo.closeNotification();
+                    demo.actualizarNotificaciones();
+                }
+            }
+            })
+        }
+        else
+        {
+            $.getJSON("../guardarNotificacionOrden",
+                {id:id}).done(function (data) {
+            if(data)
+            {
+                mensaje = data.mensaje
+                console.log(mensaje);
+                if(mensaje == "ok")
+                {
+                    demo.closeNotification();
+                    demo.actualizarNotificaciones();
+                }
+            }
+        })
+        }
     }
 };
 

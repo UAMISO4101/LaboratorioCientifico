@@ -93,6 +93,7 @@
       </div>
       <div id="pie"></div>
     </div>
+      <div id="modal2" class="card" style="display: initial"></div>
   </div>
   <!--   Core JS Files   -->
   <script src="../../../images/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
@@ -110,7 +111,7 @@
   <script>
     (function(){
             try {
-                $("#encabezado").load("encabezado");
+                $("#modal2").load("../modal_or");$("#encabezado").load("../encabezado");
                 $("#pie").load("pie");
                 demo.actualizarNotificaciones();
             }catch (exc){

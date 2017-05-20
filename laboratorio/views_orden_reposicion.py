@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
+from laboratorio import views_nivel_insumos
 from laboratorio.modelos_vista import Convertidor, ProductoVista
 from laboratorio.models import Producto, Tipo, Usuario, OrdenPedido, Bodega, DetalleOrden, ProductoReposicionPendiente
 
@@ -18,25 +19,18 @@ def ir_modal_or(request):
 
 @csrf_exempt
 def crearOrdenPedido(request):
-
-    pk_producto = request.session.get('producto_id', None)
-    if pk_producto != None:
-        producto = Producto.objects.get(id=pk_producto)
-        proveedor = producto.proveedor
-        fecha_actual = datetime.now()
-        estado = Tipo.objects.get(nombre="Ingresada")
-        usuario_creacion = Usuario.objects.filter(is_superuser=False).exclude(roles__nombre = 'Proveedor').first()
-        observaciones = "Orden de Reposición por nivel mínimo generada automáticamente."
-        orden_pedido = OrdenPedido(fecha_peticion=fecha_actual,
-                                   estado=estado,
-                                   usuario_creacion=usuario_creacion,
-                                   proveedor=proveedor,
-                                   observaciones=observaciones)
-        orden_pedido.save()
+    if request.method == 'GET' and 'id' in request.GET:
+        id = request.GET['id']
+        orden_pedido = crearOrden(id=id)
+        request.session['producto_id'] = id
+        request.session['orden_pedido_id'] = orden_pedido.id
+        mensaje = "ok"
+    else:
+        pk_producto = request.session.get('producto_id', None)
+        orden_pedido = crearOrden(id=pk_producto)
         mensaje = "ok"
         request.session['orden_pedido_id'] = orden_pedido.id
-    else:
-        mensaje = "Error al crear la orden de reposición"
+
     return JsonResponse({'mensaje':mensaje})
 
 @csrf_exempt
@@ -80,8 +74,12 @@ def guardarDetalleOrdenReposicion(request):
             detalle.orden = orden
             detalle.save()
             mensaje = "ok"
-            del request.session['orden_pedido_id']
-            del request.session['producto_id']
+            if ProductoReposicionPendiente.objects.filter(producto_id=pk_producto).exists() == True:
+                ProductoReposicionPendiente.objects.filter(producto_id=pk_producto).delete()
+            if request.session.get('orden_pedido_id', None) != None:
+                del request.session['orden_pedido_id']
+            if request.session.get('producto_id', None) != None:
+                del request.session['producto_id']
         else:
             mensaje = "Todos los campos deben ser diligenciados."
     return JsonResponse({'mensaje':mensaje})
@@ -98,14 +96,15 @@ def fechaPeticionOrdenReposicion(request):
 @csrf_exempt
 def guardarNotificacionOrden(request):
 
-    pk_producto = request.session.get('producto_id', None)
-    if pk_producto != None:
-        producto = Producto.objects.get(id=pk_producto)
-        productoReposicion = ProductoReposicionPendiente()
-        productoReposicion.producto = producto
-        productoReposicion.save()
+    if request.method == 'GET' and 'id' in request.GET:
+        id = request.GET['id']
+        json_res = guardarDetalle(id=id)
+        return json_res
+    else:
+        pk_producto = request.session.get('producto_id', None)
+        json_res = guardarDetalle(id=pk_producto)
         del request.session['producto_id']
-        return JsonResponse({'mensaje':'ok'})
+        return json_res
 
 @csrf_exempt
 def obtenerProductosPendienteReposicion(request):
@@ -126,9 +125,36 @@ def obtenerProductosPendienteReposicion(request):
         prod.unidad_unitaria = str(produc.unidad_unitaria)
         prod.imageFile = str(produc.imageFile)
         prod.proveedor = produc.proveedor.first_name
-        prod.codigo_color = str("")
+        codigo_color = views_nivel_insumos.nivel_insumo_tabla(produc.id, produc.punto_pedido)
+        prod.codigo_color = str(codigo_color[0])
         prod.punto_pedido = str(produc.punto_pedido)
-        prod.nivel_actual = str("")
+        prod.nivel_actual = str(codigo_color[1])
         listaProductos.append(prod)
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse({'productos':json_string})
+
+def guardarDetalle(id):
+
+    if id != None and ProductoReposicionPendiente.objects.filter(producto_id=id).exists() == False:
+        producto = Producto.objects.get(id=id)
+        productoReposicion = ProductoReposicionPendiente()
+        productoReposicion.producto = producto
+        productoReposicion.save()
+        return JsonResponse({'mensaje': 'ok'})
+
+def crearOrden(id):
+
+    if id != None:
+        producto = Producto.objects.get(id=id)
+        proveedor = producto.proveedor
+        fecha_actual = datetime.now()
+        estado = Tipo.objects.get(nombre="Ingresada")
+        usuario_creacion = Usuario.objects.filter(is_superuser=False).exclude(roles__nombre='Proveedor').first()
+        observaciones = "Orden de Reposición por nivel mínimo generada automáticamente."
+        orden_pedido = OrdenPedido(fecha_peticion=fecha_actual,
+                                   estado=estado,
+                                  usuario_creacion=usuario_creacion,
+                                  proveedor=proveedor,
+                                  observaciones=observaciones)
+        orden_pedido.save()
+        return orden_pedido
