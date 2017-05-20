@@ -6,7 +6,7 @@ from operator import attrgetter
 from datetime import datetime
 
 from django.core import serializers
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -241,7 +241,9 @@ def ver_conteoabc_busqueda(request):
     global tipoinventario
     tipoinventario = ""
     generar = ""
+    opciones = ["A", "B", "C"]
 
+    context = {'tipoproductoinventario': tipoinventario, 'opciones': opciones}
     # valida si es el botón de filtro o de generar conteo
 
     # Capturar el valor de los campos
@@ -250,14 +252,11 @@ def ver_conteoabc_busqueda(request):
         generar=request.POST.get('btngenerar', "")
 
     if generar != "":
-        generar_conteo(request)
-        mensaje = "Se generó el conteo correctamente"
+        id_conteo = generar_conteo(request)
+        mensaje = "Se_genera_exitosamente_el_conteo_desde_el_sistema"
+        return HttpResponseRedirect('/obtenerconteoabc/?id_conteo='+str(id_conteo)+'&mensaje='+mensaje)
     else:
         busqueda_conteoabc(request)
-
-    opciones = ["A", "B", "C"]
-
-    context = {'tipoproductoinventario': tipoinventario, 'opciones': opciones}
 
     return render(request, "laboratorio/conteoabc.html", context)
 
@@ -283,7 +282,7 @@ def generar_conteo(request):
                     # Insercion
                     guardar_DetalleProductos_Estado_Inicial(conteo, valor)
 
-    return True
+    return conteo.id
 
 
 def guardar_DetalleProductos_Estado_Inicial(conteo, peb_id):
