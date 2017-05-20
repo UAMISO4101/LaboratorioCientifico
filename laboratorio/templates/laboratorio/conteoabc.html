@@ -158,8 +158,8 @@
                                                     {% endfor %}
                                                 </select>
                                                 &nbsp;
-                                                <input type="submit" id="btngenerar" name="btngenerar" value="Ejecutar Conteo" class="btn btn-primary"
-                                                       onclick="return pregunta();">
+                                                <input type="button" id="btngenerar" name="btngenerar" value="Ejecutar Conteo" class="btn btn-primary"
+                                                       onclick="this.form.action = this.form.action + ('?btngenerar=btngenerar'); this.form.submit();">
                                             </td>
                                             </td>
                                         </tr>

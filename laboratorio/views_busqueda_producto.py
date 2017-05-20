@@ -243,13 +243,13 @@ def ver_conteoabc_busqueda(request):
     generar = ""
     opciones = ["A", "B", "C"]
 
-    context = {'tipoproductoinventario': tipoinventario, 'opciones': opciones}
+
     # valida si es el botón de filtro o de generar conteo
 
     # Capturar el valor de los campos
     if request.method == 'POST':
         tipoinventario = request.POST.get('tipoproductoinventario', "")
-        generar=request.POST.get('btngenerar', "")
+        generar=request.GET.get('btngenerar', "")
 
     if generar != "":
         id_conteo = generar_conteo(request)
@@ -257,6 +257,8 @@ def ver_conteoabc_busqueda(request):
         return HttpResponseRedirect('/obtenerconteoabc/?id_conteo='+str(id_conteo)+'&mensaje='+mensaje)
     else:
         busqueda_conteoabc(request)
+
+    context = {'tipoproductoinventario': tipoinventario, 'opciones': opciones}
 
     return render(request, "laboratorio/conteoabc.html", context)
 
