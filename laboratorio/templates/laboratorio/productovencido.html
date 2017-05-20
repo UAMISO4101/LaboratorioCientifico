@@ -72,6 +72,7 @@
         </div>
     </div>
         <div id="pie"></div>
+        <div id="modal2" class="card" style="display: initial"></div>
     </div>
 </div>
 
@@ -91,7 +92,7 @@
 <script>
     (function(){
         try {
-            $("#encabezado").load("../encabezado");
+            $("#modal2").load("../modal_or");$("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
             demo.actualizarNotificaciones();
         }catch (exc){

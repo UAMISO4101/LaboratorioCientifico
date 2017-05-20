@@ -120,7 +120,7 @@
         <div id="pie"></div>
     </div>
     </div>
-    <div id="modal2" class="card"></div>
+    <div id="modal2" class="card" style="display: initial"></div>
 </div>
 </body>
 <script src="../../../images/assets/js/bootstrap.min.js"></script>
@@ -342,7 +342,7 @@
     // Coloca el encabezado y pie de pagina
     (function(){
         try {
-            $("#modal2").load("../modal_or")
+            $("#modal2").load("../modal_or");
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie"); demo.actualizarNotificaciones();
             demo.actualizarNotificaciones();
