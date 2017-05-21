@@ -130,10 +130,12 @@ USE_TZ = True
 
 STATIC_URL = '/images/'
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'images')
 ]
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 AUTH_USER_MODEL = 'laboratorio.Usuario'
 
