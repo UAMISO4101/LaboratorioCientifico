@@ -135,10 +135,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'images')
 ]
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
 AUTH_USER_MODEL = 'laboratorio.Usuario'
-
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_USE_TLS = True
