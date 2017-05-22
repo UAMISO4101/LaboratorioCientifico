@@ -34,7 +34,7 @@
                         </div>
                         <div id="lblBodega" class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
                         <div id="slcBodega" class="col-6 col-sm-3">
-                            <select id="bodega" name="bodega" class="selectpicker form-control"
+                            <select id="bodegaaa" name="bodegaaa" class="selectpicker form-control"
                                     style="padding: 0px 4px;height:30px;">
                             </select>
                         </div>
@@ -104,7 +104,7 @@
         })
     });
 
-    $("#bodega").change(function () {
+    $("#bodegaaa").change(function () {
         var val = $(this).val();
         if(val != "")
         {
@@ -124,18 +124,18 @@
             })
         }
     })
-    function cerrarItem()
-    {
-        $("#fecha_movimiento").val("");
-        $('#producto').prop('selectedIndex',0);
-        $('#bodega').prop('selectedIndex',0);
-        $("#nivel").val("");
-        $("#seccion").val("");
-        $("#valor_unitario").val("");
-        $("#cantidad").val("");
-        $('#modalOrden').modal('hide');
-    }
-    $('form').submit(function (e) {
+    //function cerrarItem()
+    //{
+    //    $("#fecha_movimiento").val("");
+    //    $('#producto').prop('selectedIndex',0);
+    //    $('#bodega').prop('selectedIndex',0);
+    //    $("#nivel").val("");
+    //    $("#seccion").val("");
+    //    $("#valor_unitario").val("");
+    //    $("#cantidad").val("");
+    //    $('#modalOrden').modal('hide');
+    //}
+    $('#formOrdenRepos').submit(function (e) {
         var formData = new FormData($("#formOrdenRepos")[0]);
         console.log(formData)
         $.ajax({
@@ -149,6 +149,7 @@
                 if (data && data.mensaje && data.mensaje != "ok") {
                     demo.showNotification('bottom', 'center', data.mensaje)
                 } else {
+                    alert("redirigiendo");
                     window.location = "../verordenespedido";
                 }
             }
