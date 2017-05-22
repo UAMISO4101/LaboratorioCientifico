@@ -248,3 +248,4 @@ class Ajuste(models.Model):
 
 class ProductoReposicionPendiente(models.Model):
     producto = models.ForeignKey(Producto, null=True)
+    detalle_orden_guardada = models.BooleanField(default=False)

@@ -27,6 +27,7 @@ def crearOrdenPedido(request):
         mensaje = "ok"
     else:
         pk_producto = request.session.get('producto_id', None)
+        print >> sys.stdout, 'ID PRODUCTO crear' + str(request.session.get('producto_id', None))
         orden_pedido = crearOrden(id=pk_producto)
         mensaje = "ok"
         request.session['orden_pedido_id'] = orden_pedido.id
@@ -38,6 +39,7 @@ def obtenerInfoProducto(request):
 
     pk_producto = request.session.get('producto_id', None)
     pk_orden = request.session.get('orden_pedido_id', None)
+    print >> sys.stdout, 'ID PRODUCTO info' + str(request.session.get('producto_id', None)) + ' '+ str(request.session.get('orden_pedido_id', None))
     if pk_producto != None and pk_orden != None:
         producto = Producto.objects.get(id=pk_producto)
         prod_json = json.loads(serializers.serialize('json', [producto]))
@@ -73,13 +75,11 @@ def guardarDetalleOrdenReposicion(request):
             detalle.estado = Tipo.objects.filter(grupo="DETALLEPEDIDO", nombre="Recibido").first()
             detalle.orden = orden
             detalle.save()
-            mensaje = "ok"
             if ProductoReposicionPendiente.objects.filter(producto_id=pk_producto).exists() == True:
-                ProductoReposicionPendiente.objects.filter(producto_id=pk_producto).delete()
-            if request.session.get('orden_pedido_id', None) != None:
-                del request.session['orden_pedido_id']
-            if request.session.get('producto_id', None) != None:
-                del request.session['producto_id']
+                prodRes = ProductoReposicionPendiente.objects.get(producto_id=pk_producto)
+                prodRes.detalle_orden_guardada = True
+                prodRes.save()
+            mensaje = "ok"
         else:
             mensaje = "Todos los campos deben ser diligenciados."
     return JsonResponse({'mensaje':mensaje})
@@ -103,7 +103,6 @@ def guardarNotificacionOrden(request):
     else:
         pk_producto = request.session.get('producto_id', None)
         json_res = guardarDetalle(id=pk_producto)
-        del request.session['producto_id']
         return json_res
 
 @csrf_exempt
@@ -126,7 +125,7 @@ def obtenerProductosPendienteReposicion(request):
         prod.imageFile = str(produc.imageFile)
         prod.proveedor = produc.proveedor.first_name
         codigo_color = views_nivel_insumos.nivel_insumo_tabla(produc.id, produc.punto_pedido)
-        prod.codigo_color = str(codigo_color[0])
+        prod.codigo_color = str(producto.detalle_orden_guardada)
         prod.punto_pedido = str(produc.punto_pedido)
         prod.nivel_actual = str(codigo_color[1])
         listaProductos.append(prod)
@@ -139,8 +138,11 @@ def guardarDetalle(id):
         producto = Producto.objects.get(id=id)
         productoReposicion = ProductoReposicionPendiente()
         productoReposicion.producto = producto
+        productoReposicion.detalle_orden_guardada = False
         productoReposicion.save()
         return JsonResponse({'mensaje': 'ok'})
+    else:
+        return JsonResponse({'mensaje': 'YaExisteOrden'})
 
 def crearOrden(id):
 

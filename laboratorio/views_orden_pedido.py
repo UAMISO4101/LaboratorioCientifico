@@ -309,7 +309,7 @@ def ejecutar_transacciones_orden(request):
             )
             transaccion.save()
             #Ejecuta la transaccion quien hace el movimiento entre bodegas
-            ejecutar_transaccion(transaccion)
+            ejecutar_transaccion(transaccion, request=request)
 
             det_orden.estado_id = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Movida', grupo='DETALLEPEDIDO').first().id)
             det_orden.transaccion_inventario_id = transaccion.pk
@@ -332,7 +332,7 @@ def aprobar_orden(request):
     orden = OrdenPedido.objects.get(id=aprobacion['id_op'])
     comentario = ComentarioOrden(timestamp=datetime.now(), comentario=aprobacion['comentario'], orden=orden)
     comentario.save()
-    orden.estado = Tipo.objects.get(nombre='Aprobada')
+    orden.estado = Tipo.objects.get(nombre='Aprobada', grupo='ORDENPEDIDO')
     orden.save()
     return JsonResponse({"mensaje": 'ok'})
 
