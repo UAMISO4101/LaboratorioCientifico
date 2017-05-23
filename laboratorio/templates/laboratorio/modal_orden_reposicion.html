@@ -71,7 +71,6 @@
 <script>
     $('#modalOrden').on('shown.bs.modal', function ()
     {
-        alert('mostrando modal');
         $.getJSON("../obtenerInfoProducto").done(function (data) {
             if(data)
             {
@@ -87,7 +86,7 @@
         {
             data =  $.parseJSON(data);
             console.log(data)
-            var bodega = $("#bodega");
+            var bodega = $("#bodegaaa");
             bodega.append($("<option />").val("").text("Seleccione Bodega..."));
             $(data).each(function()
             {
@@ -149,7 +148,6 @@
                 if (data && data.mensaje && data.mensaje != "ok") {
                     demo.showNotification('bottom', 'center', data.mensaje)
                 } else {
-                    alert("redirigiendo");
                     window.location = "../verordenespedido";
                 }
             }

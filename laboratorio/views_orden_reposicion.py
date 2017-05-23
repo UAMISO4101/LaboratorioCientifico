@@ -54,7 +54,7 @@ def guardarDetalleOrdenReposicion(request):
         pk_orden = request.session.get('orden_pedido_id', None)
         fecha_movimiento = request.POST.get('fecha_movimiento', None)
         cantidad = request.POST.get('cantidad', None)
-        bodega_id = request.POST.get('bodega', None)
+        bodega_id = request.POST.get('bodegaaa', None)
         nivel = request.POST.get('nivel', None)
         seccion = request.POST.get('seccion', None)
         if pk_producto != None and pk_orden != None and fecha_movimiento != None and cantidad != None and bodega_id != None and nivel != None and seccion != None:
