@@ -60,7 +60,7 @@ return, formato json con mensaje de confirmación
 def aprobar_orden(request):
     ajuste = Ajuste.objects.get(id=request.GET['id_op'])
     ajuste.detalle_productos.unidad_medida
-    if ajuste.estado.nombre =="Por Aprobar":
+    if ajuste.estado.nombre =="En aprobacion":
         if ajuste.tipo_diferencia.nombre == "Exceso":
             transaccion = transaccion_por_exceso(ajuste)
         elif ajuste.tipo_diferencia.nombre == "Defecto":
