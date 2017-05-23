@@ -20,8 +20,8 @@ Views para manejo de ajustes creados
 
 """Metodo para navegar proceso de aprobacion de ajustes.
 """
-def proceso_aprobacion_ajuste(request):
-    return render(request, "laboratorio/proceso_aprobacion_ajuste.html")
+def ir_aprobacion_ajuste(request):
+    return render(request, "laboratorio/ver_ajustes.html")
 
 
 """Metodo para obtener ajustes por aprobar.
@@ -31,22 +31,8 @@ request, es la peticion dada por el usuario
 return, formato json con los usuarios
 """
 @csrf_exempt
-def obtenerAjustesPorAprobar(request):
-    estado = Tipo.objects.filter(nombre="En aprobacion")
-    qs = Ajuste.objects.filter(estado=estado)
-    qs_json = serializers.serialize('json', qs)
-    return JsonResponse(qs_json, safe=False)
-
-"""Metodo para obtener ajustes aprobados.
-HU: DA-LCINV-10: Cientifico lider aprueba ajustes
-Sirve para obtener los ajustes disponibles ya aprobados
-request, es la peticion dada por el usuario
-return, formato json con los usuarios
-"""
-@csrf_exempt
-def obtenerAjustesAprobados(request):
-    estado = Tipo.objects.filter(nombre="Aprobada")
-    qs = Ajuste.objects.filter(estado=estado)
+def obtener_ajustes(request):
+    qs = Ajuste.objects.all()
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
@@ -57,8 +43,8 @@ request, es la peticion dada por el usuario
 return, formato json con mensaje de confirmación
 """
 @csrf_exempt
-def aprobar_orden(request):
-    ajuste = Ajuste.objects.get(id=request.GET['id_op'])
+def aprobar_ajuste(request):
+    ajuste = Ajuste.objects.get(id=request.GET['id_a'])
     ajuste.detalle_productos.unidad_medida
     if ajuste.estado.nombre =="En aprobacion":
         if ajuste.tipo_diferencia.nombre == "Exceso":
