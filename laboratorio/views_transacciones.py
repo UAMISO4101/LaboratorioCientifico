@@ -11,7 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from laboratorio import views_nivel_insumos
 from laboratorio.modelos_vista import BodegaVista, Convertidor, TransaccionVista, json_default
-from laboratorio.models import Tipo, Usuario, Bodega, TransaccionInventario, ProductosEnBodega, Producto
+from laboratorio.models import Tipo, Usuario, Bodega, TransaccionInventario, ProductosEnBodega, Producto, \
+    ProductoReposicionPendiente
 from django.shortcuts import render
 
 def ir_crear_transaccion(request):
@@ -91,7 +92,7 @@ def crear_transaccion(request):
             usuario=Usuario.objects.get(pk=1),
             comentarios=json_tran['comentarios']
         )
-        ejecutar_transaccion(transaccion)
+        ejecutar_transaccion(transaccion, request=request)
         transaccion.save()
         res = lanzar_notificacionOrdenReposicion(pk_producto=json_tran['producto'])
         tran_json = json.loads(serializers.serialize('json', [transaccion]))
@@ -110,7 +111,7 @@ def crear_transaccion(request):
 #Resta de la bodega origen y suma o crea registro en la bodega destino
 
 @csrf_exempt
-def ejecutar_transaccion(transaccion):
+def ejecutar_transaccion(transaccion, request):
     try:
         if transaccion.tipo.nombre != "Recepcion de Proveedor":
             producto_bodega_origen = ProductosEnBodega.objects.get(pk=transaccion.producto_bodega_origen.pk)
@@ -145,6 +146,13 @@ def ejecutar_transaccion(transaccion):
         transaccion.save()
         if transaccion.tipo.nombre != "Recepcion de Proveedor":
                 producto_bodega_origen.save()
+        else:
+            if ProductoReposicionPendiente.objects.filter(producto_id=transaccion.producto_id).exists() == True:
+                ProductoReposicionPendiente.objects.filter(producto_id=transaccion.producto_id).delete()
+            if request.session.get('orden_pedido_id', None) != None:
+                del request.session['orden_pedido_id']
+            if request.session.get('producto_id', None) != None:
+                del request.session['producto_id']
 
 
     except Exception as e:

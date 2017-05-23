@@ -152,7 +152,8 @@
         </div>
         <div id="pie"></div>
     </div>
-    <div id="modal1" class="card"></div>
+    <div id="modal1" class="card" style="display: initial"></div>
+    <div id="modal2" class="card" style="display: initial"></div>
 </div>
 </body>
 <script src="../../../images/assets/js/bootstrap.min.js"></script>
@@ -183,7 +184,7 @@
     (function(){
         try {
             $("#modal1").load("../modal_do");
-            $("#encabezado").load("../encabezado");
+            $("#modal2").load("../modal_or");$("#encabezado").load("../encabezado");
             $("#pie").load("../pie"); demo.actualizarNotificaciones();
             var parametroMsj = GetParameterValues("msj");
             if (parametroMsj && parametroMsj=='ok'){

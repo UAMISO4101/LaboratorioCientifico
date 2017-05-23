@@ -60,14 +60,16 @@ def obtener_conteo_abc(request):
         for det_producto in qs:
             detalle = DetalleProductoVista()
             detalle.idDetalle = det_producto.id
-            detalle.nombreProducto = det_producto.producto.nombre
+            if det_producto.producto is not None:
+                detalle.nombreProducto = det_producto.producto.nombre
             if det_producto.bodega is not None:
                 detalle.nombreBodega = det_producto.bodega.nombre
                 detalle.nivel = det_producto.nivel
                 detalle.seccion = det_producto.seccion
             detalle.cantidad = int(det_producto.cantidad_contada)
             detalle.diferencia_cantidad = det_producto.diferencia_cantidad
-            detalle.unidadMedida = det_producto.unidad_medida.nombre
+            if det_producto.unidad_medida is not None:
+               detalle.unidadMedida = det_producto.unidad_medida.nombre
             listaConteos.append(detalle)
             if not ver_btn_ajuste and (det_producto.diferencia_cantidad == None or det_producto.diferencia_cantidad != 0):
                 ver_btn_ajuste = True
@@ -142,7 +144,10 @@ def actualizar_conteo_fisico(request):
             strDiferencia = '0'
             if det_producto.diferencia_cantidad != None:
                 strDiferencia = str(det_producto.diferencia_cantidad)
-            diferencia_cantidad = strDiferencia + " " + det_producto.unidad_medida.nombre
+            unidad = ""
+            if det_producto.unidad_medida != None:
+                unidad =  det_producto.unidad_medida.nombre
+            diferencia_cantidad = strDiferencia + " " + unidad
             tipo_diferencia = det_producto.tipo_diferencia.nombre
 
-    return JsonResponse({"diferencia_cantidad": diferencia_cantidad,"tipo_diferencia": tipo_diferencia, "ver_btn_ajuste": ver_btn_ajuste, "ver_msj_cerrada":ver_msj_cerrada})
+    return JsonResponse({"diferencia_cantidad": diferencia_cantidad.strip(),"tipo_diferencia": tipo_diferencia, "ver_btn_ajuste": ver_btn_ajuste, "ver_msj_cerrada":ver_msj_cerrada})

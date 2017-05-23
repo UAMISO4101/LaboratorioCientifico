@@ -29,6 +29,7 @@
     <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 
     <script>
+        parametroMensaje = "";
         function GetParameterValues(param) {
             var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
             for (var i = 0; i < url.length; i++) {
@@ -41,6 +42,8 @@
 
         (function(){
             $("#btnCerrada").hide();
+            $("#mensaje").hide();
+            parametroMensaje= GetParameterValues("mensaje");
             var parametroConteo = GetParameterValues("id_conteo");
             if (parametroConteo) {
                 //cargar informacion
@@ -178,7 +181,9 @@
                                 <h4 class="title">Conteo Físico</h4>
                                 <p class="category"></p>
                             </div>
-
+                            <div id="mensaje" class="alert alert-info">
+                                <label id="mensaje1"></label>
+                            </div>
                             <div style="text-align: center;">
                                 <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
                                 <a id="btnCerrada" href="" class="btn btn-info" role="button">Conteo Fisico Cerrado</a>
@@ -210,6 +215,13 @@
         try {
             $("#encabezado").load("../encabezado");
             $("#pie").load("../pie");
+            if (parametroMensaje) {
+                $("#mensaje").show();
+                $("#mensaje1").text(parametroMensaje.replace(/_/g, " "));
+            }else{
+                $("#mensaje").hide();
+                $("#mensaje1").text("");
+            }
         }catch (exc){
             alert(exc.message);
         }
