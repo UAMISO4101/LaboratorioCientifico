@@ -67,7 +67,7 @@
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Sección</th>";
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Cantidad</th>";
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Diferencia</th>";
-                            tablaresult=tablaresult+"<th style=\"text-align: center;\">Ajuste</th>";
+                            tablaresult=tablaresult+"<th style=\"text-align: center;\">Cantidad Real</th>";
                             tablaresult=tablaresult+"<th style=\"text-align: center;\">Tipo Diferencia</th>";
                             tablaresult=tablaresult+"</tr>";
                             tablaresult=tablaresult+"</thead>";
@@ -185,7 +185,7 @@
                                 <label id="mensaje1"></label>
                             </div>
                             <div style="text-align: center;">
-                                <a id="btnAjustarABC" href="../" class="btn btn-primary" role="button">Ajustar</a>
+                                <a id="btnAjustarABC" onclick="generarAjustes()" class="btn btn-primary" role="button">Ajustar</a>
                                 <a id="btnCerrada" href="" class="btn btn-info" role="button">Conteo Fisico Cerrado</a>
                                 <a href="../verconteosabc/">Cancelar</a>
                             </div>
@@ -227,6 +227,25 @@
         }
     })();
 
+    function generarAjustes() {
+        $.ajax({
+            url: '../generarAjustesInventario/',
+            dataType: 'text',
+            type: 'post',
+            data: {
+                    "id_conteo":GetParameterValues("id_conteo")
+                    },
+            success: function( data, textStatus, jQxhr ){
+
+                if (data){
+                    data = $.parseJSON(data);
+                    alert("El conteo se cierra " + data.mensaje);
+                    window.location = '../verconteosabc/';
+                }
+            }
+
+        });
+    }
     function guardarCantidadFisica(input, id_detalle_conteo){
         $.ajax({
             url: '../actualizarconteofisico/',
