@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import QueryDict
-
+from django.db.models import Q
 
 from laboratorio.modelos_vista import Convertidor,  RecursoBusquedaVista, RecursoBusquedaDetalleVista
 from laboratorio.models import Usuario, Bodega
@@ -64,7 +64,9 @@ def busqueda_producto(request):
         else:  # Filtro por producto y bodega
             qs = ProductosEnBodega.objects.filter(producto__codigo=bproducto, bodega__serial=bBodega)
 
-    # todo: quitar los productos en las bodegas que no deben salir (desperdicio, ...)
+    # Quitar los productos en las bodegas que no deben salir (desperdicio, ...)
+    qs = qs.filter(~Q(bodega__nombre="Desperdicios"))
+    qs = qs.filter(~Q(bodega__nombre="Proveedor"))
 
     lista_recurso = []
 
@@ -175,8 +177,6 @@ def busqueda_producto_detalle(request):
         if str(transaccion.seccion_origen) != "":
             localizacion1 = localizacion1 + ", Seccion " + str(transaccion.seccion_origen)
 
-        # req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + ", nivel " +
-        # str(transaccion.nivel_origen) + ", seccion " + str(transaccion.seccion_origen)
         req.bodegaOrigen = transaccion.producto_bodega_origen.bodega.nombre + localizacion1
         req.nivel_origen = ""  # n/a
         req.seccion_origen = ""  # n/a
@@ -187,17 +187,11 @@ def busqueda_producto_detalle(request):
         if str(transaccion.seccion_destino) != "":
             localizacion2 = localizacion2 + ", Seccion " + str(transaccion.seccion_destino)
 
-        # req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + ", nivel " +
-        # str(transaccion.nivel_destino) + ", seccion " + str(transaccion.seccion_destino)
         req.bodegaDestino = transaccion.producto_bodega_destino.bodega.nombre + localizacion2
         req.nivel_destino = ""  # n/a
         req.seccion_destino = ""  # n/a
         req.cantidad = str(transaccion.cantidad)
         req.unidad_medida = transaccion.unidad_medida.nombre
-        # req.usuario = transaccion.usuario.first_name + " " + transaccion.usuario.last_name
-        # req.autoriza = transaccion.autoriza.first_name + " " + transaccion.autoriza.last_name
-        # req.usuario = obtener_nombre_usuarioxid(transaccion.usuario.id)
-        # req.autoriza = obtener_nombre_usuarioxid(transaccion.autoriza.id)
         req.comentarios = transaccion.comentarios
         lista_trans.append(req)
 
@@ -217,7 +211,6 @@ def llenar_listado_productos_busqueda(request):
     return JsonResponse(qs_json, safe=False)
 
 
-# TODO: unificar con llenar_listado_productos_busqueda y poner filtro (no todas las bodegas tienen que salir)
 # HU: LCINV-5
 # FB.
 # Lista las bodegas, esto se utiliza para mostrar el listado en el html para la búsqueda.
@@ -226,6 +219,8 @@ def llenar_listado_productos_busqueda(request):
 @csrf_exempt
 def llenar_listado_bodegas_busqueda(request):
     qs = Bodega.objects.all().order_by('nombre')
+    qs = qs.filter(~Q(nombre="Desperdicios"))
+    qs = qs.filter(~Q(nombre="Proveedor"))
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
 
@@ -243,9 +238,7 @@ def ver_conteoabc_busqueda(request):
     generar = ""
     opciones = ["A", "B", "C"]
 
-
     # valida si es el botón de filtro o de generar conteo
-
     # Capturar el valor de los campos
     if request.method == 'POST':
         tipoinventario = request.POST.get('tipoproductoinventario', "")
@@ -316,6 +309,8 @@ def busqueda_conteoabc(request):
         qs = ProductosEnBodega.objects.all()
         qs = qs.filter(producto__tipo_producto_conteo='' + tipoinventario + '')
         # todo: quitar los productos en las bodegas que no deben salir (desperdicio, ...)
+        qs = qs.filter(~Q(bodega__nombre="Desperdicios"))
+        qs = qs.filter(~Q(bodega__nombre="Proveedor"))
     else:
         qs = ""
 
@@ -328,8 +323,6 @@ def busqueda_conteoabc(request):
         req.nombre = peb.producto.nombre
         req.unidadesExistentes = peb.cantidad
         req.unidad_medida = peb.producto.unidad_medida.nombre
-
-        # TODO: Convertir a unidades de preferencia
         req.cantidad_convertida = str(utils.convertir(req.unidadesExistentes, peb.unidad_medida.nombre,
                                                       peb.bodega.unidad_medida.nombre))
 
