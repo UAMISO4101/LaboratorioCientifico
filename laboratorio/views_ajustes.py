@@ -11,25 +11,22 @@ from .views_transacciones import ejecutar_transaccion
 from laboratorio.modelos_vista import AjusteVista, Convertidor
 
 
-"""
-Views para manejo de ajustes creados.
-"""
+"""Views para manejo de ajustes creados."""
 
-
-"""Metodo para navegar proceso de aprobacion de ajustes.
-"""
 def ir_aprobacion_ajuste(request):
+    """Metodo para navegar proceso de aprobacion de ajustes."""
     return render(request, "laboratorio/ver_ajustes.html")
 
-
-"""Metodo para obtener ajustes por aprobar.
-HU: DA-LCINV-10: Cientifico lider aprueba ajustes
-Sirve para obtener los ajustes disponibles para aprobar
-request, es la peticion dada por el usuario
-return, formato json con los usuarios
-"""
 @csrf_exempt
 def obtener_ajustes(request):
+    """
+    Metodo para obtener ajustes por aprobar.
+
+    HU: DA-LCINV-10: Cientifico lider aprueba ajustes
+    Sirve para obtener los ajustes disponibles para aprobar
+    request, es la peticion dada por el usuario
+    return, formato json con los usuarios
+    """
     qs = Ajuste.objects.all()
     listaA = []
     for ajuste_n in qs:
@@ -44,16 +41,18 @@ def obtener_ajustes(request):
     json_string = json.dumps(listaA, cls=Convertidor)
     return JsonResponse(json_string, safe=False)
 
-"""Metodo aprobar un ajuste.
-HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
-Sirve para aprobar un ajuste de inventario
-request, es la peticion dada por el usuario
-return, formato json con mensaje de confirmación
-"""
+
 @csrf_exempt
 def aprobar_ajuste(request):
+    """
+    Metodo aprobar un ajuste.
+
+    HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
+    Sirve para aprobar un ajuste de inventario
+    request, es la peticion dada por el usuario
+    return, formato json con mensaje de confirmación
+    """
     ajuste = Ajuste.objects.get(id=request.POST['id_a'])
-    ajuste.detalle_productos.unidad_medida
     if ajuste.estado.nombre =="En aprobacion" and ajuste.estado.grupo == "AJUSTE":
         if ajuste.tipo_diferencia.nombre == "Exceso":
             transaccion = transaccion_por_exceso(ajuste)
@@ -68,13 +67,15 @@ def aprobar_ajuste(request):
     else:
         return JsonResponse({"mensaje": 'La aprobación no puede ser realizada'})
 
-"""Metodo auxiliar para ajustes por exceso.
-HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
-Sirve para crear la transaccion por exceso de inventario
-request, es la peticion dada por el usuario
-return, formato json con mensaje de confirmación
-"""
 def transaccion_por_exceso(ajuste):
+    """
+    Metodo auxiliar para ajustes por exceso.
+
+    HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
+    Sirve para crear la transaccion por exceso de inventario
+    request, es la peticion dada por el usuario
+    return, formato json con mensaje de confirmación
+    """
     desperdicio = Tipo.objects.filter(nombre="Desperdicio").first()
     transaccion = TransaccionInventario(
         tipo=Tipo.objects.get(nombre='Ajuste Inventario', grupo='TIPOTRX'),
@@ -97,13 +98,15 @@ def transaccion_por_exceso(ajuste):
     transaccion.save()
     return transaccion
 
-"""Metodo auxiliar para ajustes por defecto.
-HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
-Sirve para crear la transaccion por defecto de inventario
-request, es la peticion dada por el usuario
-return, formato json con mensaje de confirmación
-"""
 def transaccion_por_defecto(ajuste):
+    """
+    Metodo auxiliar para ajustes por defecto.
+    
+    HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
+    Sirve para crear la transaccion por defecto de inventario
+    request, es la peticion dada por el usuario
+    return, formato json con mensaje de confirmación
+    """
     externa = Tipo.objects.filter(nombre="Externa").first()
     transaccion = TransaccionInventario(
         tipo=Tipo.objects.get(nombre='Ajuste Inventario', grupo='TIPOTRX'),
