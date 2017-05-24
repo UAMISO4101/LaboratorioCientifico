@@ -246,6 +246,8 @@ class Ajuste(models.Model):
     transaccion_inventario = models.ForeignKey(TransaccionInventario, related_name="do_transaccion_ajuste", null=True)
     estado = models.ForeignKey(Tipo, related_name="do_estado_ajuste", null=True)
 
+"""Clase - Modelo ProductoReposicionPendiente.
+"""
 class ProductoReposicionPendiente(models.Model):
     producto = models.ForeignKey(Producto, null=True)
     detalle_orden_guardada = models.BooleanField(default=False)

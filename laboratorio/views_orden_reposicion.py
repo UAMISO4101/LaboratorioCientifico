@@ -13,10 +13,19 @@ from laboratorio import views_nivel_insumos
 from laboratorio.modelos_vista import Convertidor, ProductoVista
 from laboratorio.models import Producto, Tipo, Usuario, OrdenPedido, Bodega, DetalleOrden, ProductoReposicionPendiente
 
-
+"""
+SA-LCINV-16: Método para navegar hacia el modal
+que permite guardar el detalle de la orden de reposición.
+"""
 def ir_modal_or(request):
     return render(request, "laboratorio/modal_orden_reposicion.html")
 
+"""
+SA-LCINV-16: Método que crea la orden automática de
+reposición como una orden de pedido, se recibe el id
+del producto o se obtiene de la sesión proveniente
+de un ejecución previa de transacción.
+"""
 @csrf_exempt
 def crearOrdenPedido(request):
     if request.method == 'GET' and 'id' in request.GET:
@@ -34,6 +43,10 @@ def crearOrdenPedido(request):
 
     return JsonResponse({'mensaje':mensaje})
 
+"""
+SA-LCINV-16: Método que obtiene la información de un producto
+cuyo id se encuentra guardado en la sesión actual.
+"""
 @csrf_exempt
 def obtenerInfoProducto(request):
 
@@ -45,6 +58,11 @@ def obtenerInfoProducto(request):
         prod_json = json.loads(serializers.serialize('json', [producto]))
         return JsonResponse({'producto':prod_json, 'pk_orden':pk_orden}, safe=False)
 
+"""
+SA-LCINV-16: Método que guarda el detalle de una orden
+de reposición, se encarga tambien de cambiar el estado
+de guardado de detalle para la orden pendiente.
+"""
 @csrf_exempt
 def guardarDetalleOrdenReposicion(request):
     mensaje = ""
@@ -84,6 +102,10 @@ def guardarDetalleOrdenReposicion(request):
             mensaje = "Todos los campos deben ser diligenciados."
     return JsonResponse({'mensaje':mensaje})
 
+"""
+SA-LCINV-16: Método que retorna la fecha de petición de la orden de
+reposición almacenada por sesion.
+"""
 @csrf_exempt
 def fechaPeticionOrdenReposicion(request):
 
@@ -93,6 +115,10 @@ def fechaPeticionOrdenReposicion(request):
         fechaPeticion = orden.fecha_peticion.strftime('%c')
         return JsonResponse({"fecha": fechaPeticion})
 
+"""
+SA-LCINV-16: Método que guarda un registro en BD para tener
+la notificación pendiente de orden de reposición.
+"""
 @csrf_exempt
 def guardarNotificacionOrden(request):
 
@@ -105,6 +131,10 @@ def guardarNotificacionOrden(request):
         json_res = guardarDetalle(id=pk_producto)
         return json_res
 
+"""
+SA-LCINV-16: Método que retorna todos los productos pendientes de
+reposición.
+"""
 @csrf_exempt
 def obtenerProductosPendienteReposicion(request):
 
@@ -132,6 +162,10 @@ def obtenerProductosPendienteReposicion(request):
     json_string = json.dumps(listaProductos, cls=Convertidor)
     return JsonResponse({'productos':json_string})
 
+"""
+SA-LCINV-16: Metodo que se encarga de crear el registro en la tabla
+de productos pendientes de reposición.
+"""
 def guardarDetalle(id):
 
     if id != None and ProductoReposicionPendiente.objects.filter(producto_id=id).exists() == False:
@@ -144,6 +178,10 @@ def guardarDetalle(id):
     else:
         return JsonResponse({'mensaje': 'YaExisteOrden'})
 
+"""
+SA-LCINV-16: Método que crea la orden de reposición directamente
+creando un registro en la BD tabla orden_pedido.
+"""
 def crearOrden(id):
 
     if id != None:
