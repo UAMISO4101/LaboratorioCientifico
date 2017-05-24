@@ -12,7 +12,6 @@ from laboratorio.modelos_vista import AjusteVista, Convertidor
 
 
 """Views para manejo de ajustes creados."""
-
 def ir_aprobacion_ajuste(request):
     """Metodo para navegar proceso de aprobacion de ajustes."""
     return render(request, "laboratorio/ver_ajustes.html")
@@ -101,7 +100,7 @@ def transaccion_por_exceso(ajuste):
 def transaccion_por_defecto(ajuste):
     """
     Metodo auxiliar para ajustes por defecto.
-    
+
     HU: DA-LCINV-18: Cientifico lider aprueba un ajuste
     Sirve para crear la transaccion por defecto de inventario
     request, es la peticion dada por el usuario
