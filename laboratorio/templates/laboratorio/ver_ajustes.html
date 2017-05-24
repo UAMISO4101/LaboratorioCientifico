@@ -65,8 +65,8 @@
                     </div>
                     <form id="formAjuste" action = "../aprobarAjuste/" method = "post" style="padding: 20px">
                         <div style="text-align: center;">
-                            <a id="btnAjuste" href="../aprobarAjuste" class="btn btn-primary" role="button">Aprobar</a>
-                            <input id="id_conteo" name="id_conteo" type="hidden" />
+                            <input id="btnAjuste" type="submit" name="btnAjuste" value="Aprobar" class="btn btn-primary"/>
+                            <input id="id_a" name="id_a" type="hidden" />
                             <a href="../">Cancelar</a>
                         </div>
                         <table id="tabla" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%"></table>
@@ -115,11 +115,13 @@
                 },
                 bProcessing: true,
                 "scrollX": true,
+                "order": [[ 5, "desc" ]],
                 aaData: datos,
                 aoColumns: [
                     { mData: "id" , sTitle: "Id"},
                     { mData: "producto" , sTitle: "Producto"},
-                    { mData: "diferencia" , sTitle: "Diferencia"},
+                    { mData: "bodega" , sTitle: "Bodega"},
+                    { mData: "tipo_diferencia" , sTitle: "Diferencia"},
                     { mData: "diferencia_cantidad" , sTitle: "Cantidad"},
                     { mData: "estado" , sTitle: "Estado Ajuste"},
 
@@ -136,23 +138,14 @@
                     $("#mensaje").hide();
                     tabla.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
-                    valor = $("#btnAjuste").attr('href');
-                    if (valor.indexOf("id_a")!=-1){
-                        valor = valor.split("?")[0];
-                    }
-                    valor += "?id_a="+$(this).children()[0].innerText;
-
-                    if ($(this).children()[4].innerText == "En aprobacion") {
-                        $("#btnAjuste").attr("href", valor);
+                    valor = $(this).children()[0].innerText;
+                    if ($(this).children()[5].innerText == "En aprobacion") {
+                        $('#id_a').attr('value', valor);
                         $('#btnAjuste').unbind('click', false);
                         $('#btnAjuste').attr('disabled', false);
                     }else {
-                        if (valor.indexOf("id_a") != -1) {
-                            valor = valor.split("?")[0];
-                            $("#btnAjuste").attr("href", valor);
-                            $('#btnAjuste').unbind('click', true);
-                            $('#btnAjuste').attr('disabled', true);
-                        }
+                        $('#btnAjuste').unbind('click', true);
+                        $('#btnAjuste').attr('disabled', true);
                     }
                 }
             });
@@ -172,6 +165,7 @@
                     $("#mensaje1").text(data.mensaje);
                     $("#mensaje").show();
                 } else {
+                    $("#mensaje1_ok").text("Aprobación exitosa");
                     $("#mensaje_ok").show();
                 }
                 setTimeout(function(){

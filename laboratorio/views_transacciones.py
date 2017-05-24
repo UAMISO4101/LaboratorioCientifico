@@ -112,11 +112,13 @@ def crear_transaccion(request):
 
 @csrf_exempt
 def ejecutar_transaccion(transaccion, request):
-    try:
-        if transaccion.tipo.nombre != "Recepcion de Proveedor":
-            producto_bodega_origen = ProductosEnBodega.objects.get(pk=transaccion.producto_bodega_origen.pk)
-            producto_bodega_origen.cantidad = int(producto_bodega_origen.cantidad) - int(transaccion.cantidad)
-            producto = producto_bodega_origen.producto
+
+        if transaccion.tipo.nombre != "Recepcion de Proveedor" and \
+                (transaccion.tipo.nombre != "Ajuste Inventario" or \
+                (transaccion.tipo.nombre == "Ajuste Inventario" and transaccion.producto_bodega_origen != None)):
+                producto_bodega_origen = ProductosEnBodega.objects.get(pk=transaccion.producto_bodega_origen.pk)
+                producto_bodega_origen.cantidad = int(producto_bodega_origen.cantidad) - int(transaccion.cantidad)
+                producto = producto_bodega_origen.producto
         else:
             producto = transaccion.producto
 
@@ -144,7 +146,9 @@ def ejecutar_transaccion(transaccion, request):
         transaccion.producto_bodega_destino = producto_bodega_destino
         transaccion.estado = Tipo.objects.get(pk=Tipo.objects.filter(nombre='Ejecutada').first().id)
         transaccion.save()
-        if transaccion.tipo.nombre != "Recepcion de Proveedor":
+        if transaccion.tipo.nombre != "Recepcion de Proveedor" and \
+                (transaccion.tipo.nombre != "Ajuste Inventario" or \
+                (transaccion.tipo.nombre == "Ajuste Inventario" and transaccion.producto_bodega_origen != None)):
                 producto_bodega_origen.save()
         else:
             if ProductoReposicionPendiente.objects.filter(producto_id=transaccion.producto_id).exists() == True:
@@ -155,8 +159,6 @@ def ejecutar_transaccion(transaccion, request):
                 del request.session['producto_id']
 
 
-    except Exception as e:
-        print 'EXCEPCION: %s (%s)' % (e.message, type(e))
 
 def lanzar_notificacionOrdenReposicion(pk_producto):
 
