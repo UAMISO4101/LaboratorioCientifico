@@ -10,8 +10,6 @@ from django.shortcuts import render
 from .views_transacciones import ejecutar_transaccion
 from laboratorio.modelos_vista import AjusteVista, Convertidor
 
-
-"""Views para manejo de ajustes creados."""
 def ir_aprobacion_ajuste(request):
     """Metodo para navegar proceso de aprobacion de ajustes."""
     return render(request, "laboratorio/ver_ajustes.html")
