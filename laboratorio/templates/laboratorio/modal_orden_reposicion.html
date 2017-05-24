@@ -32,24 +32,6 @@
                             <input id="cantidad" name="cantidad" type="number" class="form-control input-md"
                                    style="padding: 0px 4px;height:30px;" required/>
                         </div>
-                        <div id="lblBodega" class="col-6 col-sm-3"><label><b>Bodega Destino</b></label></div>
-                        <div id="slcBodega" class="col-6 col-sm-3">
-                            <select id="bodegaaa" name="bodegaaa" class="selectpicker form-control"
-                                    style="padding: 0px 4px;height:30px;">
-                            </select>
-                        </div>
-                    </div>
-                    <div id="divbodegaDestino" class="row">
-                        <div class="col-6 col-sm-3"><label id="labelNivelBodega"><b>Nivel Bodega Destino</b></label></div>
-                        <div class="col-6 col-sm-3" style="font-weight: bold;">
-                            <input id="nivel" name="nivel" type="number" min="1" class="form-control input-md"
-                                   style="padding: 0px 4px;height:30px;"/>
-                        </div>
-                        <div class="col-6 col-sm-3"><label id="labelSeccionBodega"><b>Sección Bodega Destino</b></label></div>
-                        <div class="col-6 col-sm-3" style="font-weight: bold;">
-                            <input id="seccion" name="seccion" type="number" min="1" class="form-control input-md"
-                                   style="padding: 0px 4px;height:30px;"/>
-                        </div>
                     </div>
                     <div class="row">
                         <div class="col-6 col-sm-3"><label><b>Valor Unitario Producto</b></label></div>
@@ -82,17 +64,17 @@
                 $('#valor_unitario').val(valorUnitario);
             }
         })
-        $.getJSON("../obtenerBodegas/Nevera").done(function (data)
-        {
-            data =  $.parseJSON(data);
-            console.log(data)
-            var bodega = $("#bodegaaa");
-            bodega.append($("<option />").val("").text("Seleccione Bodega..."));
-            $(data).each(function()
-            {
-                bodega.append($("<option />").val(this.id).text(this.nombre));
-            });
-        })
+        //$.getJSON("../obtenerBodegas/Nevera").done(function (data)
+        //{
+        //    data =  $.parseJSON(data);
+        //    console.log(data)
+        //    var bodega = $("#bodegaaa");
+        //    bodega.append($("<option />").val("").text("Seleccione Bodega..."));
+        //    $(data).each(function()
+        //    {
+        //        bodega.append($("<option />").val(this.id).text(this.nombre));
+        //    });
+        //})
 
         $.getJSON("../fechaPeticionOrRep").done(function (data) {
             if(data)
@@ -103,26 +85,26 @@
         })
     });
 
-    $("#bodegaaa").change(function () {
-        var val = $(this).val();
-        if(val != "")
-        {
-            $.getJSON("../obtenerBodega",{
-                    id_bodega:val
-                }).done(function (data) {
-                if(data)
-                {
-                    bodega = $.parseJSON(data.bodega);
-                    niveles = bodega.fields.niveles
-                    secciones = bodega.fields.secciones
-                    $("#labelNivelBodega").html("Nivel Bodega Destino <br>(Max "+niveles+")")
-                    $("#labelNivelBodega").css({ 'font-weight': 'bold' })
-                    $("#labelSeccionBodega").html("Sección Bodega Destino <br>(Max "+secciones+")")
-                    $("#labelSeccionBodega").css({ 'font-weight': 'bold' })
-                }
-            })
-        }
-    })
+    //$("#bodegaaa").change(function () {
+    //    var val = $(this).val();
+    //    if(val != "")
+    //    {
+    //        $.getJSON("../obtenerBodega",{
+    //                id_bodega:val
+    //           }).done(function (data) {
+    //            if(data)
+    //            {
+    //                bodega = $.parseJSON(data.bodega);
+    //                niveles = bodega.fields.niveles
+    //                secciones = bodega.fields.secciones
+    //                $("#labelNivelBodega").html("Nivel Bodega Destino <br>(Max "+niveles+")")
+    //                $("#labelNivelBodega").css({ 'font-weight': 'bold' })
+    //                $("#labelSeccionBodega").html("Sección Bodega Destino <br>(Max "+secciones+")")
+    //                $("#labelSeccionBodega").css({ 'font-weight': 'bold' })
+    //            }
+    //        })
+    //    }
+    //})
     //function cerrarItem()
     //{
     //    $("#fecha_movimiento").val("");
