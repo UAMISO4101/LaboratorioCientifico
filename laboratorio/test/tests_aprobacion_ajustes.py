@@ -1,9 +1,9 @@
 import unittest
 
-from django.utils import timezone
 from django.test import TestCase, Client
+from django.utils import timezone
 
-from laboratorio.models import Tipo, Ajuste
+from laboratorio.models import Tipo, Ajuste, Bodega, DetalleProductos, ConteoInventario, Usuario
 
 class AprobacionAjustesTestCase(TestCase):
     """
@@ -21,6 +21,24 @@ class AprobacionAjustesTestCase(TestCase):
         # Every test needs a client.
         self.client = Client()
 
+        enAprobacion = Tipo.objects.create(grupo='AJUSTE', nombre='En aprobacion')
+        enAprobacion.save()
+
+        aprobada = Tipo.objects.create(grupo='AJUSTE', nombre='Aprobada')
+        aprobada.save()
+
+        estado = Tipo.objects.create(grupo='STATUSCONTEO', nombre='Ejecutada')
+        tipoDiferencia = Tipo.objects.create(grupo='TIPODIFERENCIA', nombre='Exceso')
+
+        bodega = Bodega.objects.create()
+        conteoInvetario = ConteoInventario.objects.create(estado=estado, fecha_creacion=timezone.now())
+        detalleProducto = DetalleProductos.objects.create(conteoinventario=conteoInvetario)
+        Ajuste.objects.create(diferencia_cantidad=1, tipo_diferencia=tipoDiferencia,
+                                       estado=enAprobacion, bodega=bodega, detalle_productos=detalleProducto)
+
+        Tipo.objects.create(nombre='Ajuste Inventario', grupo='TIPOTRX')
+        Tipo.objects.create(nombre='Ejecutada', grupo='STATUSTRX')
+        Usuario(first_name="prueba").save()
 
     def test_aprobar_ajuste(self):
         """
@@ -31,9 +49,9 @@ class AprobacionAjustesTestCase(TestCase):
 
         La respuesta debe contener una orden con el estado "Aprobada" y un comentario.
         """
-        #response = self.client.generic('GET','/laboratorio/aprobarAjuste?id_a=1')
-        #self.assertIn("ok", response.json()["mensaje"])
-        #self.assertEquals("Aprobada", Ajuste.objects.get(id=1).estado.nombre)
+        response = self.client.post('/laboratorio/aprobarAjuste/', {"id_a": 1}, format='multipart')
+        self.assertIn("ok", response.json()["mensaje"])
+        self.assertEquals("Aprobada", Ajuste.objects.get(id=1).estado.nombre)
 
 
 if __name__ == '__main__':

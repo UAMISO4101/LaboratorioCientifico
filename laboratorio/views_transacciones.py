@@ -112,7 +112,7 @@ def crear_transaccion(request):
 
 @csrf_exempt
 def ejecutar_transaccion(transaccion, request):
-
+    try:
         if transaccion.tipo.nombre != "Recepcion de Proveedor" and \
                 (transaccion.tipo.nombre != "Ajuste Inventario" or \
                 (transaccion.tipo.nombre == "Ajuste Inventario" and transaccion.producto_bodega_origen != None)):
@@ -157,8 +157,8 @@ def ejecutar_transaccion(transaccion, request):
                 del request.session['orden_pedido_id']
             if request.session.get('producto_id', None) != None:
                 del request.session['producto_id']
-
-
+    except Exception as e:
+        print 'EXCEPCION: %s (%s)' % (e.message, type(e))
 
 def lanzar_notificacionOrdenReposicion(pk_producto):
 
