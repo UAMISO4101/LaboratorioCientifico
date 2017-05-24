@@ -1,21 +1,18 @@
 # coding=utf-8
 
 import json
-import time
-import sys
 from django.utils import timezone
-from django.core import serializers
-from django.http.response import JsonResponse, HttpResponse
+from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from laboratorio.models import Ajuste, DetalleProductos, Tipo, TransaccionInventario, Bodega, Usuario
+from laboratorio.models import Ajuste, Tipo, TransaccionInventario, Bodega, Usuario
 from django.shortcuts import render
 from .views_transacciones import ejecutar_transaccion
 from laboratorio.modelos_vista import AjusteVista, Convertidor
 
 
 """
-Views para manejo de ajustes creados
+Views para manejo de ajustes creados.
 """
 
 
