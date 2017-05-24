@@ -196,3 +196,14 @@ class DetalleProductoVista():
     diferencia_cantidad = 0
     ver_btn_ajuste = "0"
     ver_msj_cerrada = "0"
+
+"""Clase - Auxiliar  Ajuste.
+Clase que sirve de vista para objetos a mostrar al usuario
+"""
+class AjusteVista():
+    id = 0;
+    producto = ""
+    bodega = ""
+    tipo_diferencia = ""
+    diferencia_cantidad = ""
+    estado = ""

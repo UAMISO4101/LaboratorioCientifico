@@ -3,7 +3,8 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 
 from laboratorio import views_orden_pedido, views_busqueda_producto, views_vencimiento_productos, views_nivel_insumos, \
-views_bodegas, views_usuarios, views_transacciones, views_recursos, views_orden_reposicion, views_conteoabc_manual, views_generar_ajustes_aprobacion
+views_bodegas, views_usuarios, views_transacciones, views_recursos, views_orden_reposicion, views_conteoabc_manual, views_generar_ajustes_aprobacion, \
+    views_ajustes
 from . import views
 
 
@@ -104,5 +105,9 @@ urlpatterns = [
     url(r'^obtenerconteoabc/$', views_conteoabc_manual.ir_obtenerconteoabc, name='obtenerconteoabc'),
     url(r'^obtenerconteo/$', views_conteoabc_manual.obtener_conteo_abc, name='obtenerconteo'),
     url(r'^actualizarconteofisico/$', views_conteoabc_manual.actualizar_conteo_fisico, name='actualizarconteofisico'),
+
+    url(r'^verAjustes/$', views_ajustes.ir_aprobacion_ajuste, name='verajustes'),
+    url(r'^obtenerAjustes/$', views_ajustes.obtener_ajustes, name='obtenerajustes'),
+    url(r'^aprobarAjuste/$', views_ajustes.aprobar_ajuste, name='aprobarajustes'),
 
 ]
