@@ -12,8 +12,8 @@ WHERE NOT EXISTS (SELECT 1 FROM laboratorio_tipo WHERE grupo = 'STATUSCONTEO' an
 INSERT INTO laboratorio_tipo (grupo, nombre, valor) SELECT 'STATUSCONTEO', 'Cerrada', '4'
 WHERE NOT EXISTS (SELECT 1 FROM laboratorio_tipo WHERE grupo = 'STATUSCONTEO' and nombre = 'Cerrada');
 
-INSERT INTO laboratorio_tipo (grupo, nombre, valor) SELECT 'STATUSCONTEO', 'Cerrada con ajuste', '4'
-WHERE NOT EXISTS (SELECT 1 FROM laboratorio_tipo WHERE grupo = 'STATUSCONTEO' and nombre = 'Cerrada con ajuste');
+INSERT INTO laboratorio_tipo (grupo, nombre, valor) SELECT 'STATUSCONTEO', 'Cerrado con ajuste', '4'
+WHERE NOT EXISTS (SELECT 1 FROM laboratorio_tipo WHERE grupo = 'STATUSCONTEO' and nombre = 'Cerrado con ajuste');
 
 
 -- TIPOINVENTARIOPRODUCTO

@@ -51,7 +51,7 @@ def generarAjustesConteo(request):
             ajuste.save()
         if cerrada_conAjuste:
             mensaje = "con ajustes por aprobar"
-            cnt.estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Cerrada con ajuste', grupo='STATUSCONTEO').first().id)
+            cnt.estado=Tipo.objects.get(pk=Tipo.objects.filter(nombre='Cerrado con ajuste', grupo='STATUSCONTEO').first().id)
         else:
             mensaje = "sin novedades"
             cnt.estado = Tipo.objects.get(
