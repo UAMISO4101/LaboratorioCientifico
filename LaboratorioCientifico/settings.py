@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'LaboratorioCientifico.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
+    'default': dj_database_url.config(default=os.environ['DATABASE_URL_1'])
 }
 
 SOUTH_TESTS_MIGRATE = False
